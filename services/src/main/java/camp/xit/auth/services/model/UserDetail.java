@@ -17,6 +17,7 @@ public class UserDetail {
     private URI profilePicture;
     private boolean emailVerified;
     private Role role;
+    private boolean saveGSuitePassword;
 
 
     public UserDetail() {
@@ -92,4 +93,13 @@ public class UserDetail {
         this.role = role;
     }
 
+
+    public boolean isSaveGSuitePassword() {
+        return saveGSuitePassword;
+    }
+
+
+    public void setSaveGSuitePassword(boolean saveGSuitePassword) {
+        this.saveGSuitePassword = saveGSuitePassword;
+    }
 }
