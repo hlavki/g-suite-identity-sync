@@ -86,7 +86,6 @@
      
     <bean id="userInfoService" class="camp.xit.auth.services.rest.user.UserInfoService">
         <argument ref="gSuiteService"/>
-        <argument ref="peopleServiceClient"/>
     </bean>
 
     <!-- project_id is allocated in Google Developer Console -->
@@ -207,17 +206,6 @@
      
     <jaxrsclient:client id="userInfoServiceClient" threadSafe="true" 
                         address="https://www.googleapis.com/plus/v1/people/me/openIdConnect"
-                        serviceClass="org.apache.cxf.jaxrs.client.WebClient">
-        <jaxrsclient:headers>
-            <entry key="Accept" value="application/json"/>
-        </jaxrsclient:headers>
-        <jaxrsclient:providers>
-            <bean class="org.apache.cxf.jaxrs.provider.json.JsonMapObjectProvider"/>
-        </jaxrsclient:providers>
-    </jaxrsclient:client>
-     
-    <jaxrsclient:client id="peopleServiceClient" threadSafe="true" 
-                        address="https://people.googleapis.com/v1/people/me"
                         serviceClass="org.apache.cxf.jaxrs.client.WebClient">
         <jaxrsclient:headers>
             <entry key="Accept" value="application/json"/>

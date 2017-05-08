@@ -9,10 +9,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
-import org.apache.cxf.jaxrs.client.WebClient;
-import org.apache.cxf.rs.security.oauth2.common.ClientAccessToken;
 import org.apache.cxf.rs.security.oidc.rp.OidcClientTokenContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,12 +21,10 @@ public class UserInfoService {
     @Context
     private OidcClientTokenContext oidcContext;
     private final GSuiteDirectoryService directoryService;
-    private final WebClient peopleServiceClient;
 
 
-    public UserInfoService(GSuiteDirectoryService directoryService, WebClient peopleServiceClient) {
+    public UserInfoService(GSuiteDirectoryService directoryService) {
         this.directoryService = directoryService;
-        this.peopleServiceClient = peopleServiceClient;
     }
 
 
@@ -63,12 +58,5 @@ public class UserInfoService {
 
     private URI resizeProfilePicture(String originalUri) {
         return UriBuilder.fromUri(originalUri).queryParam("sz", "100").build();
-    }
-
-
-    private Response getInfoFromPeople() {
-        ClientAccessToken accessToken = oidcContext.getToken();
-        peopleServiceClient.authorization(accessToken);
-        return peopleServiceClient.get();
     }
 }
