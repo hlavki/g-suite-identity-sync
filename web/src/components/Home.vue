@@ -38,7 +38,7 @@
           <md-input type="password"></md-input>
         </md-input-container>
   
-        <md-checkbox class="md-primary" v-if="userData.role === 'INTERNAL'" v-model="userData.saveGSuitePassword">Save GSuite Password</md-checkbox>
+        <md-checkbox class="md-primary" v-if="showSaveGSuitePasswordCheckbox()" v-model="userData.saveGSuitePassword">Save GSuite Password</md-checkbox>
         <br/>
         <md-button class="md-raised md-primary" @click.native="sendData">Create LDAP Profile</md-button>
       </form>
@@ -78,6 +78,9 @@ export default {
     },
     sendData: function (event) {
       alert('Data akože odoslane! ' + this)
+    },
+    showSaveGSuitePasswordCheckbox() {
+      return this.userData.role === 'INTERNAL'
     }
   }
 }
