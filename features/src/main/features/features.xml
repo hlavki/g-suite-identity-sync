@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<features name="crawler-st-features-1.0"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xmlns="http://karaf.apache.org/xmlns/features/v1.3.0"
+          xsi:schemaLocation="http://karaf.apache.org/xmlns/features/v1.3.0 http://karaf.apache.org/xmlns/features/v1.3.0">
+
+    
+    <feature name="account-manager-web" version="${project.version}">
+        <feature>war</feature>
+        <bundle>mvn:camp.xit.auth/account-manager-web/${project.version}/war</bundle>
+    </feature>
+    
+    <feature name="account-manager-services" version="${project.version}">
+        <feature>cxf-jaxrs</feature>
+        <feature>cxf-rs-security-oauth2</feature>
+        <bundle>mvn:org.apache.cxf/cxf-rt-rs-security-sso-oidc/${cxf.version}</bundle> <!-- Missing in features!!! Maybe bug -->
+        <bundle>mvn:camp.xit.auth/account-manager-services/${project.version}</bundle>
+    </feature>
+</features>

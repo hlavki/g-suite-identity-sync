@@ -1,0 +1,17 @@
+version: "2"
+
+services:
+  account:
+    image: docker.xit.camp/account-manager
+    hostname: account
+    ports:
+      - "8443:8443"
+
+  httpd:
+    image: httpd
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - /data/home/hlavki/develop/xit/docker-data/httpd/conf:/usr/local/apache2/conf
+      - /data/home/hlavki/develop/xit/docker-data/httpd/htdocs:/usr/local/apache2/htdocs
