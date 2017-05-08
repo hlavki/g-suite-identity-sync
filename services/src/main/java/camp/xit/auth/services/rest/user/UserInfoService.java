@@ -1,6 +1,8 @@
 package camp.xit.auth.services.rest.user;
 
-import camp.xit.auth.services.rest.directory.GSuiteDirectoryService;
+import camp.xit.auth.services.model.UserDetail;
+import camp.xit.auth.services.model.UserInfo;
+import camp.xit.auth.services.google.GSuiteDirectoryService;
 import java.net.URI;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -69,5 +71,4 @@ public class UserInfoService {
         peopleServiceClient.authorization(accessToken);
         return peopleServiceClient.get();
     }
-
 }

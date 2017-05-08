@@ -1,5 +1,6 @@
-package camp.xit.auth.services.rest.directory;
+package camp.xit.auth.services.google;
 
+import camp.xit.auth.services.model.GroupMember;
 import camp.xit.auth.services.rest.util.StringUtils;
 import java.util.List;
 import javax.xml.bind.annotation.XmlRootElement;

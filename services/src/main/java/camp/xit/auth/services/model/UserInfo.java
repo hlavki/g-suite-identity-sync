@@ -1,4 +1,4 @@
-package camp.xit.auth.services.rest.user;
+package camp.xit.auth.services.model;
 
 import java.net.URI;
 import javax.xml.bind.annotation.XmlRootElement;

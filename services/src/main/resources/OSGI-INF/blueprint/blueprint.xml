@@ -33,7 +33,7 @@
     <!-- GSuiteService -->
     
     
-    <bean id="gSuiteService" class="camp.xit.auth.services.rest.directory.impl.GSuiteDirectoryServiceImpl">
+    <bean id="gSuiteService" class="camp.xit.auth.services.google.impl.GSuiteDirectoryServiceImpl">
         <argument ref="directoryApiClient"/>
         <argument value="notasecret"/>
     </bean>

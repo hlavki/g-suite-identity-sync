@@ -1,8 +1,8 @@
-package camp.xit.auth.services.rest.directory.impl;
+package camp.xit.auth.services.google.impl;
 
-import camp.xit.auth.services.rest.directory.GSuiteDirectoryService;
-import camp.xit.auth.services.rest.directory.GroupMembershipResponse;
-import camp.xit.auth.services.rest.directory.NoPrivateKeyException;
+import camp.xit.auth.services.google.GSuiteDirectoryService;
+import camp.xit.auth.services.google.GroupMembershipResponse;
+import camp.xit.auth.services.google.NoPrivateKeyException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.security.*;

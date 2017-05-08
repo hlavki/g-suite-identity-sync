@@ -1,4 +1,4 @@
-package camp.xit.auth.services.rest.directory;
+package camp.xit.auth.services.model;
 
 import camp.xit.auth.services.rest.util.StringUtils;
 import java.util.Objects;

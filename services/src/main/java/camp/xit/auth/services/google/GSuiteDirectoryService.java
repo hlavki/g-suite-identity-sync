@@ -1,4 +1,4 @@
-package camp.xit.auth.services.rest.directory;
+package camp.xit.auth.services.google;
 
 public interface GSuiteDirectoryService {
 
