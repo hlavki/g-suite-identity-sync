@@ -13,7 +13,6 @@ const AuthPlugin = {
       },
       methods: {
         login() {
-          console.info('AAAAA: ' + options.isProduction)
           if (!options.isProduction) {
             this.loggedIn = true
             this.userInfo = { givenName: 'Gabriel Hakan', familyName: 'Hakan', email: 'g.hakan@xit.camp', imageUri: 'https://encrypted-tbn3.gstatic.com/images?q=tbn:ANd9GcQ8TNF1mAw0VymIYZlqOUxktqmdgRyS5ylHtXeHyQyso8103P4sZA' }
@@ -23,11 +22,11 @@ const AuthPlugin = {
               console.info('Status: OK, Body: ' + Object.keys(response.data))
               _this.loggedIn = true
               _this.userInfo = response.data
-              this.$emit('loggedIn')
+              _this.$emit('loggedIn')
               options.router.push('/')
             }).catch(function (error) {
               console.error('Cannot authentication user. Status: ' + error.response.status)
-              this.logout()
+              _this.logout()
             })
           }
         },
