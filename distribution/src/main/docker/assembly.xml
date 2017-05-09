@@ -7,9 +7,5 @@
             <directory>${project.build.directory}/assembly</directory>
             <outputDirectory>karaf</outputDirectory>
         </fileSet>
-        <fileSet>
-            <directory>${project.basedir}/src/main/config/keystore</directory>
-            <outputDirectory>karaf/etc/keystore</outputDirectory>
-        </fileSet>
     </fileSets>
 </assembly>
