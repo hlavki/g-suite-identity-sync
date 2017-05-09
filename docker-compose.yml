@@ -4,8 +4,8 @@ services:
   account:
     image: docker.xit.camp/account-manager
     hostname: account
-    ports:
-      - "8443:8443"
+    volumes:
+      - /data/home/hlavki/develop/xit/docker-data/karaf/etc:/opt/karaf/etc
 
   httpd:
     image: httpd

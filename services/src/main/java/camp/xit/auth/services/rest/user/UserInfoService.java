@@ -3,6 +3,7 @@ package camp.xit.auth.services.rest.user;
 import camp.xit.auth.services.model.UserDetail;
 import camp.xit.auth.services.model.UserInfo;
 import camp.xit.auth.services.google.GSuiteDirectoryService;
+import camp.xit.auth.services.google.GroupMembershipResponse;
 import camp.xit.auth.services.model.UserDetail.Role;
 import java.net.URI;
 import javax.ws.rs.GET;
@@ -35,7 +36,8 @@ public class UserInfoService {
     @Path("info")
     public UserInfo getUserInfo() {
         org.apache.cxf.rs.security.oidc.common.UserInfo userInfo = oidcContext.getUserInfo();
-//        GroupMembershipResponse response = directoryService.getGroupMembers("saunicka@hlavki.eu");
+        GroupMembershipResponse response = directoryService.getGroupMembers("cloud.admin@xit.camp");
+        log.info("MEMBERS: " + response);
         URI profilePicture = resizeProfilePicture(userInfo.getPicture());
         return new UserInfo(userInfo.getName(), userInfo.getEmail(), profilePicture);
     }

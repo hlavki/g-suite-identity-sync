@@ -3,6 +3,7 @@ package camp.xit.auth.services.google.impl;
 import camp.xit.auth.services.google.GSuiteDirectoryService;
 import camp.xit.auth.services.google.GroupMembershipResponse;
 import camp.xit.auth.services.google.NoPrivateKeyException;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.security.*;
@@ -31,12 +32,16 @@ public class GSuiteDirectoryServiceImpl implements GSuiteDirectoryService {
     private static final Logger log = LoggerFactory.getLogger(GSuiteDirectoryServiceImpl.class);
     private PrivateKey privateKey;
     private final WebClient directoryApiClient;
+    private final String clientId;
+    private final String subject;
 
 
-    public GSuiteDirectoryServiceImpl(WebClient directoryApiClient, String keyPassword) {
+    public GSuiteDirectoryServiceImpl(WebClient directoryApiClient, String clientId, String subject, String keyResource, String keyPassword) {
         this.directoryApiClient = directoryApiClient;
+        this.clientId = clientId;
+        this.subject = subject;
         try {
-            privateKey = loadPrivateKey(keyPassword);
+            privateKey = loadPrivateKey(keyResource, keyPassword);
         } catch (NoPrivateKeyException e) {
             log.error(e.getMessage(), e.getCause());
         }
@@ -49,24 +54,24 @@ public class GSuiteDirectoryServiceImpl implements GSuiteDirectoryService {
 
         WebClient webClient = WebClient.fromClient(directoryApiClient, true);
 
-        ClientAccessToken accessToken = getAccessToken(privateKey, "groups@account-manager-166421.iam.gserviceaccount.com");
+        ClientAccessToken accessToken = getAccessToken(privateKey, clientId, subject);
         webClient.authorization(accessToken);
         GroupMembershipResponse membership = webClient.path(path).get(GroupMembershipResponse.class);
         return membership;
     }
 
 
-    private static ClientAccessToken getAccessToken(PrivateKey privateKey, String issuer) {
+    private static ClientAccessToken getAccessToken(PrivateKey privateKey, String issuer, String subject) {
         JwsHeaders headers = new JwsHeaders(JoseType.JWT, SignatureAlgorithm.RS256);
         JwtClaims claims = new JwtClaims();
         claims.setIssuer(issuer);
         claims.setAudience("https://accounts.google.com/o/oauth2/token");
-        claims.setSubject("hlavki@hlavki.eu");
+        claims.setSubject(subject);
 
         long issuedAt = OAuthUtils.getIssuedAt();
         claims.setIssuedAt(issuedAt);
         claims.setExpiryTime(issuedAt + 60 * 60);
-        claims.setProperty("scope", "https://www.googleapis.com/auth/admin.directory.group.member");
+        claims.setProperty("scope", "https://www.googleapis.com/auth/admin.directory.group.readonly");
 
         JwtToken token = new JwtToken(headers, claims);
         JwsJwtCompactProducer p = new JwsJwtCompactProducer(token);
@@ -84,8 +89,8 @@ public class GSuiteDirectoryServiceImpl implements GSuiteDirectoryService {
     }
 
 
-    private static PrivateKey loadPrivateKey(String password) throws NoPrivateKeyException {
-        try (InputStream is = GSuiteDirectoryServiceImpl.class.getResourceAsStream("/auth-test.p12")) {
+    private static PrivateKey loadPrivateKey(String keyFile, String password) throws NoPrivateKeyException {
+        try (InputStream is = new FileInputStream(keyFile)) {
             KeyStore store = KeyStore.getInstance("PKCS12");
             store.load(is, password.toCharArray());
             return (PrivateKey) store.getKey("privateKey", password.toCharArray());

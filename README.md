@@ -4,7 +4,6 @@
 
 ### Nastavenie opravnení pre GSuite
 
-
 #### Vytvorenie projektu
 
 1. Otvor [Developer console](https://console.cloud.google.com/cloud-resource-manager)
