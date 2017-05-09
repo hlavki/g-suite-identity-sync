@@ -7,7 +7,7 @@
 
 #### Vytvorenie projektu
 
-1. Otvor [Developer console](https://console.developers.google.com/cloud-resource-manager)
+1. Otvor [Developer console](https://console.cloud.google.com/cloud-resource-manager)
 1. Klikni na **Create Project**, do **Project Name** daj *xIT Account Manager* a klinkni **Create**
 1. Počkaj na vytvorenie projektu
 
@@ -20,7 +20,7 @@
 
 #### Vytvorenie OAuth Consent Screen
 
-1. Otvor Api Manager -> [Credentials](https://console.developers.google.com/apis/credentials/consent)
+1. Otvor Api Manager -> [Credentials](https://console.cloud.google.com/apis/credentials/consent)
 1. Nastav email
 1. Nazov projektu: *"xIT Account Manager"*
 1. Homepage URL `https://account.xit.camp/`
