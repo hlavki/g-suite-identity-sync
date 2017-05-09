@@ -58,7 +58,7 @@
 mvn clean install -Pdocker
 ```
 
-## Web - Build Setup
+## Web - Local Development
 
 ``` bash
 # install dependencies
@@ -82,7 +82,9 @@ npm test
 
 For detailed explanation on how things work, checkout the [guide](http://vuejs-templates.github.io/webpack/) and [docs for vue-loader](http://vuejs.github.io/vue-loader).
 
+## Generovanie SSL self-signed certifikatu pre proxy komunikaciu Apache HTTPd a Apache karaf
 
+```
 /usr/java/default/bin/keytool -genkeypair -keyalg RSA -validity 3650 \
  -alias account-server \
  -dname "cn=account, ou=xIT s.r.o., o=xIT Account Manager, C=SK, L=Bratislava, S=Slovakia" \
@@ -91,8 +93,10 @@ For detailed explanation on how things work, checkout the [guide](http://vuejs-t
  -ext SAN=DNS:account.xit.camp,DNS:account.xit.camp
 
 /usr/java/default/bin/keytool -exportcert -alias account-server -storepass changeit -keystore account-manager.jks -rfc -file account-server.pem
+```
 
 # Links
+
 https://developers.google.com/identity/protocols/OAuth2WebServer#protectauthcode
 
 offline
