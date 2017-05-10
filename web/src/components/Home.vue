@@ -1,18 +1,18 @@
 <template>
   <!--<form-wizard color="#4caf50" title="">
-                                                            <tab-content title="Personal details">
-                                                              My first tab content
-                                                            </tab-content>
-                                                            <tab-content title="Set LDAP Password">
-                                                              My second tab content
-                                                            </tab-content>
-                                                            <tab-content title="Confirm">
-                                                              Yuhuuu! This seems pretty damn simple
-                                                            </tab-content>
-                                                          </form-wizard>-->
+                                                                      <tab-content title="Personal details">
+                                                                        My first tab content
+                                                                      </tab-content>
+                                                                      <tab-content title="Set LDAP Password">
+                                                                        My second tab content
+                                                                      </tab-content>
+                                                                      <tab-content title="Confirm">
+                                                                        Yuhuuu! This seems pretty damn simple
+                                                                      </tab-content>
+                                                                    </form-wizard>-->
   <div>
     <md-whiteframe md-elevation="6" class="global-frame">
-      <md-progress md-indeterminate v-if="progress"></md-progress>
+      <md-progress md-indeterminate v-if="showProgress"></md-progress>
       <form novalidate @submit.stop.prevent="submit">
         <md-input-container>
           <label>Name</label>
@@ -69,9 +69,8 @@ export default {
   data() {
     return {
       initialValue: 'My initial value',
-      // userData: { email: 'user@example.com', name: 'George Soros', role: 'INTERNAL', saveGSuitePassword: true, groups: [{ name: 'Group1', email: 'group1@example.com' }, { name: 'Group2', email: 'group2@example.com' }] }
       userData: { email: '', name: '', role: '', saveGSuitePassword: false },
-      progress: false
+      showProgress: false
     }
   },
   // components: {
@@ -83,16 +82,20 @@ export default {
   },
   methods: {
     setUserDetail() {
-      this.progress = true
+      this.showProgress = true
       var _this = this
       this.$http.get(this.$apiPrefix + '/xit/user/detail').then(function (response) {
         console.info('User Detail. Status: OK, Body: ' + Object.keys(response.data))
         _this.userData = response.data
+        _this.showProgress = false
       }).catch(function (error) {
         console.error('Cannot authentication user. Status: ' + error.response.status)
         if (_this.$isProduction) _this.$auth.logout()
+        else {
+          _this.userData = { email: 'user@example.com', name: 'George Soros', role: 'INTERNAL', saveGSuitePassword: true, groups: [{ name: 'Group1', email: 'group1@example.com' }, { name: 'Group2', email: 'group2@example.com' }] }
+        }
+        _this.showProgress = false
       })
-      this.progress = false
     },
     sendData: function (event) {
       alert('Data akože odoslane! ' + this)
