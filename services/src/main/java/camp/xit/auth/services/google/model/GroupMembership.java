@@ -1,6 +1,6 @@
 package camp.xit.auth.services.google.model;
 
-import camp.xit.auth.services.rest.util.StringUtils;
+import camp.xit.auth.services.util.StringUtils;
 import java.util.List;
 import javax.xml.bind.annotation.XmlRootElement;
 
