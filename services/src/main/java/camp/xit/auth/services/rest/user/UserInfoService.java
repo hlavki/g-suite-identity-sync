@@ -6,7 +6,6 @@ import camp.xit.auth.services.google.GSuiteDirectoryService;
 import camp.xit.auth.services.google.model.GroupList;
 import camp.xit.auth.services.model.UserDetail.Role;
 import java.net.URI;
-import java.util.List;
 import java.util.stream.Collectors;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -62,8 +61,9 @@ public class UserInfoService {
         detail.setSaveGSuitePassword(detail.getRole() == Role.INTERNAL);
 
         GroupList list = directoryService.getGroups(userInfo.getSubject());
-        detail.setGroups(list.getGroups().stream().map(UserDetail.Group::map).collect(Collectors.toList()));
-
+        if (list.getGroups() != null) {
+            detail.setGroups(list.getGroups().stream().map(UserDetail.Group::map).collect(Collectors.toList()));
+        }
         return detail;
     }
 
