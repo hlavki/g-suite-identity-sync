@@ -50,11 +50,7 @@
 
     <!-- Google OAuth2 -->
     
-    <!-- 
-       1. Big Query Client Application: 
-       accepts a form query and uses an OAuth2 access token to query BigQuery service
-       with a bigQueryClient client  
-    -->
+    <!-- UserInfoService REST service  -->
     <jaxrs:server id="xitRestServer" address="/xit">
         <jaxrs:serviceBeans>
             <ref component-id="userInfoService"/>
@@ -63,10 +59,6 @@
             <ref component-id="jsonProvider"/>
             <!-- Checks that a client is authenticated with Google -->
             <ref component-id="oidcRpFilter"/>
-           
-            <!-- supports the mapping of the big query search result to HTML --> 
-            <!--<ref component-id="searchView"/>-->
-           
             <!-- JAX-RS provider that makes OidcClientTokenContext available as JAX-RS @Context -->
             <ref component-id="clientTokenContextProvider"/>
         </jaxrs:providers>
@@ -79,25 +71,6 @@
         <argument ref="gSuiteService"/>
     </bean>
 
-    <!-- project_id is allocated in Google Developer Console -->
-    <!--    <jaxrsclient:client id="userInfoClient" threadSafe="true" 
-                         address="https://www.googleapis.com/bigquery/v2/projects/auth-test-165613/queries"
-                         serviceClass="org.apache.cxf.jaxrs.client.WebClient">
-        <jaxrsclient:headers>
-            <entry key="Accept" value="application/json"/>
-            <entry key="Content-Type" value="application/json"/>
-        </jaxrsclient:headers>
-        <jaxrsclient:providers>
-            <bean class="org.apache.cxf.jaxrs.provider.json.JsonMapObjectProvider"/>
-        </jaxrsclient:providers>
-    </jaxrsclient:client>-->
-     
-    <!--    <bean id="searchView" class="org.apache.cxf.jaxrs.provider.RequestDispatcherProvider">
-        <property name="useClassNames" value="true"/>
-        <property name="locationPrefix" value="/forms/"/>
-        <property name="beanName" value="data"/>
-    </bean>-->
-     
     <bean id="oidcRpFilter" class="org.apache.cxf.rs.security.oidc.rp.OidcRpAuthenticationFilter">
         <!-- 
              This state manager is shared between this filter and the RP endpoint, 
@@ -105,7 +78,7 @@
         -->
         <property name="clientTokenContextManager" ref="stateManager"/>
          
-        <!-- The address to redirect to if no OIDC context is available -->
+        <!-- The address to redirect to if no OIDC context is available. If not set, returns HTTP error 401 -->
         <!--<property name="redirectUri" value="/error"/>-->
     </bean>
      
@@ -149,7 +122,7 @@
         <property name="consumer" ref="consumer"/>
         <property name="authorizationServiceUri" value="https://accounts.google.com/o/oauth2/auth"/>
         <property name="startUri" value="rp"/>
-        <property name="completeUri" value="https://account.xit.camp/cxf/oidc/rp/complete"/>
+        <property name="completeUri" value="https://account.xit.camp/cxf/oidc/rp/complete"/> <!-- Have to use absolute URI -->
     </bean>
     <!-- This state manager creates an OAuth2 'state' parameter and saves it in the HTTP session -->
     <bean id="rpClientCodeStateManager" class="org.apache.cxf.rs.security.oauth2.client.MemoryClientCodeStateManager"/>
