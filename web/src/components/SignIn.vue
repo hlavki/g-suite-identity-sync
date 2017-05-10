@@ -1,9 +1,6 @@
 <template>
   <div class="hello">
     <div class="main-content">
-      <!--<google-sign-in-button /><br/>-->
-      <!-- Sign-in button -->
-      <!--<button class="google-sign-in" />-->
       <md-button class="md-raised md-primary" v-on:click.native="signIn"><img class="google-logo" src="../assets/google.png">Sign In</md-button>
     </div>
   </div>
