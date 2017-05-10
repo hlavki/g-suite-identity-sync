@@ -5,6 +5,7 @@ import camp.xit.auth.services.model.UserInfo;
 import camp.xit.auth.services.google.GSuiteDirectoryService;
 import camp.xit.auth.services.google.model.GroupList;
 import camp.xit.auth.services.model.UserDetail.Role;
+import camp.xit.auth.services.util.Configuration;
 import java.net.URI;
 import java.util.stream.Collectors;
 import javax.ws.rs.GET;
@@ -15,21 +16,30 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.UriBuilder;
 import org.apache.cxf.rs.security.oidc.common.IdToken;
 import org.apache.cxf.rs.security.oidc.rp.OidcClientTokenContext;
+import org.osgi.service.event.Event;
+import org.osgi.service.event.EventHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @Path("user")
-public class UserInfoService {
+public class UserInfoService implements EventHandler {
 
-    private static final String XIT_DOMAIN = "xit.camp";
     private static final Logger log = LoggerFactory.getLogger(UserInfoService.class);
+    private static final String GSUITE_DOMAIN_PROP = "gsuite.domain";
+
     @Context
     private OidcClientTokenContext oidcContext;
     private final GSuiteDirectoryService directoryService;
+    private Configuration config;
 
 
     public UserInfoService(GSuiteDirectoryService directoryService) {
         this.directoryService = directoryService;
+    }
+
+
+    private void configure() {
+        log.info("Configuring UserInfoService ...");
     }
 
 
@@ -57,7 +67,7 @@ public class UserInfoService {
         detail.setProfilePicture(resizeProfilePicture(userInfo.getPicture()));
         detail.setEmailVerified(userInfo.getEmailVerified());
         String hdParam = idToken.getStringProperty("hd");
-        detail.setRole(XIT_DOMAIN.equals(hdParam) ? Role.INTERNAL : Role.EXTERNAL);
+        detail.setRole(config.get(GSUITE_DOMAIN_PROP).equals(hdParam) ? Role.INTERNAL : Role.EXTERNAL);
         detail.setSaveGSuitePassword(detail.getRole() == Role.INTERNAL);
 
         GroupList list = directoryService.getGroups(userInfo.getSubject());
@@ -70,5 +80,14 @@ public class UserInfoService {
 
     private URI resizeProfilePicture(String originalUri) {
         return UriBuilder.fromUri(originalUri).queryParam("sz", "100").build();
+    }
+
+
+    @Override
+    public void handleEvent(Event event) {
+        if (Configuration.TOPIC_CHANGE.equals(event.getTopic())) {
+            this.config = (Configuration) event.getProperty(Configuration.CONFIG_PROP);
+            configure();
+        }
     }
 }

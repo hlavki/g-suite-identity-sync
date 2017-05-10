@@ -13,7 +13,6 @@ import java.security.*;
 import java.security.cert.CertificateException;
 import java.text.MessageFormat;
 import java.util.Arrays;
-import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import javax.ws.rs.core.MediaType;
 import org.apache.cxf.interceptor.LoggingInInterceptor;
@@ -31,16 +30,19 @@ import org.apache.cxf.rs.security.oauth2.provider.OAuthJSONProvider;
 import org.apache.cxf.rs.security.oauth2.utils.OAuthUtils;
 import org.cache2k.Cache;
 import org.cache2k.Cache2kBuilder;
+import org.osgi.service.event.Event;
+import org.osgi.service.event.EventHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class GSuiteDirectoryServiceImpl implements GSuiteDirectoryService {
+public class GSuiteDirectoryServiceImpl implements GSuiteDirectoryService, EventHandler {
 
     private static final Logger log = LoggerFactory.getLogger(GSuiteDirectoryServiceImpl.class);
     private static final String CLIENT_ID_PROP = "oauth2.serviceAccount.clientId";
     private static final String SUBJECT_PROP = "oauth2.serviceAccount.subject";
     private static final String PRIVATE_KEY_PROP = "oauth2.serviceAccount.privateKey.file";
     private static final String PRIVATE_KEY_PASS_PROP = "oauth2.serviceAccount.privateKey.passphrase";
+    private static final String GSUITE_DOMAIN_PROP = "gsuite.domain";
     private static final int TOKEN_LIFETIME = 3600;
     private PrivateKey privateKey;
     private final WebClient directoryApiClient;
@@ -59,7 +61,7 @@ public class GSuiteDirectoryServiceImpl implements GSuiteDirectoryService {
 
 
     private void configure() {
-        log.info("Configuring GSuiteDirectoryService...");
+        log.info("Configuring GSuiteDirectoryService ...");
         try {
             privateKey = loadPrivateKey(config.get(PRIVATE_KEY_PROP), config.get(PRIVATE_KEY_PASS_PROP));
         } catch (NoPrivateKeyException e) {
@@ -113,7 +115,7 @@ public class GSuiteDirectoryServiceImpl implements GSuiteDirectoryService {
         if (userKey != null) {
             webClient.query("userKey", userKey);
         }
-        GroupList groupList = webClient.query("domain", "xit.camp").get(GroupList.class);
+        GroupList groupList = webClient.query("domain", config.get(GSUITE_DOMAIN_PROP)).get(GroupList.class);
         return groupList;
     }
 
@@ -157,8 +159,11 @@ public class GSuiteDirectoryServiceImpl implements GSuiteDirectoryService {
     }
 
 
-    public void update(Map<String, Object> props) {
-        this.config = new Configuration(props);
-        configure();
+    @Override
+    public void handleEvent(Event event) {
+        if (Configuration.TOPIC_CHANGE.equals(event.getTopic())) {
+            this.config = (Configuration) event.getProperty(Configuration.CONFIG_PROP);
+            configure();
+        }
     }
 }

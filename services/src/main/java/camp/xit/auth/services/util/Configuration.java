@@ -2,18 +2,25 @@ package camp.xit.auth.services.util;
 
 import java.math.BigDecimal;
 import java.util.*;
+import org.osgi.service.cm.ConfigurationException;
+import org.osgi.service.cm.ManagedService;
+import org.osgi.service.event.Event;
+import org.osgi.service.event.EventAdmin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class Configuration {
+public class Configuration implements ManagedService {
 
     private static final Logger log = LoggerFactory.getLogger(Configuration.class);
+    public static final String TOPIC_CHANGE = "camp/xit/account/Configuration/CHANGED";
+    public static final String CONFIG_PROP = "config";
     private static final String COLLECTIONS_VALUE_SEPARATOR = "|";
-    private final Map<String, Object> properties;
+    private Dictionary<String, ?> properties;
+    private final EventAdmin eventAdmin;
 
 
-    public Configuration(Map<String, Object> properties) {
-        this.properties = properties;
+    public Configuration(EventAdmin eventAdmin) {
+        this.eventAdmin = eventAdmin;
     }
 
 
@@ -156,4 +163,13 @@ public class Configuration {
         return result;
     }
 
+
+    @Override
+    public void updated(Dictionary<String, ?> props) throws ConfigurationException {
+        log.info("Configuration changed");
+        this.properties = props;
+        Map<String, Object> eventProps = new HashMap<>();
+        eventProps.put(CONFIG_PROP, this);
+        eventAdmin.postEvent(new Event(TOPIC_CHANGE, eventProps));
+    }
 }
