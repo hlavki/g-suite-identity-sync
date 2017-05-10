@@ -3,9 +3,11 @@ package camp.xit.auth.services.rest.user;
 import camp.xit.auth.services.model.UserDetail;
 import camp.xit.auth.services.model.UserInfo;
 import camp.xit.auth.services.google.GSuiteDirectoryService;
-import camp.xit.auth.services.google.GroupMembershipResponse;
+import camp.xit.auth.services.google.model.GroupList;
 import camp.xit.auth.services.model.UserDetail.Role;
 import java.net.URI;
+import java.util.List;
+import java.util.stream.Collectors;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
@@ -36,8 +38,6 @@ public class UserInfoService {
     @Path("info")
     public UserInfo getUserInfo() {
         org.apache.cxf.rs.security.oidc.common.UserInfo userInfo = oidcContext.getUserInfo();
-        GroupMembershipResponse response = directoryService.getGroupMembers("cloud.admin@xit.camp");
-        log.info("MEMBERS: " + response);
         URI profilePicture = resizeProfilePicture(userInfo.getPicture());
         return new UserInfo(userInfo.getName(), userInfo.getEmail(), profilePicture);
     }
@@ -50,7 +50,6 @@ public class UserInfoService {
         final org.apache.cxf.rs.security.oidc.common.UserInfo userInfo = oidcContext.getUserInfo();
         final IdToken idToken = oidcContext.getIdToken();
 
-//        GroupMembershipResponse response = directoryService.getGroupMembers("saunicka@hlavki.eu");
         UserDetail detail = new UserDetail();
         detail.setGivenName(userInfo.getGivenName());
         detail.setFamilyName(userInfo.getFamilyName());
@@ -61,6 +60,10 @@ public class UserInfoService {
         String hdParam = idToken.getStringProperty("hd");
         detail.setRole(XIT_DOMAIN.equals(hdParam) ? Role.INTERNAL : Role.EXTERNAL);
         detail.setSaveGSuitePassword(detail.getRole() == Role.INTERNAL);
+
+        GroupList list = directoryService.getGroups(userInfo.getSubject());
+        detail.setGroups(list.getGroups().stream().map(UserDetail.Group::map).collect(Collectors.toList()));
+
         return detail;
     }
 

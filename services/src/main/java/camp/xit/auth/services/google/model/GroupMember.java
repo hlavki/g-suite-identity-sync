@@ -1,4 +1,4 @@
-package camp.xit.auth.services.model;
+package camp.xit.auth.services.google.model;
 
 import camp.xit.auth.services.rest.util.StringUtils;
 import java.util.Objects;
@@ -98,7 +98,7 @@ public class GroupMember {
     @Override
     public int hashCode() {
         int hash = 3;
-        hash = 73 * hash + Objects.hashCode(this.id);
+        hash = 73 * hash + Objects.hashCode(this.email);
         return hash;
     }
 
@@ -109,7 +109,7 @@ public class GroupMember {
         if (obj == null) return false;
         if (getClass() != obj.getClass()) return false;
         final GroupMember other = (GroupMember) obj;
-        if (!Objects.equals(this.id, other.id)) return false;
+        if (!Objects.equals(this.email, other.email)) return false;
         return true;
     }
 

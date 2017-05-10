@@ -1,12 +1,11 @@
-package camp.xit.auth.services.google;
+package camp.xit.auth.services.google.model;
 
-import camp.xit.auth.services.model.GroupMember;
 import camp.xit.auth.services.rest.util.StringUtils;
 import java.util.List;
 import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement
-public class GroupMembershipResponse {
+public class GroupMembership {
 
     private String etag;
     private String kind;
@@ -14,7 +13,7 @@ public class GroupMembershipResponse {
     private List<GroupMember> members;
 
 
-    public GroupMembershipResponse() {
+    public GroupMembership() {
     }
 
 
