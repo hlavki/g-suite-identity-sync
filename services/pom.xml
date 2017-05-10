@@ -34,6 +34,12 @@
             <version>1.7.22</version>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>org.cache2k</groupId>
+            <artifactId>cache2k-core</artifactId>
+            <version>${cache2k.version}</version>
+            <scope>provided</scope>
+        </dependency>
     </dependencies>
 
     
