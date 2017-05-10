@@ -5,6 +5,7 @@ import camp.xit.auth.services.google.model.GroupMembership;
 import camp.xit.auth.services.google.NoPrivateKeyException;
 import camp.xit.auth.services.google.model.Group;
 import camp.xit.auth.services.google.model.GroupList;
+import camp.xit.auth.services.util.Configuration;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -12,6 +13,7 @@ import java.security.*;
 import java.security.cert.CertificateException;
 import java.text.MessageFormat;
 import java.util.Arrays;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import javax.ws.rs.core.MediaType;
 import org.apache.cxf.interceptor.LoggingInInterceptor;
@@ -35,28 +37,34 @@ import org.slf4j.LoggerFactory;
 public class GSuiteDirectoryServiceImpl implements GSuiteDirectoryService {
 
     private static final Logger log = LoggerFactory.getLogger(GSuiteDirectoryServiceImpl.class);
+    private static final String CLIENT_ID_PROP = "oauth2.serviceAccount.clientId";
+    private static final String SUBJECT_PROP = "oauth2.serviceAccount.subject";
+    private static final String PRIVATE_KEY_PROP = "oauth2.serviceAccount.privateKey.file";
+    private static final String PRIVATE_KEY_PASS_PROP = "oauth2.serviceAccount.privateKey.passphrase";
     private static final int TOKEN_LIFETIME = 3600;
     private PrivateKey privateKey;
     private final WebClient directoryApiClient;
-    private final String clientId;
-    private final String subject;
     private final Cache<Boolean, ClientAccessToken> tokenCache;
+    private Configuration config;
 
 
-    public GSuiteDirectoryServiceImpl(WebClient directoryApiClient, String clientId, String subject, String keyResource, String keyPassword) {
+    public GSuiteDirectoryServiceImpl(WebClient directoryApiClient) {
         this.directoryApiClient = directoryApiClient;
-        this.clientId = clientId;
-        this.subject = subject;
-        try {
-            privateKey = loadPrivateKey(keyResource, keyPassword);
-        } catch (NoPrivateKeyException e) {
-            log.error(e.getMessage(), e.getCause());
-        }
-        tokenCache = Cache2kBuilder.of(Boolean.class, ClientAccessToken.class)
+        this.tokenCache = Cache2kBuilder.of(Boolean.class, ClientAccessToken.class)
                 .expireAfterWrite(TOKEN_LIFETIME - 3, TimeUnit.SECONDS)
                 .loader((key) -> {
                     return key.equals(Boolean.TRUE) ? getAccessToken() : null;
                 }).build();
+    }
+
+
+    private void configure() {
+        log.info("Configuring GSuiteDirectoryService...");
+        try {
+            privateKey = loadPrivateKey(config.get(PRIVATE_KEY_PROP), config.get(PRIVATE_KEY_PASS_PROP));
+        } catch (NoPrivateKeyException e) {
+            log.error(e.getMessage(), e.getCause());
+        }
     }
 
 
@@ -113,9 +121,9 @@ public class GSuiteDirectoryServiceImpl implements GSuiteDirectoryService {
     private ClientAccessToken getAccessToken() {
         JwsHeaders headers = new JwsHeaders(JoseType.JWT, SignatureAlgorithm.RS256);
         JwtClaims claims = new JwtClaims();
-        claims.setIssuer(clientId);
+        claims.setIssuer(config.get(CLIENT_ID_PROP));
         claims.setAudience("https://accounts.google.com/o/oauth2/token");
-        claims.setSubject(subject);
+        claims.setSubject(config.get(SUBJECT_PROP));
 
         long issuedAt = OAuthUtils.getIssuedAt();
         claims.setIssuedAt(issuedAt);
@@ -146,5 +154,11 @@ public class GSuiteDirectoryServiceImpl implements GSuiteDirectoryService {
         } catch (IOException | CertificateException | KeyStoreException | NoSuchAlgorithmException | UnrecoverableKeyException e) {
             throw new NoPrivateKeyException("Could not load private key", e);
         }
+    }
+
+
+    public void update(Map<String, Object> props) {
+        this.config = new Configuration(props);
+        configure();
     }
 }
