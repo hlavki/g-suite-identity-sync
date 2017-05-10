@@ -1,4 +1,4 @@
-package camp.xit.auth.services.rest.util;
+package camp.xit.auth.services.util;
 
 import java.beans.BeanInfo;
 import java.beans.Introspector;
