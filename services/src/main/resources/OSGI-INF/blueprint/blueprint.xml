@@ -3,15 +3,15 @@
            xmlns:jaxrs="http://cxf.apache.org/blueprint/jaxrs"
            xmlns:jaxrsclient="http://cxf.apache.org/blueprint/jaxrs-client"
            xmlns:cxf="http://cxf.apache.org/blueprint/core"
-           xmlns:cm="http://aries.apache.org/blueprint/xmlns/blueprint-cm/v1.0.0"
+           xmlns:cm="http://aries.apache.org/blueprint/xmlns/blueprint-cm/v1.1.0"
            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
            xsi:schemaLocation="http://www.osgi.org/xmlns/blueprint/v1.0.0 https://osgi.org/xmlns/blueprint/v1.0.0/blueprint.xsd
                 http://cxf.apache.org/blueprint/jaxrs http://cxf.apache.org/schemas/blueprint/jaxrs.xsd
                 http://cxf.apache.org/blueprint/core http://cxf.apache.org/schemas/blueprint/core.xsd
                 http://cxf.apache.org/blueprint/core http://cxf.apache.org/schemas/blueprint/core.xsd
-                http://aries.apache.org/blueprint/xmlns/blueprint-cm/v1.0.0 http://aries.apache.org/schemas/blueprint-cm/blueprint-cm-1.0.0.xsd">
+                http://aries.apache.org/blueprint/xmlns/blueprint-cm/v1.0.0 http://aries.apache.org/schemas/blueprint-cm/blueprint-cm-1.1.0.xsd">
 
-    <cm:property-placeholder persistent-id="xit.camp.account" />
+    <cm:property-placeholder persistent-id="xit.camp.account" update-strategy="reload" />
 
     <!-- RESTFul Web Services Configuration -->
     <!-- 1 -->
@@ -21,15 +21,35 @@
         </cxf:features>
     </cxf:bus>
 
-    <!-- GSuiteService -->
-    
-    
-    <bean id="gSuiteService" class="camp.xit.auth.services.google.impl.GSuiteDirectoryServiceImpl">
-        <argument ref="directoryApiClient"/>
-        <cm:managed-properties persistent-id="xit.camp.account" update-strategy="component-managed" update-method="update" />
+    <reference id="eventAdmin" interface="org.osgi.service.event.EventAdmin"/>
+   
+    <bean id="configurationBean" class="camp.xit.auth.services.util.Configuration">
+        <argument ref="eventAdmin"/>
     </bean>
     
+    <service id="configurationService" interface="org.osgi.service.cm.ManagedService" ref="configurationBean">
+        <service-properties>
+            <entry key="service.pid" value="xit.camp.account"/>
+        </service-properties>
+    </service>
     
+    <!-- GSuiteService -->
+    <bean id="gSuiteService" class="camp.xit.auth.services.google.impl.GSuiteDirectoryServiceImpl">
+        <argument ref="directoryApiClient"/>
+    </bean>
+    
+    <!-- Configuration listener -->
+    <service ref="gSuiteService" interface="org.osgi.service.event.EventHandler">
+        <service-properties>
+            <entry key="event.topics">
+                <array value-type="java.lang.String">
+                    <value>camp/xit/account/Configuration/*</value>
+                </array>
+            </entry>
+        </service-properties>
+    </service>
+    
+    <!-- JSON Provider -->
     <bean id="jsonProvider" class="org.apache.cxf.jaxrs.provider.json.JSONProvider">
         <property name="dropRootElement" value="true"/> <!-- Serialization -->
         <property name="supportUnwrapped" value="true"/> <!-- Deserialization -->
@@ -63,13 +83,24 @@
             <ref component-id="clientTokenContextProvider"/>
         </jaxrs:providers>
     </jaxrs:server> 
-     
+
     <!-- JAX-RS provider that makes OidcClientTokenContext available as JAX-RS @Context -->
     <bean id="clientTokenContextProvider" class="org.apache.cxf.rs.security.oauth2.client.ClientTokenContextProvider"/>
      
     <bean id="userInfoService" class="camp.xit.auth.services.rest.user.UserInfoService">
         <argument ref="gSuiteService"/>
     </bean>
+
+    <!-- Configuration listener -->
+    <service ref="userInfoService" interface="org.osgi.service.event.EventHandler">
+        <service-properties>
+            <entry key="event.topics">
+                <array value-type="java.lang.String">
+                    <value>camp/xit/account/Configuration/*</value>
+                </array>
+            </entry>
+        </service-properties>
+    </service>
 
     <bean id="oidcRpFilter" class="org.apache.cxf.rs.security.oidc.rp.OidcRpAuthenticationFilter">
         <!-- 
