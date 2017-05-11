@@ -15,8 +15,8 @@
     </feature>
 
     <feature name="account-manager-services" version="${project.version}">
-        <feature>cxf-jaxrs</feature>
-        <feature>cxf-rs-security-oauth2</feature>
+        <feature version="${cxf.version}">cxf-jaxrs</feature>
+        <feature version="${cxf.version}">cxf-rs-security-oauth2</feature>
         <feature version="${cache2k.version}">cache2k</feature>
         <bundle>mvn:org.apache.cxf/cxf-rt-rs-security-sso-oidc/${cxf.version}</bundle> <!-- Missing in features!!! Maybe bug -->
         <bundle>mvn:camp.xit.auth/account-manager-services/${project.version}</bundle>
