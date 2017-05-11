@@ -52,9 +52,59 @@ public class UserDetail {
         }
     }
 
+    public static class EmailAddress {
+
+        private String email;
+        private boolean primary;
+        private boolean verified;
+
+
+        public EmailAddress() {
+        }
+
+
+        public EmailAddress(String email, boolean primary, boolean verified) {
+            this.email = email;
+            this.primary = primary;
+            this.verified = verified;
+        }
+
+
+        public String getEmail() {
+            return email;
+        }
+
+
+        public void setEmail(String email) {
+            this.email = email;
+        }
+
+
+        public boolean isVerified() {
+            return verified;
+        }
+
+
+        public void setVerified(boolean verified) {
+            this.verified = verified;
+        }
+
+
+        public boolean isPrimary() {
+            return primary;
+        }
+
+
+        public void setPrimary(boolean primary) {
+            this.primary = primary;
+        }
+
+    }
+
     private String givenName;
     private String familyName;
     private String name;
+    private List<EmailAddress> emails;
     private String email;
     private URI profilePicture;
     private boolean emailVerified;
@@ -104,6 +154,16 @@ public class UserDetail {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+
+    public List<EmailAddress> getEmails() {
+        return emails;
+    }
+
+
+    public void setEmails(List<EmailAddress> emails) {
+        this.emails = emails;
     }
 
 

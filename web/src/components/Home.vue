@@ -1,15 +1,4 @@
 <template>
-  <!--<form-wizard color="#4caf50" title="">
-                                                                      <tab-content title="Personal details">
-                                                                        My first tab content
-                                                                      </tab-content>
-                                                                      <tab-content title="Set LDAP Password">
-                                                                        My second tab content
-                                                                      </tab-content>
-                                                                      <tab-content title="Confirm">
-                                                                        Yuhuuu! This seems pretty damn simple
-                                                                      </tab-content>
-                                                                    </form-wizard>-->
   <div>
     <md-whiteframe md-elevation="6" class="global-frame">
       <md-progress md-indeterminate v-if="showProgress"></md-progress>
@@ -20,8 +9,12 @@
         </md-input-container>
   
         <md-input-container>
-          <label>Username (E-mail)</label>
-          <md-input v-model="userData.email" disabled></md-input>
+          <label>Select username (email)</label>
+          <md-select name="emails" id="email" v-model="selectedEmail">
+            <md-option v-for="email in userData.emails" :key="email.email" v-bind:value="email.email">
+              {{ email.email }}
+            </md-option>
+          </md-select>
         </md-input-container>
   
         <md-input-container>
@@ -70,7 +63,8 @@ export default {
     return {
       initialValue: 'My initial value',
       userData: { email: '', name: '', role: '', saveGSuitePassword: false },
-      showProgress: false
+      showProgress: true,
+      selectedEmail: ''
     }
   },
   // components: {
@@ -87,12 +81,14 @@ export default {
       this.$http.get(this.$apiPrefix + '/xit/user/detail').then(function (response) {
         console.info('User Detail. Status: OK, Body: ' + Object.keys(response.data))
         _this.userData = response.data
+        _this.setSelectedEmail(_this.userData.emails)
         _this.showProgress = false
       }).catch(function (error) {
         console.error('Cannot authentication user. Status: ' + error.response.status)
         if (_this.$isProduction) _this.$auth.logout()
         else {
-          _this.userData = { email: 'user@example.com', name: 'George Soros', role: 'INTERNAL', saveGSuitePassword: true, groups: [{ name: 'Group1', email: 'group1@example.com' }, { name: 'Group2', email: 'group2@example.com' }] }
+          _this.userData = { emails: [{ email: 'user@example.com', primary: true }, { email: 'user2@example.com', primary: false }], name: 'George Soros', role: 'INTERNAL', saveGSuitePassword: true, groups: [{ name: 'Group1', email: 'group1@example.com' }, { name: 'Group2', email: 'group2@example.com' }] }
+          _this.setSelectedEmail(_this.userData.emails)
         }
         _this.showProgress = false
       })
@@ -106,6 +102,13 @@ export default {
     showGroups() {
       var groups = this.userData.groups
       return (typeof groups !== 'undefined') && groups.length > 0
+    },
+    setSelectedEmail(emails) {
+      for (var i = 0; i < emails.length; i++) {
+        if (emails[i].primary) {
+          this.selectedEmail = emails[i].email
+        }
+      }
     }
   }
 }

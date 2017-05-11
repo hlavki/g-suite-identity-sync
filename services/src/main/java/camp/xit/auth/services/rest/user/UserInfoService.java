@@ -7,6 +7,9 @@ import camp.xit.auth.services.google.model.GroupList;
 import camp.xit.auth.services.model.UserDetail.Role;
 import camp.xit.auth.services.util.Configuration;
 import java.net.URI;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -14,6 +17,10 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.UriBuilder;
+import org.apache.cxf.helpers.CastUtils;
+import org.apache.cxf.jaxrs.client.WebClient;
+import org.apache.cxf.jaxrs.json.basic.JsonMapObject;
+import org.apache.cxf.rs.security.oauth2.common.ClientAccessToken;
 import org.apache.cxf.rs.security.oidc.common.IdToken;
 import org.apache.cxf.rs.security.oidc.rp.OidcClientTokenContext;
 import org.osgi.service.event.Event;
@@ -30,11 +37,13 @@ public class UserInfoService implements EventHandler {
     @Context
     private OidcClientTokenContext oidcContext;
     private final GSuiteDirectoryService directoryService;
+    private final WebClient peopleServiceClient;
     private Configuration config;
 
 
-    public UserInfoService(GSuiteDirectoryService directoryService) {
+    public UserInfoService(GSuiteDirectoryService directoryService, WebClient peopleServiceClient) {
         this.directoryService = directoryService;
+        this.peopleServiceClient = peopleServiceClient;
     }
 
 
@@ -63,7 +72,7 @@ public class UserInfoService implements EventHandler {
         detail.setGivenName(userInfo.getGivenName());
         detail.setFamilyName(userInfo.getFamilyName());
         detail.setName(userInfo.getName());
-        detail.setEmail(userInfo.getEmail());
+        detail.setEmails(getVerifiedEmails());
         detail.setProfilePicture(resizeProfilePicture(userInfo.getPicture()));
         detail.setEmailVerified(userInfo.getEmailVerified());
         String hdParam = idToken.getStringProperty("hd");
@@ -89,5 +98,26 @@ public class UserInfoService implements EventHandler {
             this.config = (Configuration) event.getProperty(Configuration.CONFIG_PROP);
             configure();
         }
+    }
+
+
+    private List<UserDetail.EmailAddress> getVerifiedEmails() {
+        List<UserDetail.EmailAddress> result = new ArrayList<>();
+        ClientAccessToken accessToken = oidcContext.getToken();
+        peopleServiceClient.authorization(accessToken);
+        log.info("Reading email addresses");
+        JsonMapObject jsonMap = peopleServiceClient.query("requestMask.includeField", "person.email_addresses").get().readEntity(JsonMapObject.class);
+        List<Object> emails = CastUtils.cast((List<?>) jsonMap.getProperty("emailAddresses"));
+        for (Object email : emails) {
+            Map<String, Object> emailMap = CastUtils.cast((Map<String, Object>) email);
+            String value = (String) emailMap.get("value");
+            Map<String, Object> metadata = CastUtils.cast((Map<String, Object>) emailMap.get("metadata"));
+            boolean primary = metadata.containsKey("primary") ? (boolean) metadata.get("primary") : false;
+            boolean verified = metadata.containsKey("verified") ? (boolean) metadata.get("verified") : false;
+            if (verified) {
+                result.add(new UserDetail.EmailAddress(value, primary, verified));
+            }
+        }
+        return result;
     }
 }
