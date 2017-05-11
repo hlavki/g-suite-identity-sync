@@ -1,11 +1,12 @@
-package camp.xit.auth.services.rest.user;
+package camp.xit.auth.services.rest.account;
 
-import camp.xit.auth.services.model.UserDetail;
+import camp.xit.auth.services.model.PrepareAccountData;
 import camp.xit.auth.services.model.UserInfo;
 import camp.xit.auth.services.google.GSuiteDirectoryService;
 import camp.xit.auth.services.google.model.GroupList;
+import camp.xit.auth.services.model.AccountInfo;
 import camp.xit.auth.services.model.CreateAccountData;
-import camp.xit.auth.services.model.UserDetail.Role;
+import camp.xit.auth.services.model.PrepareAccountData.Role;
 import camp.xit.auth.services.util.Configuration;
 import camp.xit.auth.services.util.StringUtils;
 import java.net.URI;
@@ -26,10 +27,10 @@ import org.osgi.service.event.EventHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@Path("user")
-public class UserInfoService implements EventHandler {
+@Path("account")
+public class UserAccountService implements EventHandler {
 
-    private static final Logger log = LoggerFactory.getLogger(UserInfoService.class);
+    private static final Logger log = LoggerFactory.getLogger(UserAccountService.class);
     private static final String GSUITE_DOMAIN_PROP = "gsuite.domain";
 
     @Context
@@ -39,7 +40,7 @@ public class UserInfoService implements EventHandler {
     private Configuration config;
 
 
-    public UserInfoService(GSuiteDirectoryService directoryService, WebClient peopleServiceClient) {
+    public UserAccountService(GSuiteDirectoryService directoryService, WebClient peopleServiceClient) {
         this.directoryService = directoryService;
         this.peopleServiceClient = peopleServiceClient;
     }
@@ -51,27 +52,16 @@ public class UserInfoService implements EventHandler {
 
 
     @GET
-    @Path("info")
-    public UserInfo getUserInfo() {
-        org.apache.cxf.rs.security.oidc.common.UserInfo userInfo = oidcContext.getUserInfo();
-        URI profilePicture = resizeProfilePicture(userInfo.getPicture());
-        return new UserInfo(userInfo.getName(), userInfo.getEmail(), profilePicture);
-    }
-
-
-    @GET
-    @Path("detail")
-    @Produces(MediaType.APPLICATION_JSON)
-    public UserDetail getUserDetail() {
+    @Path("prepare")
+    public PrepareAccountData prepareAccount() {
         final org.apache.cxf.rs.security.oidc.common.UserInfo userInfo = oidcContext.getUserInfo();
         final IdToken idToken = oidcContext.getIdToken();
 
-        UserDetail detail = new UserDetail();
+        PrepareAccountData detail = new PrepareAccountData();
         detail.setGivenName(userInfo.getGivenName());
         detail.setFamilyName(userInfo.getFamilyName());
         detail.setName(userInfo.getName());
         detail.setEmails(getVerifiedEmails());
-        detail.setProfilePicture(resizeProfilePicture(userInfo.getPicture()));
         detail.setEmailVerified(userInfo.getEmailVerified());
         String hdParam = idToken.getStringProperty("hd");
         detail.setRole(config.get(GSUITE_DOMAIN_PROP).equals(hdParam) ? Role.INTERNAL : Role.EXTERNAL);
@@ -79,24 +69,22 @@ public class UserInfoService implements EventHandler {
 
         GroupList list = directoryService.getGroups(userInfo.getSubject());
         if (list.getGroups() != null) {
-            detail.setGroups(list.getGroups().stream().map(UserDetail.Group::map).collect(Collectors.toList()));
+            detail.setGroups(list.getGroups().stream().map(PrepareAccountData.Group::map).collect(Collectors.toList()));
         }
         return detail;
     }
 
 
     @POST
-    @Path("create-account")
-    @Produces(MediaType.APPLICATION_JSON)
-    @Consumes(MediaType.APPLICATION_JSON)
     public Response createAccount(CreateAccountData data) {
         log.info("Creating data: " + StringUtils.objectToString("data", data));
         return Response.ok().build();
     }
 
 
-    private URI resizeProfilePicture(String originalUri) {
-        return UriBuilder.fromUri(originalUri).queryParam("sz", "100").build();
+    @GET
+    public Response getAccountInfo() {
+        return Response.ok().status(Response.Status.NOT_FOUND).build();
     }
 
 
@@ -109,8 +97,8 @@ public class UserInfoService implements EventHandler {
     }
 
 
-    private List<UserDetail.EmailAddress> getVerifiedEmails() {
-        List<UserDetail.EmailAddress> result = new ArrayList<>();
+    private List<PrepareAccountData.EmailAddress> getVerifiedEmails() {
+        List<PrepareAccountData.EmailAddress> result = new ArrayList<>();
         ClientAccessToken accessToken = oidcContext.getToken();
         peopleServiceClient.authorization(accessToken);
         log.info("Reading email addresses");
@@ -123,7 +111,7 @@ public class UserInfoService implements EventHandler {
             boolean primary = metadata.containsKey("primary") ? (boolean) metadata.get("primary") : false;
             boolean verified = metadata.containsKey("verified") ? (boolean) metadata.get("verified") : false;
             if (verified) {
-                result.add(new UserDetail.EmailAddress(value, primary, verified));
+                result.add(new PrepareAccountData.EmailAddress(value, primary, verified));
             }
         }
         return result;

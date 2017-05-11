@@ -5,7 +5,7 @@ import java.util.List;
 import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement
-public class UserDetail {
+public class PrepareAccountData {
 
     public enum Role {
         INTERNAL, EXTERNAL
@@ -113,7 +113,7 @@ public class UserDetail {
     private List<Group> groups;
 
 
-    public UserDetail() {
+    public PrepareAccountData() {
     }
 
 
