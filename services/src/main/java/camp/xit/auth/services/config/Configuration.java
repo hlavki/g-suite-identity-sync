@@ -1,4 +1,4 @@
-package camp.xit.auth.services.util;
+package camp.xit.auth.services.config;
 
 import java.math.BigDecimal;
 import java.util.*;

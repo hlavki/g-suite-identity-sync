@@ -52,6 +52,12 @@
             <version>${cache2k.version}</version>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>com.unboundid</groupId>
+            <artifactId>unboundid-ldapsdk</artifactId>
+            <version>${unboundid.version}</version>
+            <scope>provided</scope>
+        </dependency>
     </dependencies>
 
     
