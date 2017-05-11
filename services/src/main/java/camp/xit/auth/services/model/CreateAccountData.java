@@ -1,5 +1,6 @@
 package camp.xit.auth.services.model;
 
+import camp.xit.auth.services.model.PrepareAccountData.Role;
 import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement
@@ -9,6 +10,7 @@ public class CreateAccountData {
     private String password;
     private String confirmPassword;
     private boolean saveGSuitePassword;
+    private Role role;
 
 
     public CreateAccountData() {
@@ -52,5 +54,15 @@ public class CreateAccountData {
 
     public void setSaveGSuitePassword(boolean saveGSuitePassword) {
         this.saveGSuitePassword = saveGSuitePassword;
+    }
+
+
+    public Role getRole() {
+        return role;
+    }
+
+
+    public void setRole(Role role) {
+        this.role = role;
     }
 }

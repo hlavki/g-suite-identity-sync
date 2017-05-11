@@ -1,6 +1,7 @@
 <template>
   <div>
     <md-whiteframe md-elevation="6" class="global-frame">
+      <md-subheader>Create LDAP Account</md-subheader>
       <md-progress md-indeterminate v-if="showProgress"></md-progress>
       <form novalidate @submit.stop.prevent="submit">
         <md-input-container>
@@ -50,7 +51,12 @@
   
         <md-checkbox class="md-primary" v-if="showSaveGSuitePasswordCheckbox()" v-model="formData.saveGSuitePassword">Save GSuite Password</md-checkbox>
         <br/>
+        <div v-if="error" class="error-label">
+          <label>OMG: [{{ error.code }}] {{ error.message }}</label>
+          <br/>
+        </div>
         <md-button class="md-raised md-primary" @click.native="sendData">Create LDAP Profile</md-button>
+        
       </form>
     </md-whiteframe>
   </div>
@@ -63,14 +69,19 @@ export default {
     return {
       userData: { email: '', name: '', role: '', password: '' },
       showProgress: true,
-      formData: { email: '', password: '', confirmPassword: '', saveGSuitePassword: false }
+      formData: { email: '', password: '', confirmPassword: '', saveGSuitePassword: false },
+      error: undefined
     }
   },
   created: function () {
     this.setAccountDetail()
   },
   methods: {
+    clearError() {
+      this.error = undefined
+    },
     setAccountDetail() {
+      this.clearError()
       this.showProgress = true
       var _this = this
       this.$http.get(this.$apiPrefix + '/xit/account/prepare').then(function (response) {
@@ -80,6 +91,7 @@ export default {
         _this.showProgress = false
       }).catch(function (error) {
         console.error('Cannot authentication user. Status: ' + error.response.status)
+        _this.error = error.response.data
         if (_this.$isProduction) _this.$auth.logout()
         else {
           _this.userData = { emails: [{ email: 'user@example.com', primary: false }, { email: 'user2@example.com', primary: true }], name: 'George Soros', role: 'INTERNAL', saveGSuitePassword: true, groups: [{ name: 'Group1', email: 'group1@example.com' }, { name: 'Group2', email: 'group2@example.com' }] }
@@ -89,16 +101,21 @@ export default {
       })
     },
     sendData: function (event) {
+      this.clearError()
       var _this = this
       this.$validator
         .validateAll()
         .then(function (response) {
+          _this.showProgress = true
           console.info('Valid. Creating account')
           _this.$http.post(_this.$apiPrefix + '/xit/account', _this.formData).then(function (response) {
             console.info('Account created!' + response.data)
-          })
-          .catch(function (error) {
+            _this.showProgress = false
+            _this.$router.push('/')
+          }).catch(function (error) {
             console.warn('Error while creating account! ' + error)
+            _this.showProgress = false
+            _this.error = error.response.data
           })
         }).catch(function (e) {
           // Catch errors
@@ -137,5 +154,11 @@ export default {
   padding-left: 0px;
   padding-right: 5px;
   margin-bottom: 20px;
+}
+
+.error-label {
+  background-color: hotpink;
+  color: black;
+  padding: 5px;
 }
 </style>

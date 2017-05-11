@@ -5,7 +5,7 @@ import camp.xit.auth.services.google.model.GroupMembership;
 import camp.xit.auth.services.google.NoPrivateKeyException;
 import camp.xit.auth.services.google.model.Group;
 import camp.xit.auth.services.google.model.GroupList;
-import camp.xit.auth.services.util.Configuration;
+import camp.xit.auth.services.config.Configuration;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;

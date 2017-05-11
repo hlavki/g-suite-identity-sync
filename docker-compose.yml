@@ -15,3 +15,15 @@ services:
     volumes:
       - /data/home/hlavki/develop/xit/docker-data/httpd/conf:/usr/local/apache2/conf
       - /data/home/hlavki/develop/xit/docker-data/httpd/htdocs:/usr/local/apache2/htdocs
+
+  ldap:
+    image: dinkel/openldap
+    hostname: ldap
+    ports:
+      - "389:389"
+    environment:
+      - SLAPD_PASSWORD=#EfEfe?uP4uS
+      - SLAPD_DOMAIN=xit.camp
+    volumes:
+      - /data/home/hlavki/develop/xit/docker-data/ldap/config:/etc/ldap
+      - /data/home/hlavki/develop/xit/docker-data/ldap/data:/var/lib/ldap

@@ -11,4 +11,17 @@
                 <activatedProfile>docker</activatedProfile>
             </activatedProfiles>
         </action>
+        <action>
+            <actionName>CUSTOM-Build Services [docker]</actionName>
+            <displayName>Build Services [docker]</displayName>
+            <goals>
+                <goal>install</goal>
+            </goals>
+            <properties>
+                <arguments>'-pl services,distribution'</arguments>
+            </properties>
+            <activatedProfiles>
+                <activatedProfile>docker</activatedProfile>
+            </activatedProfiles>
+        </action>
     </actions>

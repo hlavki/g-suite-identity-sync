@@ -13,11 +13,12 @@
     <feature name="cache2k" version="${cache2k.version}">
         <bundle>mvn:org.cache2k/cache2k-all/${cache2k.version}</bundle>
     </feature>
-
+    
     <feature name="account-manager-services" version="${project.version}">
         <feature version="${cxf.version}">cxf-jaxrs</feature>
         <feature version="${cxf.version}">cxf-rs-security-oauth2</feature>
         <feature version="${cache2k.version}">cache2k</feature>
+        <bundle>mvn:com.unboundid/unboundid-ldapsdk/${unboundid.version}</bundle>
         <bundle>mvn:org.apache.cxf/cxf-rt-rs-security-sso-oidc/${cxf.version}</bundle> <!-- Missing in features!!! Maybe bug -->
         <bundle>mvn:camp.xit.auth/account-manager-services/${project.version}</bundle>
     </feature>
