@@ -21,6 +21,8 @@ export default {
       }).catch(function (error) {
         if (error.response.status === 404) {
           _this.$router.push('/create-account')
+        } else {
+          _this.$auth.logout()
         }
         console.error('LDAP Account not found: ' + error.response.status)
       })
