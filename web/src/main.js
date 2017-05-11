@@ -7,9 +7,11 @@ import VueMaterial from 'vue-material'
 import 'vue-material/dist/vue-material.css'
 import AuthPlugin from './plugins/auth'
 import axios from 'axios'
+import VeeValidate from 'vee-validate'
 
 Vue.config.productionTip = false
 Vue.use(VueMaterial)
+Vue.use(VeeValidate)
 
 var isProduction = false
 var apiPrefix

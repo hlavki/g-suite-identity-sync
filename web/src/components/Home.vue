@@ -10,7 +10,7 @@
   
         <md-input-container>
           <label>Select username (email)</label>
-          <md-select name="emails" id="email" v-model="selectedEmail">
+          <md-select name="emails" id="email" v-model="formData.email" required>
             <md-option v-for="email in userData.emails" :key="email.email" v-bind:value="email.email">
               {{ email.email }}
             </md-option>
@@ -36,17 +36,19 @@
           </md-list>
         </md-whiteframe>
   
-        <md-input-container md-has-password>
-          <label>Type LDAP Password</label>
-          <md-input type="password"></md-input>
+        <md-input-container :class="{'md-input-invalid': errors.has('password')}" md-has-password>
+          <label for="password">Type LDAP Password</label>
+          <md-input v-model="formData.password" name="password" type="password" v-validate data-vv-name="password" data-vv-rules="required|min:8" required></md-input>
+          <span class="md-error">{{errors.first('password')}}</span>
         </md-input-container>
   
-        <md-input-container>
-          <label>Repeat LDAP Password</label>
-          <md-input type="password"></md-input>
+        <md-input-container :class="{'md-input-invalid': errors.has('password-confirm')}">
+          <label>Confirm LDAP Password</label>
+          <md-input v-model="formData.confirmPassword" name="password-confirm" type="password" v-validate data-vv-name="password-confirm" data-vv-rules="required|confirmed:password" required></md-input>
+          <span class="md-error">{{errors.first('password-confirm')}}</span>
         </md-input-container>
   
-        <md-checkbox class="md-primary" v-if="showSaveGSuitePasswordCheckbox()" v-model="userData.saveGSuitePassword">Save GSuite Password</md-checkbox>
+        <md-checkbox class="md-primary" v-if="showSaveGSuitePasswordCheckbox()" v-model="formData.saveGSuitePassword">Save GSuite Password</md-checkbox>
         <br/>
         <md-button class="md-raised md-primary" @click.native="sendData">Create LDAP Profile</md-button>
       </form>
@@ -55,22 +57,16 @@
 </template>
 
 <script>
-// import { FormWizard, TabContent } from 'vue-form-wizard'
-// import 'vue-form-wizard/dist/vue-form-wizard.min.css'
 export default {
   name: 'Home',
   data() {
     return {
       initialValue: 'My initial value',
-      userData: { email: '', name: '', role: '', saveGSuitePassword: false },
+      userData: { email: '', name: '', role: '', password: '' },
       showProgress: true,
-      selectedEmail: ''
+      formData: { email: '', password: '', confirmPassword: '', saveGSuitePassword: false }
     }
   },
-  // components: {
-  //   FormWizard,
-  //   TabContent
-  // },
   created: function () {
     this.setUserDetail()
   },
@@ -81,20 +77,29 @@ export default {
       this.$http.get(this.$apiPrefix + '/xit/user/detail').then(function (response) {
         console.info('User Detail. Status: OK, Body: ' + Object.keys(response.data))
         _this.userData = response.data
-        _this.setSelectedEmail(_this.userData.emails)
+        _this.processFormData(_this.userData)
         _this.showProgress = false
       }).catch(function (error) {
         console.error('Cannot authentication user. Status: ' + error.response.status)
         if (_this.$isProduction) _this.$auth.logout()
         else {
-          _this.userData = { emails: [{ email: 'user@example.com', primary: true }, { email: 'user2@example.com', primary: false }], name: 'George Soros', role: 'INTERNAL', saveGSuitePassword: true, groups: [{ name: 'Group1', email: 'group1@example.com' }, { name: 'Group2', email: 'group2@example.com' }] }
-          _this.setSelectedEmail(_this.userData.emails)
+          _this.userData = { emails: [{ email: 'user@example.com', primary: false }, { email: 'user2@example.com', primary: true }], name: 'George Soros', role: 'INTERNAL', saveGSuitePassword: true, groups: [{ name: 'Group1', email: 'group1@example.com' }, { name: 'Group2', email: 'group2@example.com' }] }
+          _this.processFormData(_this.userData)
         }
         _this.showProgress = false
       })
     },
     sendData: function (event) {
-      alert('Data akože odoslane! ' + this)
+      this.$validator
+        .validateAll()
+        .then(function (response) {
+          // Validation success if response === true
+          console.info('Valid')
+        })
+        .catch(function (e) {
+          // Catch errors
+          console.warn('Form Invalid: ' + e)
+        })
     },
     showSaveGSuitePasswordCheckbox() {
       return this.userData.role === 'INTERNAL'
@@ -103,12 +108,13 @@ export default {
       var groups = this.userData.groups
       return (typeof groups !== 'undefined') && groups.length > 0
     },
-    setSelectedEmail(emails) {
-      for (var i = 0; i < emails.length; i++) {
-        if (emails[i].primary) {
-          this.selectedEmail = emails[i].email
+    processFormData(userData) {
+      for (var i = 0; i < userData.emails.length; i++) {
+        if (userData.emails[i].primary) {
+          this.formData.email = userData.emails[i].email
         }
       }
+      this.formData.saveGSuitePassword = userData.saveGSuitePassword
     }
   }
 }
