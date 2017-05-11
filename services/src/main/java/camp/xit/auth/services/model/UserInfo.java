@@ -10,7 +10,6 @@ public class UserInfo {
     private String email;
     private URI imageUri;
 
-
     public UserInfo() {
     }
 

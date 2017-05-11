@@ -3,15 +3,15 @@
            xmlns:jaxrs="http://cxf.apache.org/blueprint/jaxrs"
            xmlns:jaxrsclient="http://cxf.apache.org/blueprint/jaxrs-client"
            xmlns:cxf="http://cxf.apache.org/blueprint/core"
-           xmlns:cm="http://aries.apache.org/blueprint/xmlns/blueprint-cm/v1.1.0"
+           xmlns:cm="http://aries.apache.org/blueprint/xmlns/blueprint-cm/v1.0.0"
            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
            xsi:schemaLocation="http://www.osgi.org/xmlns/blueprint/v1.0.0 https://osgi.org/xmlns/blueprint/v1.0.0/blueprint.xsd
                 http://cxf.apache.org/blueprint/jaxrs http://cxf.apache.org/schemas/blueprint/jaxrs.xsd
                 http://cxf.apache.org/blueprint/core http://cxf.apache.org/schemas/blueprint/core.xsd
                 http://cxf.apache.org/blueprint/core http://cxf.apache.org/schemas/blueprint/core.xsd
-                http://aries.apache.org/blueprint/xmlns/blueprint-cm/v1.0.0 http://aries.apache.org/schemas/blueprint-cm/blueprint-cm-1.1.0.xsd">
+                http://aries.apache.org/blueprint/xmlns/blueprint-cm/v1.0.0 http://aries.apache.org/schemas/blueprint-cm/blueprint-cm-1.0.0.xsd">
 
-    <cm:property-placeholder persistent-id="xit.camp.account" update-strategy="reload" />
+    <cm:property-placeholder persistent-id="xit.camp.account" />
 
     <!-- RESTFul Web Services Configuration -->
     <!-- 1 -->
@@ -61,6 +61,7 @@
     <!-- UserInfoService REST service  -->
     <jaxrs:server id="xitRestServer" address="/xit">
         <jaxrs:serviceBeans>
+            <ref component-id="userAccountService"/>
             <ref component-id="userInfoService"/>
         </jaxrs:serviceBeans>
         <jaxrs:providers>
@@ -82,13 +83,15 @@
     <!-- JAX-RS provider that makes OidcClientTokenContext available as JAX-RS @Context -->
     <bean id="clientTokenContextProvider" class="org.apache.cxf.rs.security.oauth2.client.ClientTokenContextProvider"/>
      
-    <bean id="userInfoService" class="camp.xit.auth.services.rest.user.UserInfoService">
+    <bean id="userAccountService" class="camp.xit.auth.services.rest.account.UserAccountService">
         <argument ref="gSuiteService"/>
         <argument ref="peopleServiceClient"/>
     </bean>
 
+    <bean id="userInfoService" class="camp.xit.auth.services.rest.account.UserInfoService"/>
+
     <!-- Configuration listener -->
-    <service id="userInfoConfigHandler" ref="userInfoService" interface="org.osgi.service.event.EventHandler">
+    <service id="userAccountConfigHandler" ref="userAccountService" interface="org.osgi.service.event.EventHandler">
         <service-properties>
             <entry key="event.topics">
                 <array value-type="java.lang.String">
@@ -233,7 +236,7 @@
     <service id="configurationService" 
              interface="org.osgi.service.cm.ManagedService" 
              ref="configurationBean" 
-             depends-on="userInfoConfigHandler gSuiteServiceConfigHandler">
+             depends-on="userAccountConfigHandler gSuiteServiceConfigHandler">
         <service-properties>
             <entry key="service.pid" value="xit.camp.account"/>
         </service-properties>

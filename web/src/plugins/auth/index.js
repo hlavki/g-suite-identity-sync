@@ -18,7 +18,7 @@ const AuthPlugin = {
             this.userInfo = { givenName: 'Gabriel Hakan', familyName: 'Hakan', email: 'g.hakan@xit.camp', imageUri: 'https://encrypted-tbn3.gstatic.com/images?q=tbn:ANd9GcQ8TNF1mAw0VymIYZlqOUxktqmdgRyS5ylHtXeHyQyso8103P4sZA' }
           } else {
             var _this = this
-            options.http.get(options.apiPrefix + '/xit/user/info').then(function (response) {
+            options.http.get(options.apiPrefix + '/xit/user').then(function (response) {
               console.info('Status: OK, Body: ' + Object.keys(response.data))
               _this.loggedIn = true
               _this.userInfo = response.data
