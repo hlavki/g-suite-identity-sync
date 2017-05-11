@@ -27,7 +27,7 @@
     </bean>
     
     <!-- Configuration listener -->
-    <service ref="gSuiteService" interface="org.osgi.service.event.EventHandler">
+    <service id="gSuiteServiceConfigHandler" ref="gSuiteService" interface="org.osgi.service.event.EventHandler">
         <service-properties>
             <entry key="event.topics">
                 <array value-type="java.lang.String">
@@ -88,7 +88,7 @@
     </bean>
 
     <!-- Configuration listener -->
-    <service ref="userInfoService" interface="org.osgi.service.event.EventHandler">
+    <service id="userInfoConfigHandler" ref="userInfoService" interface="org.osgi.service.event.EventHandler">
         <service-properties>
             <entry key="event.topics">
                 <array value-type="java.lang.String">
@@ -223,13 +223,17 @@
         <property name="clientSecret" value="${oauth2.web.clientSecret}"/>
     </bean> 
 
+    <!-- Configuration -->
     <reference id="eventAdmin" interface="org.osgi.service.event.EventAdmin"/>
    
     <bean id="configurationBean" class="camp.xit.auth.services.util.Configuration">
         <argument ref="eventAdmin"/>
     </bean>
     
-    <service id="configurationService" interface="org.osgi.service.cm.ManagedService" ref="configurationBean">
+    <service id="configurationService" 
+             interface="org.osgi.service.cm.ManagedService" 
+             ref="configurationBean" 
+             depends-on="userInfoConfigHandler gSuiteServiceConfigHandler">
         <service-properties>
             <entry key="service.pid" value="xit.camp.account"/>
         </service-properties>
