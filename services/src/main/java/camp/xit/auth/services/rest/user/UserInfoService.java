@@ -4,19 +4,17 @@ import camp.xit.auth.services.model.UserDetail;
 import camp.xit.auth.services.model.UserInfo;
 import camp.xit.auth.services.google.GSuiteDirectoryService;
 import camp.xit.auth.services.google.model.GroupList;
+import camp.xit.auth.services.model.CreateAccountData;
 import camp.xit.auth.services.model.UserDetail.Role;
 import camp.xit.auth.services.util.Configuration;
+import camp.xit.auth.services.util.StringUtils;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.UriBuilder;
+import javax.ws.rs.*;
+import javax.ws.rs.core.*;
 import org.apache.cxf.helpers.CastUtils;
 import org.apache.cxf.jaxrs.client.WebClient;
 import org.apache.cxf.jaxrs.json.basic.JsonMapObject;
@@ -84,6 +82,16 @@ public class UserInfoService implements EventHandler {
             detail.setGroups(list.getGroups().stream().map(UserDetail.Group::map).collect(Collectors.toList()));
         }
         return detail;
+    }
+
+
+    @POST
+    @Path("create-account")
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Response createAccount(CreateAccountData data) {
+        log.info("Creating data: " + StringUtils.objectToString("data", data));
+        return Response.ok().build();
     }
 
 
