@@ -21,18 +21,6 @@
         </cxf:features>
     </cxf:bus>
 
-    <reference id="eventAdmin" interface="org.osgi.service.event.EventAdmin"/>
-   
-    <bean id="configurationBean" class="camp.xit.auth.services.util.Configuration">
-        <argument ref="eventAdmin"/>
-    </bean>
-    
-    <service id="configurationService" interface="org.osgi.service.cm.ManagedService" ref="configurationBean">
-        <service-properties>
-            <entry key="service.pid" value="xit.camp.account"/>
-        </service-properties>
-    </service>
-    
     <!-- GSuiteService -->
     <bean id="gSuiteService" class="camp.xit.auth.services.google.impl.GSuiteDirectoryServiceImpl">
         <argument ref="directoryApiClient"/>
@@ -96,6 +84,7 @@
      
     <bean id="userInfoService" class="camp.xit.auth.services.rest.user.UserInfoService">
         <argument ref="gSuiteService"/>
+        <argument ref="peopleServiceClient"/>
     </bean>
 
     <!-- Configuration listener -->
@@ -217,9 +206,32 @@
         </jaxrsclient:providers>
     </jaxrsclient:client>
 
+    <jaxrsclient:client id="peopleServiceClient" threadSafe="true" 
+                        address="https://people.googleapis.com/v1/people/me"
+                        serviceClass="org.apache.cxf.jaxrs.client.WebClient">
+        <jaxrsclient:headers>
+            <entry key="Accept" value="application/json"/>
+        </jaxrsclient:headers>
+        <jaxrsclient:providers>
+            <bean class="org.apache.cxf.jaxrs.provider.json.JsonMapObjectProvider"/>
+        </jaxrsclient:providers>
+    </jaxrsclient:client>
+
     <!-- Client id and secret allocated in Google Developer Console -->
     <bean id="consumer" class="org.apache.cxf.rs.security.oauth2.client.Consumer">
         <property name="clientId" value="${oauth2.web.clientId}"/> 
         <property name="clientSecret" value="${oauth2.web.clientSecret}"/>
     </bean> 
+
+    <reference id="eventAdmin" interface="org.osgi.service.event.EventAdmin"/>
+   
+    <bean id="configurationBean" class="camp.xit.auth.services.util.Configuration">
+        <argument ref="eventAdmin"/>
+    </bean>
+    
+    <service id="configurationService" interface="org.osgi.service.cm.ManagedService" ref="configurationBean">
+        <service-properties>
+            <entry key="service.pid" value="xit.camp.account"/>
+        </service-properties>
+    </service>
 </blueprint>
