@@ -9,11 +9,9 @@ import camp.xit.auth.services.model.PrepareAccountData.Role;
 import camp.xit.auth.services.model.ServerError;
 import camp.xit.auth.services.config.Configuration;
 import camp.xit.auth.services.ldap.UserLdapService;
-import camp.xit.auth.services.util.StringUtils;
 import com.unboundid.ldap.sdk.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.stream.Collectors;
 import javax.ws.rs.*;
@@ -23,7 +21,6 @@ import org.apache.cxf.helpers.CastUtils;
 import org.apache.cxf.jaxrs.client.WebClient;
 import org.apache.cxf.jaxrs.json.basic.JsonMapObject;
 import org.apache.cxf.rs.security.oauth2.common.ClientAccessToken;
-import org.apache.cxf.rs.security.oidc.common.IdToken;
 import org.apache.cxf.rs.security.oidc.rp.OidcClientTokenContext;
 import org.osgi.service.event.Event;
 import org.osgi.service.event.EventHandler;
@@ -38,18 +35,19 @@ public class UserAccountService implements EventHandler {
 
     @Context
     private OidcClientTokenContext oidcContext;
+    private final Configuration config;
     private final GSuiteDirectoryService directoryService;
     private final WebClient peopleServiceClient;
     private final UserLdapService ldapService;
 
-    private Configuration config;
 
-
-    public UserAccountService(GSuiteDirectoryService directoryService, WebClient peopleServiceClient,
-            UserLdapService ldapService) {
+    public UserAccountService(Configuration config, GSuiteDirectoryService directoryService,
+            WebClient peopleServiceClient, UserLdapService ldapService) {
+        this.config = config;
         this.directoryService = directoryService;
         this.peopleServiceClient = peopleServiceClient;
         this.ldapService = ldapService;
+        configure();
     }
 
 
@@ -140,7 +138,6 @@ public class UserAccountService implements EventHandler {
     @Override
     public void handleEvent(Event event) {
         if (Configuration.TOPIC_CHANGE.equals(event.getTopic())) {
-            this.config = (Configuration) event.getProperty(Configuration.CONFIG_PROP);
             configure();
         }
     }

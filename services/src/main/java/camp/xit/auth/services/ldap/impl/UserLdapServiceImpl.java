@@ -17,10 +17,11 @@ public class UserLdapServiceImpl implements UserLdapService {
     private static final String LDAP_USERS_BASE_DN_PROP = "ldap.users.baseDN";
 
     private final LDAPConnectionPool ldapPool;
-    private Configuration config;
+    private final Configuration config;
 
 
-    public UserLdapServiceImpl(LDAPConnectionPool ldapPool) {
+    public UserLdapServiceImpl(Configuration config, LDAPConnectionPool ldapPool) {
+        this.config = config;
         this.ldapPool = ldapPool;
     }
 
@@ -97,10 +98,8 @@ public class UserLdapServiceImpl implements UserLdapService {
 
 
     @Override
-    public void handleEvent(Event event
-    ) {
+    public void handleEvent(Event event) {
         if (Configuration.TOPIC_CHANGE.equals(event.getTopic())) {
-            this.config = (Configuration) event.getProperty(Configuration.CONFIG_PROP);
             configure();
         }
     }

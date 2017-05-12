@@ -23,6 +23,7 @@
 
     <!-- GSuiteService -->
     <bean id="gSuiteService" class="camp.xit.auth.services.google.impl.GSuiteDirectoryServiceImpl">
+        <argument ref="configuration"/>
         <argument ref="directoryApiClient"/>
     </bean>
     
@@ -84,6 +85,7 @@
     <bean id="clientTokenContextProvider" class="org.apache.cxf.rs.security.oauth2.client.ClientTokenContextProvider"/>
      
     <bean id="userAccountService" class="camp.xit.auth.services.rest.account.UserAccountService">
+        <argument ref="configuration"/>
         <argument ref="gSuiteService"/>
         <argument ref="peopleServiceClient"/>
         <argument ref="userLdapService"/>
@@ -229,14 +231,17 @@
 
     <!-- Configuration -->
     <reference id="eventAdmin" interface="org.osgi.service.event.EventAdmin"/>
+
+    <reference id="configurationAdmin" interface="org.osgi.service.cm.ConfigurationAdmin"/>
    
-    <bean id="configurationBean" class="camp.xit.auth.services.config.Configuration">
+    <bean id="configuration" class="camp.xit.auth.services.config.Configuration">
         <argument ref="eventAdmin"/>
+        <argument ref="configurationAdmin"/>
     </bean>
     
     <service id="configurationService" 
              interface="org.osgi.service.cm.ManagedService" 
-             ref="configurationBean" 
+             ref="configuration" 
              depends-on="userAccountConfigHandler gSuiteServiceConfigHandler userLdapServiceConfigHandler">
         <service-properties>
             <entry key="service.pid" value="xit.camp.account"/>
@@ -264,6 +269,7 @@
     </bean>
 
     <bean id="userLdapService" class="camp.xit.auth.services.ldap.impl.UserLdapServiceImpl">
+        <argument ref="configuration"/>
         <argument ref="ldapConnectionPool"/>
     </bean>
     
