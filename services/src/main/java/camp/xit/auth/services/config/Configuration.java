@@ -1,11 +1,14 @@
 package camp.xit.auth.services.config;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.*;
+import org.osgi.service.cm.ConfigurationAdmin;
 import org.osgi.service.cm.ConfigurationException;
 import org.osgi.service.cm.ManagedService;
 import org.osgi.service.event.Event;
 import org.osgi.service.event.EventAdmin;
+import org.osgi.service.event.EventProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -17,15 +20,24 @@ public class Configuration implements ManagedService {
     private static final String COLLECTIONS_VALUE_SEPARATOR = "|";
     private Dictionary<String, ?> properties;
     private final EventAdmin eventAdmin;
+    private final ConfigurationAdmin cfgAdmin;
 
 
-    public Configuration(EventAdmin eventAdmin) {
+    public Configuration(EventAdmin eventAdmin, ConfigurationAdmin cfgAdmin) {
         this.eventAdmin = eventAdmin;
+        this.cfgAdmin = cfgAdmin;
+        try {
+            org.osgi.service.cm.Configuration cfg = this.cfgAdmin.getConfiguration("xit.camp.account");
+            this.properties = cfg.getProperties();
+        } catch (IOException e) {
+            log.warn("Can't load configuration", e);
+        }
     }
 
 
     public String get(String name) {
-        return String.valueOf(properties.get(name));
+        Object value = properties.get(name);
+        return value != null ? String.valueOf(value) : null;
     }
 
 
@@ -168,8 +180,6 @@ public class Configuration implements ManagedService {
     public void updated(Dictionary<String, ?> props) throws ConfigurationException {
         log.info("Configuration changed");
         this.properties = props;
-        Map<String, Object> eventProps = new HashMap<>();
-        eventProps.put(CONFIG_PROP, this);
-        eventAdmin.postEvent(new Event(TOPIC_CHANGE, eventProps));
+        eventAdmin.postEvent(new Event(TOPIC_CHANGE, new EventProperties(new HashMap<>())));
     }
 }
