@@ -6,7 +6,7 @@ import com.unboundid.ldap.sdk.LDAPException;
 import org.apache.cxf.rs.security.oidc.common.UserInfo;
 import org.osgi.service.event.EventHandler;
 
-public interface UserLdapService extends EventHandler {
+public interface LdapAccountService extends EventHandler {
 
     boolean accountExists(String subject) throws LDAPException;
 

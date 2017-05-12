@@ -1,6 +1,5 @@
 package camp.xit.auth.services.ldap.impl;
 
-import camp.xit.auth.services.ldap.UserLdapService;
 import camp.xit.auth.services.model.AccountInfo;
 import camp.xit.auth.services.config.Configuration;
 import camp.xit.auth.services.model.CreateAccountData;
@@ -10,17 +9,18 @@ import org.apache.cxf.rs.security.oidc.common.UserInfo;
 import org.osgi.service.event.Event;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import camp.xit.auth.services.ldap.LdapAccountService;
 
-public class UserLdapServiceImpl implements UserLdapService {
+public class LdapAccountServiceImpl implements LdapAccountService {
 
-    private static final Logger log = LoggerFactory.getLogger(UserLdapServiceImpl.class);
+    private static final Logger log = LoggerFactory.getLogger(LdapAccountServiceImpl.class);
     private static final String LDAP_USERS_BASE_DN_PROP = "ldap.users.baseDN";
 
     private final LDAPConnectionPool ldapPool;
     private final Configuration config;
 
 
-    public UserLdapServiceImpl(Configuration config, LDAPConnectionPool ldapPool) {
+    public LdapAccountServiceImpl(Configuration config, LDAPConnectionPool ldapPool) {
         this.config = config;
         this.ldapPool = ldapPool;
     }
