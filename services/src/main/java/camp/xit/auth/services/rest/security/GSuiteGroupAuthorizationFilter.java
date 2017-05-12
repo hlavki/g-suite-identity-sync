@@ -1,4 +1,4 @@
-package camp.xit.auth.services.rest;
+package camp.xit.auth.services.rest.security;
 
 import camp.xit.auth.services.google.GSuiteDirectoryService;
 import java.io.IOException;
