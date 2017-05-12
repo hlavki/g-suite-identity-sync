@@ -8,7 +8,6 @@ import camp.xit.auth.services.model.CreateAccountData;
 import camp.xit.auth.services.model.PrepareAccountData.Role;
 import camp.xit.auth.services.model.ServerError;
 import camp.xit.auth.services.config.Configuration;
-import camp.xit.auth.services.ldap.UserLdapService;
 import com.unboundid.ldap.sdk.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -26,6 +25,7 @@ import org.osgi.service.event.Event;
 import org.osgi.service.event.EventHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import camp.xit.auth.services.ldap.LdapAccountService;
 
 @Path("account")
 public class UserAccountService implements EventHandler {
@@ -38,11 +38,11 @@ public class UserAccountService implements EventHandler {
     private final Configuration config;
     private final GSuiteDirectoryService directoryService;
     private final WebClient peopleServiceClient;
-    private final UserLdapService ldapService;
+    private final LdapAccountService ldapService;
 
 
     public UserAccountService(Configuration config, GSuiteDirectoryService directoryService,
-            WebClient peopleServiceClient, UserLdapService ldapService) {
+            WebClient peopleServiceClient, LdapAccountService ldapService) {
         this.config = config;
         this.directoryService = directoryService;
         this.peopleServiceClient = peopleServiceClient;

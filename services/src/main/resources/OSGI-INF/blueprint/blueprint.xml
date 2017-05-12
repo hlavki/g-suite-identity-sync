@@ -268,7 +268,7 @@
         <argument value="${ldap.pool.maxSize}"/>
     </bean>
 
-    <bean id="userLdapService" class="camp.xit.auth.services.ldap.impl.UserLdapServiceImpl">
+    <bean id="userLdapService" class="camp.xit.auth.services.ldap.impl.LdapAccountServiceImpl">
         <argument ref="configuration"/>
         <argument ref="ldapConnectionPool"/>
     </bean>
