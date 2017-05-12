@@ -30,7 +30,7 @@
         <span class="md-error">{{errors.first('password-confirm')}}</span>
       </md-input-container>
   
-      <md-checkbox class="md-primary" v-if="showSaveGSuitePasswordCheckbox()" v-model="formData.saveGSuitePassword">Save GSuite Password</md-checkbox>
+      <md-checkbox class="md-primary" v-if="showSaveGSuitePasswordCheckbox()" v-model="formData.saveGSuitePassword">Sync GSuite Password</md-checkbox>
       <br/>
       <div v-if="error" class="error-label">
         <label>OMG: [{{ error.code }}] {{ error.message }}</label>
@@ -100,8 +100,8 @@ export default {
           _this.$http.put(_this.$apiPrefix + '/xit/account', _this.formData).then(function (response) {
             console.info('Account updated!' + response.data)
             _this.showProgress = false
-            _this.message = 'Account successfully updated!'
             _this.setAccountDetail()
+            _this.message = 'Account successfully updated!'
           }).catch(function (error) {
             console.warn('Error while creating account! ' + error)
             _this.showProgress = false

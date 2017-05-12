@@ -49,7 +49,7 @@
           <span class="md-error">{{errors.first('password-confirm')}}</span>
         </md-input-container>
   
-        <md-checkbox class="md-primary" v-if="showSaveGSuitePasswordCheckbox()" v-model="formData.saveGSuitePassword">Save GSuite Password</md-checkbox>
+        <md-checkbox class="md-primary" v-if="showSaveGSuitePasswordCheckbox()" v-model="formData.saveGSuitePassword">Sync GSuite Password</md-checkbox>
         <br/>
         <div v-if="error" class="error-label">
           <label>OMG: [{{ error.code }}] {{ error.message }}</label>
