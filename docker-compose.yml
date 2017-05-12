@@ -22,8 +22,12 @@ services:
     ports:
       - "389:389"
     environment:
-      - SLAPD_PASSWORD=#EfEfe?uP4uS
+      #- SLAPD_PASSWORD=
+      #- SLAPD_CONFIG_PASSWORD=
       - SLAPD_DOMAIN=xit.camp
+      - SLAPD_ORGANIZATION=xIT
+      - SLAPD_ADDITIONAL_SCHEMAS=ppolicy
+      - SLAPD_ADDITIONAL_MODULES=ppolicy,memberof
     volumes:
       - /data/home/hlavki/develop/xit/docker-data/ldap/config:/etc/ldap
       - /data/home/hlavki/develop/xit/docker-data/ldap/data:/var/lib/ldap
