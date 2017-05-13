@@ -76,9 +76,9 @@
         </jaxrs:providers>
     </jaxrs:server> 
      
-    <bean id="gsuiteAuthzFilter" class="camp.xit.auth.services.rest.GSuiteGroupAuthorizationFilter">
+    <bean id="gsuiteAuthzFilter" class="camp.xit.auth.services.rest.security.GSuiteGroupAuthorizationFilter">
         <argument ref="gSuiteService"/>
-        <argument value="${gsuite.domain}"/> 
+        <argument ref="configuration"/> 
     </bean>
      
     <!-- JAX-RS provider that makes OidcClientTokenContext available as JAX-RS @Context -->
