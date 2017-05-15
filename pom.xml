@@ -20,6 +20,7 @@
     <modules>
         <module>web</module>
         <module>services</module>
+        <module>sync</module>
         <module>features</module>
         <module>distribution</module>
     </modules>
