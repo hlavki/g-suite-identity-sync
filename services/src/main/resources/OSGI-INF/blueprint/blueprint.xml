@@ -11,7 +11,7 @@
                 http://cxf.apache.org/blueprint/core http://cxf.apache.org/schemas/blueprint/core.xsd
                 http://aries.apache.org/blueprint/xmlns/blueprint-cm/v1.0.0 http://aries.apache.org/schemas/blueprint-cm/blueprint-cm-1.0.0.xsd">
 
-    <cm:property-placeholder persistent-id="xit.camp.account" />
+    <cm:property-placeholder persistent-id="camp.xit.identity" />
 
     <!-- RESTFul Web Services Configuration -->
     <!-- 1 -->
@@ -22,7 +22,7 @@
     </cxf:bus>
 
     <!-- GSuiteService -->
-    <bean id="gSuiteService" class="camp.xit.auth.services.google.impl.GSuiteDirectoryServiceImpl">
+    <bean id="gSuiteService" class="camp.xit.identity.services.google.impl.GSuiteDirectoryServiceImpl">
         <argument ref="configuration"/>
         <argument ref="directoryApiClient"/>
     </bean>
@@ -76,7 +76,7 @@
         </jaxrs:providers>
     </jaxrs:server> 
      
-    <bean id="gsuiteAuthzFilter" class="camp.xit.auth.services.rest.security.GSuiteGroupAuthorizationFilter">
+    <bean id="gsuiteAuthzFilter" class="camp.xit.identity.services.rest.security.GSuiteGroupAuthorizationFilter">
         <argument ref="gSuiteService"/>
         <argument ref="configuration"/> 
     </bean>
@@ -84,14 +84,14 @@
     <!-- JAX-RS provider that makes OidcClientTokenContext available as JAX-RS @Context -->
     <bean id="clientTokenContextProvider" class="org.apache.cxf.rs.security.oauth2.client.ClientTokenContextProvider"/>
      
-    <bean id="userAccountService" class="camp.xit.auth.services.rest.account.UserAccountService">
+    <bean id="userAccountService" class="camp.xit.identity.services.rest.account.UserAccountService">
         <argument ref="configuration"/>
         <argument ref="gSuiteService"/>
         <argument ref="peopleServiceClient"/>
         <argument ref="userLdapService"/>
     </bean>
 
-    <bean id="userInfoService" class="camp.xit.auth.services.rest.account.UserInfoService"/>
+    <bean id="userInfoService" class="camp.xit.identity.services.rest.account.UserInfoService"/>
 
     <!-- Configuration listener -->
     <service id="userAccountConfigHandler" ref="userAccountService" interface="org.osgi.service.event.EventHandler">
@@ -234,7 +234,7 @@
 
     <reference id="configurationAdmin" interface="org.osgi.service.cm.ConfigurationAdmin"/>
    
-    <bean id="configuration" class="camp.xit.auth.services.config.Configuration">
+    <bean id="configuration" class="camp.xit.identity.services.config.Configuration">
         <argument ref="eventAdmin"/>
         <argument ref="configurationAdmin"/>
     </bean>
@@ -268,7 +268,7 @@
         <argument value="${ldap.pool.maxSize}"/>
     </bean>
 
-    <bean id="userLdapService" class="camp.xit.auth.services.ldap.impl.LdapAccountServiceImpl">
+    <bean id="userLdapService" class="camp.xit.identity.services.ldap.impl.LdapAccountServiceImpl">
         <argument ref="configuration"/>
         <argument ref="ldapConnectionPool"/>
     </bean>
