@@ -5,7 +5,8 @@ services:
     image: docker.xit.camp/account-manager
     hostname: account
     volumes:
-      - /data/home/hlavki/develop/xit/docker-data/karaf/etc:/opt/karaf/etc
+      - /data/home/hlavki/develop/xit/_config/camp.xit.identity.cfg:/opt/karaf/etc/camp.xit.identity.cfg
+      - /data/home/hlavki/develop/xit/_config/keystore:/opt/karaf/etc/keystore
 
   httpd:
     image: httpd
