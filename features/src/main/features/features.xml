@@ -7,7 +7,7 @@
     
     <feature name="account-manager-web" version="${project.version}">
         <feature>war</feature>
-        <bundle>mvn:camp.xit.auth/account-manager-web/${project.version}/war</bundle>
+        <bundle>mvn:camp.xit.identity/account-manager-web/${project.version}/war</bundle>
     </feature>
 
     <feature name="cache2k" version="${cache2k.version}">
@@ -20,6 +20,6 @@
         <feature version="${cache2k.version}">cache2k</feature>
         <bundle>mvn:com.unboundid/unboundid-ldapsdk/${unboundid.version}</bundle>
         <bundle>mvn:org.apache.cxf/cxf-rt-rs-security-sso-oidc/${cxf.version}</bundle> <!-- Missing in features!!! Maybe bug -->
-        <bundle>mvn:camp.xit.auth/account-manager-services/${project.version}</bundle>
+        <bundle>mvn:camp.xit.identity/account-manager-services/${project.version}</bundle>
     </feature>
 </features>

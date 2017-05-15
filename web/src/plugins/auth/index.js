@@ -44,7 +44,7 @@ export default AuthPlugin
 
 function ApplyRouteGuard(router) {
   router.beforeEach((to, from, next) => {
-    let route = to.matched.find(e => e.meta.auth != null)
+    let route = to.matched.find(e => e.meta.auth !== null)
     if (route) {
       let auth = route.meta.auth
       if (auth && !this.loggedIn) {
