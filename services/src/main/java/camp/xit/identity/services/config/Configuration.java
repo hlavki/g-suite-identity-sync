@@ -27,7 +27,8 @@ public class Configuration implements ManagedService {
         this.eventAdmin = eventAdmin;
         this.cfgAdmin = cfgAdmin;
         try {
-            org.osgi.service.cm.Configuration cfg = this.cfgAdmin.getConfiguration("xit.camp.account");
+            org.osgi.service.cm.Configuration cfg = this.cfgAdmin.getConfiguration("camp.xit.identity");
+            log.info("CONFIGURATION: " + cfg.getProperties());
             this.properties = cfg.getProperties();
         } catch (IOException e) {
             log.warn("Can't load configuration", e);
