@@ -4,6 +4,8 @@ services:
   account:
     image: docker.xit.camp/account-manager
     hostname: account
+    depends_on:
+      - ldap
     volumes:
       - /data/home/hlavki/develop/xit/_config/camp.xit.identity.cfg:/opt/karaf/etc/camp.xit.identity.cfg
       - /data/home/hlavki/develop/xit/_config/keystore:/opt/karaf/etc/keystore
