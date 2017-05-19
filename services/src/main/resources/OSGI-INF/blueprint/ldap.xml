@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://www.osgi.org/xmlns/blueprint/v1.0.0 https://osgi.org/xmlns/blueprint/v1.0.0/blueprint.xsd">
+
+    <!-- LDAP -->
+    <bean id="ldapConnOptions" class="com.unboundid.ldap.sdk.LDAPConnectionOptions">
+        <!-- configure options -->
+    </bean>
+
+    <bean id="ldapConnection" class="com.unboundid.ldap.sdk.LDAPConnection">
+        <argument ref="ldapConnOptions"/>
+        <argument value="${ldap.host}"/>
+        <argument value="${ldap.port}"/>
+        <argument value="${ldap.bindDN}"/>
+        <argument value="${ldap.password}"/>
+    </bean>
+
+    <bean id="ldapConnectionPool" class="com.unboundid.ldap.sdk.LDAPConnectionPool">
+        <argument ref="ldapConnection"/>
+        <argument value="${ldap.pool.initSize}"/>
+        <argument value="${ldap.pool.maxSize}"/>
+    </bean>
+
+    <bean id="userLdapService" class="camp.xit.identity.services.ldap.impl.LdapAccountServiceImpl">
+        <argument ref="configuration"/>
+        <argument ref="ldapConnectionPool"/>
+    </bean>
+    
+    <!-- Configuration listener -->
+    <service id="userLdapServiceConfigHandler" ref="userLdapService" interface="org.osgi.service.event.EventHandler">
+        <service-properties>
+            <entry key="event.topics">
+                <array value-type="java.lang.String">
+                    <value>camp/xit/account/Configuration/*</value>
+                </array>
+            </entry>
+        </service-properties>
+    </service>
+</blueprint>

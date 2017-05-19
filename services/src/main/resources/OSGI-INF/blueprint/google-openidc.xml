@@ -3,107 +3,17 @@
            xmlns:jaxrs="http://cxf.apache.org/blueprint/jaxrs"
            xmlns:jaxrsclient="http://cxf.apache.org/blueprint/jaxrs-client"
            xmlns:cxf="http://cxf.apache.org/blueprint/core"
-           xmlns:cm="http://aries.apache.org/blueprint/xmlns/blueprint-cm/v1.0.0"
            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
            xsi:schemaLocation="http://www.osgi.org/xmlns/blueprint/v1.0.0 https://osgi.org/xmlns/blueprint/v1.0.0/blueprint.xsd
                 http://cxf.apache.org/blueprint/jaxrs http://cxf.apache.org/schemas/blueprint/jaxrs.xsd
-                http://cxf.apache.org/blueprint/core http://cxf.apache.org/schemas/blueprint/core.xsd
-                http://cxf.apache.org/blueprint/core http://cxf.apache.org/schemas/blueprint/core.xsd
-                http://aries.apache.org/blueprint/xmlns/blueprint-cm/v1.0.0 http://aries.apache.org/schemas/blueprint-cm/blueprint-cm-1.0.0.xsd">
-
-    <cm:property-placeholder persistent-id="camp.xit.identity" />
-
-    <!-- RESTFul Web Services Configuration -->
-    <!-- 1 -->
-    <cxf:bus>
-        <cxf:features>
-            <cxf:logging/>
-        </cxf:features>
-    </cxf:bus>
-
-    <!-- GSuiteService -->
-    <bean id="gSuiteService" class="camp.xit.identity.services.google.impl.GSuiteDirectoryServiceImpl">
-        <argument ref="configuration"/>
-        <argument ref="directoryApiClient"/>
-    </bean>
-    
-    <!-- Configuration listener -->
-    <service id="gSuiteServiceConfigHandler" ref="gSuiteService" interface="org.osgi.service.event.EventHandler">
-        <service-properties>
-            <entry key="event.topics">
-                <array value-type="java.lang.String">
-                    <value>camp/xit/account/Configuration/*</value>
-                </array>
-            </entry>
-        </service-properties>
-    </service>
-    
-    <!-- JSON Provider -->
-    <bean id="jsonProvider" class="org.apache.cxf.jaxrs.provider.json.JSONProvider">
-        <property name="dropRootElement" value="true"/> <!-- Serialization -->
-        <property name="supportUnwrapped" value="true"/> <!-- Deserialization -->
-    </bean>
-    
-    <jaxrsclient:client id="directoryApiClient" threadSafe="true" 
-                        address="https://www.googleapis.com/admin/directory/v1"
-                        serviceClass="org.apache.cxf.jaxrs.client.WebClient">
-        <jaxrsclient:headers>
-            <entry key="Accept" value="application/json"/>
-            <entry key="Content-Type" value="application/json"/>
-        </jaxrsclient:headers>
-        <jaxrsclient:providers>
-            <ref component-id="jsonProvider"/>
-        </jaxrsclient:providers>
-    </jaxrsclient:client>
-
+                http://cxf.apache.org/blueprint/jaxrs-client http://cxf.apache.org/schemas/blueprint/jaxrs-client.xsd
+                http://cxf.apache.org/blueprint/core http://cxf.apache.org/schemas/blueprint/core.xsd">
 
     <!-- Google OAuth2 -->
     
-    <!-- UserInfoService REST service  -->
-    <jaxrs:server id="xitRestServer" address="/xit">
-        <jaxrs:serviceBeans>
-            <ref component-id="userAccountService"/>
-            <ref component-id="userInfoService"/>
-        </jaxrs:serviceBeans>
-        <jaxrs:providers>
-            <ref component-id="jsonProvider"/>
-            <!-- Checks that a client is authenticated with Google -->
-            <ref component-id="oidcRpFilter"/>
-            <!-- JAX-RS provider that makes OidcClientTokenContext available as JAX-RS @Context -->
-            <ref component-id="clientTokenContextProvider"/>
-            <!-- GSuite Authorization filter -->
-            <ref component-id="gsuiteAuthzFilter"/>
-        </jaxrs:providers>
-    </jaxrs:server> 
-     
-    <bean id="gsuiteAuthzFilter" class="camp.xit.identity.services.rest.security.GSuiteGroupAuthorizationFilter">
-        <argument ref="gSuiteService"/>
-        <argument ref="configuration"/> 
-    </bean>
-     
     <!-- JAX-RS provider that makes OidcClientTokenContext available as JAX-RS @Context -->
     <bean id="clientTokenContextProvider" class="org.apache.cxf.rs.security.oauth2.client.ClientTokenContextProvider"/>
      
-    <bean id="userAccountService" class="camp.xit.identity.services.rest.account.UserAccountService">
-        <argument ref="configuration"/>
-        <argument ref="gSuiteService"/>
-        <argument ref="peopleServiceClient"/>
-        <argument ref="userLdapService"/>
-    </bean>
-
-    <bean id="userInfoService" class="camp.xit.identity.services.rest.account.UserInfoService"/>
-
-    <!-- Configuration listener -->
-    <service id="userAccountConfigHandler" ref="userAccountService" interface="org.osgi.service.event.EventHandler">
-        <service-properties>
-            <entry key="event.topics">
-                <array value-type="java.lang.String">
-                    <value>camp/xit/account/Configuration/*</value>
-                </array>
-            </entry>
-        </service-properties>
-    </service>
-
     <bean id="oidcRpFilter" class="org.apache.cxf.rs.security.oidc.rp.OidcRpAuthenticationFilter">
         <!-- 
              This state manager is shared between this filter and the RP endpoint, 
@@ -212,75 +122,10 @@
         </jaxrsclient:providers>
     </jaxrsclient:client>
 
-    <jaxrsclient:client id="peopleServiceClient" threadSafe="true" 
-                        address="https://people.googleapis.com/v1/people/me"
-                        serviceClass="org.apache.cxf.jaxrs.client.WebClient">
-        <jaxrsclient:headers>
-            <entry key="Accept" value="application/json"/>
-        </jaxrsclient:headers>
-        <jaxrsclient:providers>
-            <bean class="org.apache.cxf.jaxrs.provider.json.JsonMapObjectProvider"/>
-        </jaxrsclient:providers>
-    </jaxrsclient:client>
-
     <!-- Client id and secret allocated in Google Developer Console -->
     <bean id="consumer" class="org.apache.cxf.rs.security.oauth2.client.Consumer">
         <property name="clientId" value="${oauth2.web.clientId}"/> 
         <property name="clientSecret" value="${oauth2.web.clientSecret}"/>
     </bean> 
 
-    <!-- Configuration -->
-    <reference id="eventAdmin" interface="org.osgi.service.event.EventAdmin"/>
-
-    <reference id="configurationAdmin" interface="org.osgi.service.cm.ConfigurationAdmin"/>
-   
-    <bean id="configuration" class="camp.xit.identity.services.config.Configuration">
-        <argument ref="eventAdmin"/>
-        <argument ref="configurationAdmin"/>
-    </bean>
-    
-    <service id="configurationService" 
-             interface="org.osgi.service.cm.ManagedService" 
-             ref="configuration" 
-             depends-on="userAccountConfigHandler gSuiteServiceConfigHandler userLdapServiceConfigHandler">
-        <service-properties>
-            <entry key="service.pid" value="xit.camp.account"/>
-        </service-properties>
-    </service>
-
-
-    <!-- LDAP -->
-    <bean id="ldapConnOptions" class="com.unboundid.ldap.sdk.LDAPConnectionOptions">
-        <!-- configure options -->
-    </bean>
-
-    <bean id="ldapConnection" class="com.unboundid.ldap.sdk.LDAPConnection">
-        <argument ref="ldapConnOptions"/>
-        <argument value="${ldap.host}"/>
-        <argument value="${ldap.port}"/>
-        <argument value="${ldap.bindDN}"/>
-        <argument value="${ldap.password}"/>
-    </bean>
-
-    <bean id="ldapConnectionPool" class="com.unboundid.ldap.sdk.LDAPConnectionPool">
-        <argument ref="ldapConnection"/>
-        <argument value="${ldap.pool.initSize}"/>
-        <argument value="${ldap.pool.maxSize}"/>
-    </bean>
-
-    <bean id="userLdapService" class="camp.xit.identity.services.ldap.impl.LdapAccountServiceImpl">
-        <argument ref="configuration"/>
-        <argument ref="ldapConnectionPool"/>
-    </bean>
-    
-    <!-- Configuration listener -->
-    <service id="userLdapServiceConfigHandler" ref="userLdapService" interface="org.osgi.service.event.EventHandler">
-        <service-properties>
-            <entry key="event.topics">
-                <array value-type="java.lang.String">
-                    <value>camp/xit/account/Configuration/*</value>
-                </array>
-            </entry>
-        </service-properties>
-    </service>
 </blueprint>
