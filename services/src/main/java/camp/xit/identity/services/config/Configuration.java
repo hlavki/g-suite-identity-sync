@@ -8,7 +8,6 @@ import org.osgi.service.cm.ConfigurationException;
 import org.osgi.service.cm.ManagedService;
 import org.osgi.service.event.Event;
 import org.osgi.service.event.EventAdmin;
-import org.osgi.service.event.EventProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -179,8 +178,10 @@ public class Configuration implements ManagedService {
 
     @Override
     public void updated(Dictionary<String, ?> props) throws ConfigurationException {
-        log.info("Configuration changed");
-        this.properties = props;
-        eventAdmin.postEvent(new Event(TOPIC_CHANGE, new EventProperties(new HashMap<>())));
+        if (props != null) {
+            log.info("Configuration changed");
+            this.properties = props;
+            eventAdmin.postEvent(new Event(TOPIC_CHANGE, Collections.emptyMap()));
+        }
     }
 }
