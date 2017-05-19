@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0"
+           xmlns:jaxrs="http://cxf.apache.org/blueprint/jaxrs"
+           xmlns:jaxrsclient="http://cxf.apache.org/blueprint/jaxrs-client"
+           xmlns:cm="http://aries.apache.org/blueprint/xmlns/blueprint-cm/v1.0.0"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://www.osgi.org/xmlns/blueprint/v1.0.0 https://osgi.org/xmlns/blueprint/v1.0.0/blueprint.xsd
+                http://cxf.apache.org/blueprint/jaxrs http://cxf.apache.org/schemas/blueprint/jaxrs.xsd
+                http://cxf.apache.org/blueprint/jaxrs-client http://cxf.apache.org/schemas/blueprint/jaxrs-client.xsd">
+
+    <bean id="userInfoService" class="camp.xit.identity.services.rest.account.UserInfoService"/>     
+     
+    <bean id="userAccountService" class="camp.xit.identity.services.rest.account.UserAccountService">
+        <argument ref="configuration"/>
+        <argument ref="gSuiteService"/>
+        <argument ref="peopleServiceClient"/>
+        <argument ref="userLdapService"/>
+    </bean>
+
+    <jaxrsclient:client id="peopleServiceClient" threadSafe="true" 
+                        address="https://people.googleapis.com/v1/people/me"
+                        serviceClass="org.apache.cxf.jaxrs.client.WebClient">
+        <jaxrsclient:headers>
+            <entry key="Accept" value="application/json"/>
+        </jaxrsclient:headers>
+        <jaxrsclient:providers>
+            <bean class="org.apache.cxf.jaxrs.provider.json.JsonMapObjectProvider"/>
+        </jaxrsclient:providers>
+    </jaxrsclient:client>
+
+    <!-- Configuration listener -->
+    <service id="userAccountConfigHandler" ref="userAccountService" interface="org.osgi.service.event.EventHandler">
+        <service-properties>
+            <entry key="event.topics">
+                <array value-type="java.lang.String">
+                    <value>camp/xit/account/Configuration/*</value>
+                </array>
+            </entry>
+        </service-properties>
+    </service>
+
+    <!-- xIT REST service  -->
+    <jaxrs:server id="xitRestServer" address="/xit">
+        <jaxrs:serviceBeans>
+            <ref component-id="userAccountService"/>
+            <ref component-id="userInfoService"/>
+        </jaxrs:serviceBeans>
+        <jaxrs:providers>
+            <ref component-id="jsonProvider"/>
+            <!-- Checks that a client is authenticated with Google -->
+            <ref component-id="oidcRpFilter"/>
+            <!-- JAX-RS provider that makes OidcClientTokenContext available as JAX-RS @Context -->
+            <ref component-id="clientTokenContextProvider"/>
+            <!-- GSuite Authorization filter -->
+            <ref component-id="gsuiteAuthzFilter"/>
+        </jaxrs:providers>
+    </jaxrs:server> 
+     
+    <bean id="gsuiteAuthzFilter" class="camp.xit.identity.services.rest.security.GSuiteGroupAuthorizationFilter">
+        <argument ref="gSuiteService"/>
+        <argument ref="configuration"/>
+    </bean>
+</blueprint>
