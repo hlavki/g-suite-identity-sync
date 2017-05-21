@@ -1,5 +1,8 @@
 .DS_Store
 .vscode/
+.idea/
+*.iml
+*.ipr
 node_modules/
 node/
 dist/
