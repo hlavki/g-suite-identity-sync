@@ -20,7 +20,7 @@
   
       <md-input-container :class="{'md-input-invalid': errors.has('password')}" md-has-password>
         <label for="password">Type LDAP Password</label>
-        <md-input v-model="formData.password" name="password" type="password" v-validate data-vv-name="password" data-vv-rules="required|min:8" required></md-input>
+        <md-input v-model="formData.password" name="password" type="password" v-validate data-vv-name="password" data-vv-rules="required|min:8|password" required></md-input>
         <span class="md-error">{{errors.first('password')}}</span>
       </md-input-container>
   

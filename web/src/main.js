@@ -27,6 +27,14 @@ var setupAPI = function () {
 }
 setupAPI()
 
+VeeValidate.Validator.extend('password', {
+  getMessage: field => 'Requirements: 1 uppercase, 1 lowercase, 1 number, and one special character (E.g. , . _ & ? etc)',
+  validate: value => {
+    var strongRegex = new RegExp('^(?=.*\\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#\\$%\\^&\\*])[0-9a-zA-Z!@#\\$%\\^&\\*]{8,}$')
+    return strongRegex.test(value)
+  }
+})
+
 Vue.use(AuthPlugin, {
   router: router,
   http: axios,
