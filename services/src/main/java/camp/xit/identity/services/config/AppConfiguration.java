@@ -12,6 +12,8 @@ public interface AppConfiguration {
     static final String GSUITE_DOMAIN_PROP = "gsuite.domain";
     static final String TOKEN_LIFETIME_PROP = "gsuite.serviceAccount.tokenLifetime";
     static final long TOKEN_LIFETIME_DEFAULT = 3600;
+    static final String LDAP_USERS_BASE_DN_PROP = "ldap.users.baseDN";
+
 
 
     String getGSuiteDomain();
@@ -30,4 +32,6 @@ public interface AppConfiguration {
 
 
     long getServiceAccountTokenLifetime();
+    
+    String getLdapUserBaseDN();
 }

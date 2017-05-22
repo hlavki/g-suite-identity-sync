@@ -251,4 +251,9 @@ public class Configuration implements ManagedService, AppConfiguration {
         return getLong(TOKEN_LIFETIME_PROP, TOKEN_LIFETIME_DEFAULT);
     }
 
+
+    @Override
+    public String getLdapUserBaseDN() {
+        return get(LDAP_USERS_BASE_DN_PROP);
+    }
 }

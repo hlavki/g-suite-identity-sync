@@ -1,5 +1,6 @@
 package camp.xit.identity.services.ldap.impl;
 
+import camp.xit.identity.services.config.AppConfiguration;
 import camp.xit.identity.services.model.AccountInfo;
 import camp.xit.identity.services.config.Configuration;
 import camp.xit.identity.services.model.CreateAccountData;
@@ -14,10 +15,9 @@ import camp.xit.identity.services.ldap.LdapAccountService;
 public class LdapAccountServiceImpl implements LdapAccountService {
 
     private static final Logger log = LoggerFactory.getLogger(LdapAccountServiceImpl.class);
-    private static final String LDAP_USERS_BASE_DN_PROP = "ldap.users.baseDN";
 
     private final LDAPConnectionPool ldapPool;
-    private final Configuration config;
+    private final AppConfiguration config;
 
 
     public LdapAccountServiceImpl(Configuration config, LDAPConnectionPool ldapPool) {
@@ -39,7 +39,7 @@ public class LdapAccountServiceImpl implements LdapAccountService {
 
     private String getAccountDN(String subject) throws LDAPException {
         try (LDAPConnection conn = ldapPool.getConnection()) {
-            String baseDn = config.get(LDAP_USERS_BASE_DN_PROP);
+            String baseDn = config.getLdapUserBaseDN();
             SearchResultEntry entry = conn.searchForEntry(baseDn, SearchScope.ONE, "(employeeNumber=" + subject + ")", "uid");
             return entry != null ? entry.getDN() : null;
         }
@@ -50,7 +50,7 @@ public class LdapAccountServiceImpl implements LdapAccountService {
     public AccountInfo getAccountInfo(String subject) throws LDAPException {
         AccountInfo result = null;
         try (LDAPConnection conn = ldapPool.getConnection()) {
-            String baseDn = config.get(LDAP_USERS_BASE_DN_PROP);
+            String baseDn = config.getLdapUserBaseDN();
             SearchResultEntry entry = conn.searchForEntry(baseDn, SearchScope.ONE, "(employeeNumber=" + subject + ")");
             if (entry != null) {
                 AccountInfo info = new AccountInfo();
@@ -71,7 +71,7 @@ public class LdapAccountServiceImpl implements LdapAccountService {
     @Override
     public void createAccount(UserInfo userInfo, CreateAccountData createData) throws LDAPException {
         try (LDAPConnection conn = ldapPool.getConnection()) {
-            DN baseDN = new DN(config.get(LDAP_USERS_BASE_DN_PROP));
+            DN baseDN = new DN(config.getLdapUserBaseDN());
             DN entryDN = new DN(new RDN("uid", createData.getEmail()), baseDN);
             Entry entry = new Entry(entryDN);
             entry.addAttribute("objectClass", "inetOrgPerson");
@@ -99,7 +99,7 @@ public class LdapAccountServiceImpl implements LdapAccountService {
 
     @Override
     public void synchronizeUserGroups(UserInfo userInfo) throws LDAPException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        
     }
 
 
