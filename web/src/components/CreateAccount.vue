@@ -39,7 +39,7 @@
   
         <md-input-container :class="{'md-input-invalid': errors.has('password')}" md-has-password>
           <label for="password">Type LDAP Password</label>
-          <md-input v-model="formData.password" name="password" type="password" v-validate data-vv-name="password" data-vv-rules="required|min:8" required></md-input>
+          <md-input v-model="formData.password" name="password" type="password" v-validate data-vv-name="password" data-vv-rules="required|min:8|password" required></md-input>
           <span class="md-error">{{errors.first('password')}}</span>
         </md-input-container>
   
@@ -51,12 +51,8 @@
   
         <md-checkbox class="md-primary" v-if="showSaveGSuitePasswordCheckbox()" v-model="formData.saveGSuitePassword">Sync GSuite Password</md-checkbox>
         <br/>
-        <div v-if="error" class="error-label">
-          <label>OMG: [{{ error.code }}] {{ error.message }}</label>
-          <br/>
-        </div>
         <md-button class="md-raised md-primary" @click.native="sendData">Create LDAP Profile</md-button>
-        
+  
       </form>
     </md-whiteframe>
   </div>
@@ -69,19 +65,14 @@ export default {
     return {
       userData: { email: '', name: '', role: '', password: '' },
       showProgress: true,
-      formData: { email: '', password: '', confirmPassword: '', saveGSuitePassword: false },
-      error: undefined
+      formData: { email: '', password: '', confirmPassword: '', saveGSuitePassword: false }
     }
   },
   created: function () {
     this.setAccountDetail()
   },
   methods: {
-    clearError() {
-      this.error = undefined
-    },
     setAccountDetail() {
-      this.clearError()
       this.showProgress = true
       var _this = this
       this.$http.get(this.$apiPrefix + '/xit/account/prepare').then(function (response) {
@@ -91,7 +82,7 @@ export default {
         _this.showProgress = false
       }).catch(function (error) {
         console.error('Cannot authentication user. Status: ' + error.response.status)
-        _this.error = error.response.data
+        _this.notifyError({ message: error.response.data })
         if (_this.$isProduction) _this.$auth.logout()
         else {
           _this.userData = { emails: [{ email: 'user@example.com', primary: false }, { email: 'user2@example.com', primary: true }], name: 'George Soros', role: 'INTERNAL', saveGSuitePassword: true, groups: [{ name: 'Group1', email: 'group1@example.com' }, { name: 'Group2', email: 'group2@example.com' }] }
@@ -101,7 +92,6 @@ export default {
       })
     },
     sendData: function (event) {
-      this.clearError()
       var _this = this
       this.$validator
         .validateAll()
@@ -116,7 +106,7 @@ export default {
           }).catch(function (error) {
             console.warn('Error while creating account! ' + error)
             _this.showProgress = false
-            _this.error = error.response.data
+            _this.notifyError({ message: error.response.data })
           })
         }).catch(function (e) {
           // Catch errors
@@ -143,7 +133,12 @@ export default {
     notifyAccountCreated: {
       title: 'Accout created',
       message: 'User account successfully created.',
-      type: 'info',
+      type: 'success',
+      timeout: 5000
+    },
+    notifyError: {
+      title: 'Error Occured',
+      type: 'error',
       timeout: 5000
     }
   }
@@ -169,9 +164,5 @@ export default {
   background-color: hotpink;
   color: black;
   padding: 5px;
-}
-
-.mini-toastr {
-  left: 12px;
 }
 </style>

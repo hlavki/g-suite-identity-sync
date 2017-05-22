@@ -3,7 +3,9 @@ package camp.xit.identity.services.rest.security;
 import camp.xit.identity.services.config.Configuration;
 import camp.xit.identity.services.google.GSuiteDirectoryService;
 import camp.xit.identity.services.google.model.GroupList;
+import camp.xit.identity.services.model.ServerError;
 import java.io.IOException;
+import java.util.Collections;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
@@ -11,6 +13,7 @@ import javax.annotation.Priority;
 import javax.ws.rs.Priorities;
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.container.ContainerRequestFilter;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import org.apache.cxf.jaxrs.utils.JAXRSUtils;
 import org.apache.cxf.rs.security.oauth2.client.ClientTokenContext;
@@ -39,7 +42,10 @@ public class GSuiteGroupAuthorizationFilter implements ContainerRequestFilter {
         }.expireAfterWrite(15, TimeUnit.MINUTES)
                 .loader((key) -> {
                     GroupList list = this.directoryService.getGroups(key);
-                    return list.getGroups().stream().map(g -> g.getEmail()).collect(Collectors.toSet());
+                    Set<String> result = list.getGroups() != null
+                            ? list.getGroups().stream().map(g -> g.getEmail()).collect(Collectors.toSet())
+                            : Collections.emptySet();
+                    return result;
                 }).build();
     }
 
@@ -56,7 +62,8 @@ public class GSuiteGroupAuthorizationFilter implements ContainerRequestFilter {
         boolean memberOfAllowedGroup = !allowGroups.isEmpty();
         if (!fromGsuite || memberOfAllowedGroup) {
             log.error("Unauthorized access from {}", hdParam);
-            requestContext.abortWith(Response.status(Response.Status.UNAUTHORIZED).build());
+            ServerError err = new ServerError("E001", "Sorry you are not allowed to exit camp");
+            requestContext.abortWith(Response.status(Response.Status.UNAUTHORIZED).entity(err).type(MediaType.APPLICATION_JSON).build());
         }
     }
 }

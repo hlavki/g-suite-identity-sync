@@ -25,8 +25,12 @@ const AuthPlugin = {
               _this.$emit('loggedIn')
               options.router.push('/')
             }).catch(function (error) {
-              console.error('Cannot authentication user. Status: ' + error.response.status)
+              console.error('Cannot authenticate user. Status: ' + error.response.status)
+              console.info('ERRdata: ' + error.response.data)
               _this.logout()
+              if (error.response.data.hasOwnProperty('code')) {
+                _this.notifyError({ message: 'Sorry, you are not allowed to exit camp' })
+              }
             })
           }
         },
@@ -34,6 +38,13 @@ const AuthPlugin = {
           this.loggedIn = false
           this.userInfo = undefined
           options.router.push('/sign-in')
+        }
+      },
+      notifications: {
+        notifyError: {
+          title: 'Error Occured',
+          type: 'error',
+          timeout: 5000
         }
       }
     })
