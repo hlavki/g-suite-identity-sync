@@ -8,11 +8,14 @@ import 'vue-material/dist/vue-material.css'
 import AuthPlugin from './plugins/auth'
 import axios from 'axios'
 import VeeValidate from 'vee-validate'
+import VueNotifications from 'vue-notifications'
+import miniToastr from 'mini-toastr'
 
 Vue.config.productionTip = false
 Vue.use(VueMaterial)
 Vue.use(VeeValidate)
 
+// Setup API prefix (TODO: asi by sa zislo upratat rest clienta do jednej triedy)
 var isProduction = false
 var apiPrefix
 var setupAPI = function () {
@@ -26,6 +29,20 @@ var setupAPI = function () {
   }
 }
 setupAPI()
+
+// Notifications
+miniToastr.init()
+
+function toast({ title, message, type, timeout, cb }) {
+  return miniToastr[type](message, title, timeout, cb)
+}
+
+Vue.use(VueNotifications, {
+  success: toast,
+  error: toast,
+  info: toast,
+  warn: toast
+})
 
 VeeValidate.Validator.extend('password', {
   getMessage: field => 'Requirements: 1 uppercase, 1 lowercase, 1 number, and one special character (E.g. , . _ & ? etc)',

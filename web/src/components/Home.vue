@@ -36,10 +36,6 @@
         <label>OMG: [{{ error.code }}] {{ error.message }}</label>
         <br/>
       </div>
-      <div v-if="message" class="msg-label">
-        <label>{{ message }}</label>
-        <br/>
-      </div>
       <md-button class="md-raised md-primary" @click.native="sendData">Update LDAP Password</md-button>
   
     </md-whiteframe>
@@ -53,8 +49,6 @@ export default {
     return {
       accountData: { username: '', name: '', role: '' },
       showProgress: false,
-      error: undefined,
-      message: undefined,
       formData: { password: '', confirmPassword: '', saveGSuitePassword: true }
     }
   },
@@ -101,16 +95,29 @@ export default {
             console.info('Account updated!' + response.data)
             _this.showProgress = false
             _this.setAccountDetail()
-            _this.message = 'Account successfully updated!'
+            _this.notifyAccountCreated()
           }).catch(function (error) {
             console.warn('Error while creating account! ' + error)
             _this.showProgress = false
-            _this.error = error.response.data
+            _this.notifyError({ message: error.response.data })
           })
         }).catch(function (e) {
           // Catch errors
           console.warn('Form Invalid: ' + e)
         })
+    }
+  },
+  notifications: {
+    notifyAccountUpdated: {
+      title: 'Account updated',
+      message: 'User account successfully updated.',
+      type: 'info',
+      timeout: 5000
+    },
+    notifyError: {
+      title: 'Error Occured',
+      type: 'error',
+      timeout: 5000
     }
   }
 }
@@ -141,5 +148,9 @@ export default {
   background-color: darkseagreen;
   color: black;
   padding: 5px;
+}
+
+.mini-toastr {
+  left: 12px;
 }
 </style>
