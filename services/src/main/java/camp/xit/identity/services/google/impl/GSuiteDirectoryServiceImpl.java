@@ -117,6 +117,16 @@ public class GSuiteDirectoryServiceImpl implements GSuiteDirectoryService, Event
     }
 
 
+    @Override
+    public GroupList getAllGroups() {
+        WebClient webClient = WebClient.fromClient(directoryApiClient, true).path("groups");
+        webClient.authorization(tokenCache.get(true));
+        webClient.query("domain", config.getGSuiteDomain());
+        GroupList groupList = webClient.query("domain", config.getGSuiteDomain()).get(GroupList.class);
+        return groupList;
+    }
+
+
     private ClientAccessToken getAccessToken() {
         JwsHeaders headers = new JwsHeaders(JoseType.JWT, SignatureAlgorithm.RS256);
         JwtClaims claims = new JwtClaims();
