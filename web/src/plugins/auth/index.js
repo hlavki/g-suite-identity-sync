@@ -17,6 +17,7 @@ const AuthPlugin = {
             this.loggedIn = true
             this.userInfo = { givenName: 'Gabriel Hakan', familyName: 'Hakan', email: 'g.hakan@xit.camp', imageUri: 'https://encrypted-tbn3.gstatic.com/images?q=tbn:ANd9GcQ8TNF1mAw0VymIYZlqOUxktqmdgRyS5ylHtXeHyQyso8103P4sZA' }
           } else {
+            options.router.push('/auth-wait')
             var _this = this
             options.http.get(options.apiPrefix + '/xit/user').then(function (response) {
               console.info('Status: OK, Body: ' + Object.keys(response.data))
