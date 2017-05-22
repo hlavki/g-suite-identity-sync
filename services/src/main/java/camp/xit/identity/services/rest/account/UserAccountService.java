@@ -71,8 +71,6 @@ public class UserAccountService implements EventHandler {
         detail.setEmailVerified(userInfo.getEmailVerified());
         detail.setRole(getRole());
         detail.setSaveGSuitePassword(detail.getRole() == Role.INTERNAL);
-        Group all = directoryService.getGroup("all@xit.camp");
-        log.info(StringUtils.objectToString("allGroup", all));
         GroupList userGroups = directoryService.getGroups(userInfo.getSubject());
         if (userGroups.getGroups() != null) {
             detail.setGroups(userGroups.getGroups().stream().map(PrepareAccountData.Group::map).collect(Collectors.toList()));
