@@ -1,16 +1,13 @@
 package camp.xit.identity.services.google.impl;
 
+import camp.xit.identity.services.config.AppConfiguration;
 import camp.xit.identity.services.google.GSuiteDirectoryService;
 import camp.xit.identity.services.google.model.GroupMembership;
 import camp.xit.identity.services.google.NoPrivateKeyException;
 import camp.xit.identity.services.google.model.Group;
 import camp.xit.identity.services.google.model.GroupList;
 import camp.xit.identity.services.config.Configuration;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
 import java.security.*;
-import java.security.cert.CertificateException;
 import java.text.MessageFormat;
 import java.util.Arrays;
 import java.util.concurrent.TimeUnit;
@@ -38,18 +35,11 @@ import org.slf4j.LoggerFactory;
 public class GSuiteDirectoryServiceImpl implements GSuiteDirectoryService, EventHandler {
 
     private static final Logger log = LoggerFactory.getLogger(GSuiteDirectoryServiceImpl.class);
-    private static final String CLIENT_ID_PROP = "oauth2.serviceAccount.clientId";
-    private static final String SUBJECT_PROP = "oauth2.serviceAccount.subject";
-    private static final String PRIVATE_KEY_PROP = "oauth2.serviceAccount.privateKey.file";
-    private static final String PRIVATE_KEY_PASS_PROP = "oauth2.serviceAccount.privateKey.passphrase";
-    private static final String GSUITE_DOMAIN_PROP = "gsuite.domain";
-    private static final String TOKEN_LIFETIME_PROP = "gsuite.serviceAccount.tokenLifetime";
-    private static final long TOKEN_LIFETIME_DEFAULT = 3600;
     private PrivateKey privateKey;
     private Cache<Boolean, ClientAccessToken> tokenCache;
 
     private final WebClient directoryApiClient;
-    private final Configuration config;
+    private final AppConfiguration config;
 
 
     public GSuiteDirectoryServiceImpl(Configuration config, WebClient directoryApiClient) {
@@ -61,7 +51,7 @@ public class GSuiteDirectoryServiceImpl implements GSuiteDirectoryService, Event
 
     private void configure() {
         log.info("Configuring GSuiteDirectoryService ...");
-        long tokenLifetime = config.getLong(TOKEN_LIFETIME_PROP, TOKEN_LIFETIME_DEFAULT);
+        long tokenLifetime = config.getServiceAccountTokenLifetime();
         log.info("Token lifetime set to {}", tokenLifetime);
         this.tokenCache = Cache2kBuilder.of(Boolean.class, ClientAccessToken.class)
                 .expireAfterWrite(tokenLifetime - 3, TimeUnit.SECONDS)
@@ -69,7 +59,7 @@ public class GSuiteDirectoryServiceImpl implements GSuiteDirectoryService, Event
                     return key.equals(Boolean.TRUE) ? getAccessToken() : null;
                 }).build();
         try {
-            privateKey = loadPrivateKey(config.get(PRIVATE_KEY_PROP), config.get(PRIVATE_KEY_PASS_PROP));
+            privateKey = config.getServiceAccountKey();
             log.info("Service account private key loaded");
         } catch (NoPrivateKeyException e) {
             log.error(e.getMessage(), e.getCause());
@@ -122,7 +112,7 @@ public class GSuiteDirectoryServiceImpl implements GSuiteDirectoryService, Event
         if (userKey != null) {
             webClient.query("userKey", userKey);
         }
-        GroupList groupList = webClient.query("domain", config.get(GSUITE_DOMAIN_PROP)).get(GroupList.class);
+        GroupList groupList = webClient.query("domain", config.getGSuiteDomain()).get(GroupList.class);
         return groupList;
     }
 
@@ -130,12 +120,12 @@ public class GSuiteDirectoryServiceImpl implements GSuiteDirectoryService, Event
     private ClientAccessToken getAccessToken() {
         JwsHeaders headers = new JwsHeaders(JoseType.JWT, SignatureAlgorithm.RS256);
         JwtClaims claims = new JwtClaims();
-        claims.setIssuer(config.get(CLIENT_ID_PROP));
+        claims.setIssuer(config.getServiceAccountClientId());
         claims.setAudience("https://accounts.google.com/o/oauth2/token");
-        claims.setSubject(config.get(SUBJECT_PROP));
+        claims.setSubject(config.getServiceAccountSubject());
 
         long issuedAt = OAuthUtils.getIssuedAt();
-        long tokenTimeout = config.getLong(TOKEN_LIFETIME_PROP, TOKEN_LIFETIME_DEFAULT);
+        long tokenTimeout = config.getServiceAccountTokenLifetime();
         claims.setIssuedAt(issuedAt);
         claims.setExpiryTime(issuedAt + tokenTimeout);
         claims.setProperty("scope", "https://www.googleapis.com/auth/admin.directory.group.readonly");
@@ -153,17 +143,6 @@ public class GSuiteDirectoryServiceImpl implements GSuiteDirectoryService, Event
         accessTokenService.type(MediaType.APPLICATION_FORM_URLENCODED).accept(MediaType.APPLICATION_JSON);
 
         return accessTokenService.post(grant, ClientAccessToken.class);
-    }
-
-
-    private static PrivateKey loadPrivateKey(String keyFile, String password) throws NoPrivateKeyException {
-        try (InputStream is = new FileInputStream(keyFile)) {
-            KeyStore store = KeyStore.getInstance("PKCS12");
-            store.load(is, password.toCharArray());
-            return (PrivateKey) store.getKey("privateKey", password.toCharArray());
-        } catch (IOException | CertificateException | KeyStoreException | NoSuchAlgorithmException | UnrecoverableKeyException e) {
-            throw new NoPrivateKeyException("Could not load private key", e);
-        }
     }
 
 

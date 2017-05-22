@@ -98,6 +98,12 @@ public class LdapAccountServiceImpl implements LdapAccountService {
 
 
     @Override
+    public void synchronizeUserGroups(UserInfo userInfo) throws LDAPException {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+
+    @Override
     public void handleEvent(Event event) {
         if (Configuration.TOPIC_CHANGE.equals(event.getTopic())) {
             configure();
