@@ -13,4 +13,7 @@ public interface GSuiteDirectoryService {
 
 
     GroupMembership getGroupMembers(String groupKey);
+
+
+    GroupList getAllGroups();
 }
