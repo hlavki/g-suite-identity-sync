@@ -14,10 +14,12 @@
   },
   "dependencies": {
     "axios": "^0.16.1",
+    "mini-toastr": "^0.6.5",
     "vee-validate": "^2.0.0-rc.3",
     "vue": "^2.2.6",
     "vue-form-wizard": "^0.2.2",
     "vue-material": "^0.7.1",
+    "vue-notifications": "^0.8.0",
     "vue-router": "^2.3.1"
   },
   "devDependencies": {

@@ -112,6 +112,7 @@ export default {
             console.info('Account created!' + response.data)
             _this.showProgress = false
             _this.$router.push('/')
+            _this.notifyAccountCreated()
           }).catch(function (error) {
             console.warn('Error while creating account! ' + error)
             _this.showProgress = false
@@ -137,6 +138,14 @@ export default {
       }
       this.formData.saveGSuitePassword = userData.saveGSuitePassword
     }
+  },
+  notifications: {
+    notifyAccountCreated: {
+      title: 'Accout created',
+      message: 'User account successfully created.',
+      type: 'info',
+      timeout: 5000
+    }
   }
 }
 </script>
@@ -160,5 +169,9 @@ export default {
   background-color: hotpink;
   color: black;
   padding: 5px;
+}
+
+.mini-toastr {
+  left: 12px;
 }
 </style>
