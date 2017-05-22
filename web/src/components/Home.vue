@@ -32,10 +32,6 @@
   
       <md-checkbox class="md-primary" v-if="showSaveGSuitePasswordCheckbox()" v-model="formData.saveGSuitePassword">Sync GSuite Password</md-checkbox>
       <br/>
-      <div v-if="error" class="error-label">
-        <label>OMG: [{{ error.code }}] {{ error.message }}</label>
-        <br/>
-      </div>
       <md-button class="md-raised md-primary" @click.native="sendData">Update LDAP Password</md-button>
   
     </md-whiteframe>
@@ -56,12 +52,7 @@ export default {
     this.setAccountDetail()
   },
   methods: {
-    clearError() {
-      this.error = undefined
-      this.message = undefined
-    },
     setAccountDetail() {
-      this.clearError()
       var _this = this
       this.$http.get(this.$apiPrefix + '/xit/account').then(function (response) {
         console.info('Account Detail. Status: OK, Body: ' + Object.keys(response.data))
@@ -75,7 +66,7 @@ export default {
         } else if (error.response.status === 401) {
           _this.$auth.logout()
         } else {
-          _this.error = error.response.data
+          _this.notifyError({ message: error.response.data })
         }
         console.error('LDAP Account not found: ' + error.response.status)
       })
@@ -84,7 +75,6 @@ export default {
       return this.accountData.role === 'INTERNAL'
     },
     sendData: function (event) {
-      this.clearError()
       var _this = this
       this.$validator
         .validateAll()
@@ -111,7 +101,7 @@ export default {
     notifyAccountUpdated: {
       title: 'Account updated',
       message: 'User account successfully updated.',
-      type: 'info',
+      type: 'success',
       timeout: 5000
     },
     notifyError: {
@@ -148,9 +138,5 @@ export default {
   background-color: darkseagreen;
   color: black;
   padding: 5px;
-}
-
-.mini-toastr {
-  left: 12px;
 }
 </style>
