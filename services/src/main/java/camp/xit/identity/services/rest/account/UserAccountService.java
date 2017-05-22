@@ -8,6 +8,7 @@ import camp.xit.identity.services.model.CreateAccountData;
 import camp.xit.identity.services.model.PrepareAccountData.Role;
 import camp.xit.identity.services.model.ServerError;
 import camp.xit.identity.services.config.Configuration;
+import camp.xit.identity.services.google.model.Group;
 import com.unboundid.ldap.sdk.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -26,6 +27,7 @@ import org.osgi.service.event.EventHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import camp.xit.identity.services.ldap.LdapAccountService;
+import camp.xit.identity.services.util.StringUtils;
 
 @Path("account")
 public class UserAccountService implements EventHandler {
@@ -69,10 +71,11 @@ public class UserAccountService implements EventHandler {
         detail.setEmailVerified(userInfo.getEmailVerified());
         detail.setRole(getRole());
         detail.setSaveGSuitePassword(detail.getRole() == Role.INTERNAL);
-
-        GroupList list = directoryService.getGroups(userInfo.getSubject());
-        if (list.getGroups() != null) {
-            detail.setGroups(list.getGroups().stream().map(PrepareAccountData.Group::map).collect(Collectors.toList()));
+        Group all = directoryService.getGroup("all@xit.camp");
+        log.info(StringUtils.objectToString("allGroup", all));
+        GroupList userGroups = directoryService.getGroups(userInfo.getSubject());
+        if (userGroups.getGroups() != null) {
+            detail.setGroups(userGroups.getGroups().stream().map(PrepareAccountData.Group::map).collect(Collectors.toList()));
         }
         return detail;
     }

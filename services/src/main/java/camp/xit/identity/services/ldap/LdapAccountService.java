@@ -18,4 +18,7 @@ public interface LdapAccountService extends EventHandler {
 
 
     void updateAccount(UserInfo userInfo, CreateAccountData createData) throws LDAPException;
+
+
+    void synchronizeUserGroups(UserInfo userInfo) throws LDAPException;
 }

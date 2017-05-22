@@ -1,7 +1,12 @@
 package camp.xit.identity.services.config;
 
+import camp.xit.identity.services.google.NoPrivateKeyException;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.math.BigDecimal;
+import java.security.*;
+import java.security.cert.CertificateException;
 import java.util.*;
 import org.osgi.service.cm.ConfigurationAdmin;
 import org.osgi.service.cm.ConfigurationException;
@@ -11,7 +16,7 @@ import org.osgi.service.event.EventAdmin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class Configuration implements ManagedService {
+public class Configuration implements ManagedService, AppConfiguration {
 
     private static final Logger log = LoggerFactory.getLogger(Configuration.class);
     public static final String TOPIC_CHANGE = "camp/xit/account/Configuration/CHANGED";
@@ -155,6 +160,24 @@ public class Configuration implements ManagedService {
     }
 
 
+    public List<Set<String>> getListOfSet(String name) {
+        return getListOfSet(name, COLLECTIONS_VALUE_SEPARATOR);
+    }
+
+
+    public List<Set<String>> getListOfSet(String name, String separator) {
+        List<Set<String>> result = new ArrayList<>();
+        int idx = 0;
+        while (get(name + "." + String.valueOf(idx)) != null) {
+            result.add(getSet(name + "." + String.valueOf(idx++), separator));
+        }
+        if (result.isEmpty() && get(name) != null) {
+            result.add(getSet(name));
+        }
+        return result;
+    }
+
+
     public List<String> getList(String name) {
         return getList(name, COLLECTIONS_VALUE_SEPARATOR);
     }
@@ -184,4 +207,48 @@ public class Configuration implements ManagedService {
             eventAdmin.postEvent(new Event(TOPIC_CHANGE, Collections.emptyMap()));
         }
     }
+
+
+    @Override
+    public String getGSuiteDomain() {
+        return get(GSUITE_DOMAIN_PROP);
+    }
+
+
+    @Override
+    public String getGSuiteImplicitGroup() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+
+    @Override
+    public String getServiceAccountClientId() {
+        return get(CLIENT_ID_PROP);
+    }
+
+
+    @Override
+    public String getServiceAccountSubject() {
+        return get(SUBJECT_PROP);
+    }
+
+
+    @Override
+    public PrivateKey getServiceAccountKey() throws NoPrivateKeyException {
+        try (InputStream is = new FileInputStream(get(PRIVATE_KEY_PROP))) {
+            KeyStore store = KeyStore.getInstance("PKCS12");
+            char[] password = get(PRIVATE_KEY_PASS_PROP).toCharArray();
+            store.load(is, password);
+            return (PrivateKey) store.getKey("privateKey", password);
+        } catch (IOException | CertificateException | KeyStoreException | NoSuchAlgorithmException | UnrecoverableKeyException e) {
+            throw new NoPrivateKeyException("Could not load private key", e);
+        }
+    }
+
+
+    @Override
+    public long getServiceAccountTokenLifetime() {
+        return getLong(TOKEN_LIFETIME_PROP, TOKEN_LIFETIME_DEFAULT);
+    }
+
 }
