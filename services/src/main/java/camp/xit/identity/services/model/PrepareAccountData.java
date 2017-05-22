@@ -47,7 +47,7 @@ public class PrepareAccountData {
         }
 
 
-        public static Group map(camp.xit.identity.services.google.model.Group group) {
+        public static Group map(camp.xit.identity.services.google.model.GSuiteGroup group) {
             return new Group(group.getName(), group.getEmail());
         }
     }

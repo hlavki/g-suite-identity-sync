@@ -160,19 +160,19 @@ public class Configuration implements ManagedService, AppConfiguration {
     }
 
 
-    public List<Set<String>> getListOfSet(String name) {
-        return getListOfSet(name, COLLECTIONS_VALUE_SEPARATOR);
+    public List<List<String>> getListOfList(String name) {
+        return getListOfList(name, COLLECTIONS_VALUE_SEPARATOR);
     }
 
 
-    public List<Set<String>> getListOfSet(String name, String separator) {
-        List<Set<String>> result = new ArrayList<>();
+    public List<List<String>> getListOfList(String name, String separator) {
+        List<List<String>> result = new ArrayList<>();
         int idx = 0;
         while (get(name + "." + String.valueOf(idx)) != null) {
-            result.add(getSet(name + "." + String.valueOf(idx++), separator));
+            result.add(getList(name + "." + String.valueOf(idx++), separator));
         }
         if (result.isEmpty() && get(name) != null) {
-            result.add(getSet(name));
+            result.add(getList(name));
         }
         return result;
     }
@@ -217,7 +217,7 @@ public class Configuration implements ManagedService, AppConfiguration {
 
     @Override
     public String getGSuiteImplicitGroup() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return get(GSUITE_IMPLICIT_GROUP);
     }
 
 
@@ -253,7 +253,30 @@ public class Configuration implements ManagedService, AppConfiguration {
 
 
     @Override
+    public Map<String, Set<String>> getLdapGroupMapping() {
+        List<List<String>> values = getListOfList(LDAP_GROUP_MAPPING_PROP);
+        Map<String, Set<String>> result = new HashMap<>();
+        for (List<String> value : values) {
+            result.put(value.get(0), new HashSet<>(value.subList(1, value.size())));
+        }
+        return result;
+    }
+
+
+    @Override
+    public String getBaseDN() {
+        return get(LDAP_BASE_DN_PROP);
+    }
+
+
+    @Override
     public String getLdapUserBaseDN() {
-        return get(LDAP_USERS_BASE_DN_PROP);
+        return get(LDAP_USERS_BASE_DN_PROP) + "," + getBaseDN();
+    }
+
+
+    @Override
+    public String getLdapAppsBaseDN() {
+        return get(LDAP_APPS_BASE_DN_PROP) + "," + getBaseDN();
     }
 }

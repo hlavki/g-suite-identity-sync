@@ -1,10 +1,11 @@
 package camp.xit.identity.services.google.model;
 
+import camp.xit.identity.services.util.StringUtils;
 import java.util.List;
 import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement
-public class Group {
+public class GSuiteGroup {
 
     private String kind;
     private String id;
@@ -18,7 +19,7 @@ public class Group {
     private List<String> nonEditableAliases;
 
 
-    public Group() {
+    public GSuiteGroup() {
     }
 
 
@@ -119,5 +120,11 @@ public class Group {
 
     public void setNonEditableAliases(List<String> nonEditableAliases) {
         this.nonEditableAliases = nonEditableAliases;
+    }
+
+
+    @Override
+    public String toString() {
+        return StringUtils.toStringLine(this);
     }
 }

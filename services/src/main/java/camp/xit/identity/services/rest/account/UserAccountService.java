@@ -1,5 +1,6 @@
 package camp.xit.identity.services.rest.account;
 
+import camp.xit.identity.services.config.AppConfiguration;
 import camp.xit.identity.services.model.PrepareAccountData;
 import camp.xit.identity.services.google.GSuiteDirectoryService;
 import camp.xit.identity.services.google.model.GroupList;
@@ -8,7 +9,6 @@ import camp.xit.identity.services.model.CreateAccountData;
 import camp.xit.identity.services.model.PrepareAccountData.Role;
 import camp.xit.identity.services.model.ServerError;
 import camp.xit.identity.services.config.Configuration;
-import camp.xit.identity.services.google.model.Group;
 import com.unboundid.ldap.sdk.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -27,28 +27,31 @@ import org.osgi.service.event.EventHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import camp.xit.identity.services.ldap.LdapAccountService;
-import camp.xit.identity.services.util.StringUtils;
+import camp.xit.identity.services.sync.AccountSyncService;
+import camp.xit.identity.services.util.AccountUtil;
+import org.apache.cxf.rs.security.oidc.common.UserInfo;
 
 @Path("account")
 public class UserAccountService implements EventHandler {
 
     private static final Logger log = LoggerFactory.getLogger(UserAccountService.class);
-    private static final String GSUITE_DOMAIN_PROP = "gsuite.domain";
 
     @Context
     private OidcClientTokenContext oidcContext;
-    private final Configuration config;
+    private final AppConfiguration config;
     private final GSuiteDirectoryService directoryService;
     private final WebClient peopleServiceClient;
     private final LdapAccountService ldapService;
+    private final AccountSyncService syncService;
 
 
     public UserAccountService(Configuration config, GSuiteDirectoryService directoryService,
-            WebClient peopleServiceClient, LdapAccountService ldapService) {
+            WebClient peopleServiceClient, LdapAccountService ldapService, AccountSyncService syncService) {
         this.config = config;
         this.directoryService = directoryService;
         this.peopleServiceClient = peopleServiceClient;
         this.ldapService = ldapService;
+        this.syncService = syncService;
         configure();
     }
 
@@ -69,7 +72,7 @@ public class UserAccountService implements EventHandler {
         detail.setName(userInfo.getName());
         detail.setEmails(getVerifiedEmails());
         detail.setEmailVerified(userInfo.getEmailVerified());
-        detail.setRole(getRole());
+        detail.setRole(AccountUtil.getAccountRole(config, userInfo));
         detail.setSaveGSuitePassword(detail.getRole() == Role.INTERNAL);
         GroupList userGroups = directoryService.getGroups(userInfo.getSubject());
         if (userGroups.getGroups() != null) {
@@ -85,7 +88,7 @@ public class UserAccountService implements EventHandler {
         String subject = oidcContext.getUserInfo().getSubject();
         try {
             if (!ldapService.accountExists(subject)) {
-                data.setRole(getRole());
+                data.setRole(AccountUtil.getAccountRole(config, oidcContext.getUserInfo()));
                 ldapService.createAccount(oidcContext.getUserInfo(), data);
                 response = Response.ok();
             } else {
@@ -94,6 +97,22 @@ public class UserAccountService implements EventHandler {
         } catch (LDAPException e) {
             log.error("Can't create account", e);
             response = ServerError.toResponse("LDAP_ERR", e);
+        }
+        return response.build();
+    }
+
+
+    @PUT
+    @Path("groups")
+    public Response syncGroups() {
+        ResponseBuilder response;
+        UserInfo userInfo = oidcContext.getUserInfo();
+        try {
+            syncService.synchronizeUserGroups(userInfo);
+            response = Response.ok();
+        } catch (LDAPException e) {
+            log.error("Can't create account", e);
+            response = ServerError.toResponse("SYNC_ERR", e);
         }
         return response.build();
     }
@@ -130,6 +149,7 @@ public class UserAccountService implements EventHandler {
                 response = Response.ok().status(Response.Status.NOT_FOUND);
             }
         } catch (LDAPException e) {
+            log.error("Can't obtain account info", e);
             response = ServerError.toResponse("LDAP_ERR", e);
         }
         return response.build();
@@ -141,12 +161,6 @@ public class UserAccountService implements EventHandler {
         if (Configuration.TOPIC_CHANGE.equals(event.getTopic())) {
             configure();
         }
-    }
-
-
-    private Role getRole() {
-        String hdParam = oidcContext.getIdToken().getStringProperty("hd");
-        return config.get(GSUITE_DOMAIN_PROP).equals(hdParam) ? Role.INTERNAL : Role.EXTERNAL;
     }
 
 

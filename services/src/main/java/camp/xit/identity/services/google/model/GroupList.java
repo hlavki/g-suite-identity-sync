@@ -7,7 +7,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 public class GroupList {
 
     private String kind;
-    private List<Group> groups;
+    private List<GSuiteGroup> groups;
     private String nextPageToken;
 
 
@@ -15,7 +15,7 @@ public class GroupList {
     }
 
 
-    public GroupList(String kind, List<Group> groups) {
+    public GroupList(String kind, List<GSuiteGroup> groups) {
         this.kind = kind;
         this.groups = groups;
     }
@@ -31,12 +31,12 @@ public class GroupList {
     }
 
 
-    public List<Group> getGroups() {
+    public List<GSuiteGroup> getGroups() {
         return groups;
     }
 
 
-    public void setGroups(List<Group> groups) {
+    public void setGroups(List<GSuiteGroup> groups) {
         this.groups = groups;
     }
 

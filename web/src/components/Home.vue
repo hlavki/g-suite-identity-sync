@@ -83,9 +83,18 @@ export default {
           console.info('Valid. Creating account')
           _this.$http.put(_this.$apiPrefix + '/xit/account', _this.formData).then(function (response) {
             console.info('Account updated!' + response.data)
-            _this.showProgress = false
             _this.setAccountDetail()
-            _this.notifyAccountCreated()
+            _this.notifyAccountUpdated()
+            // Synchronize groups
+            _this.$http.put(_this.$apiPrefix + '/xit/account/groups').then(function (response) {
+              console.info('Groups synchronized!' + response.data)
+              _this.showProgress = false
+              _this.notifyGroupsSynchronized()
+            }).catch(function (error) {
+              console.warn('Error while synchronize groups! ' + error)
+              _this.showProgress = false
+              _this.notifyError({ message: error.response.data })
+            })
           }).catch(function (error) {
             console.warn('Error while creating account! ' + error)
             _this.showProgress = false
@@ -101,6 +110,12 @@ export default {
     notifyAccountUpdated: {
       title: 'Account updated',
       message: 'User account successfully updated.',
+      type: 'success',
+      timeout: 5000
+    },
+    notifyGroupsSynchronized: {
+      title: 'Group synchronization',
+      message: 'All groups synchronized.',
       type: 'success',
       timeout: 5000
     },

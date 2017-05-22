@@ -57,8 +57,20 @@ public class GroupMembership {
     }
 
 
+    public boolean isMember(String userId) {
+        boolean result = false;
+        for (GroupMember member : members) {
+            if (userId.equals(member.getId())) {
+                result = true;
+                break;
+            }
+        }
+        return result;
+    }
+
+
     @Override
     public String toString() {
-        return StringUtils.objectToString("membership", this);
+        return StringUtils.toStringLine(this);
     }
 }
