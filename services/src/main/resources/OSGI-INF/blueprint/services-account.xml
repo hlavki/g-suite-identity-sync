@@ -12,9 +12,10 @@
      
     <bean id="userAccountService" class="camp.xit.identity.services.rest.account.UserAccountService">
         <argument ref="configuration"/>
-        <argument ref="gSuiteService"/>
+        <argument ref="gSuiteDirService"/>
         <argument ref="peopleServiceClient"/>
-        <argument ref="userLdapService"/>
+        <argument ref="ldapAccountService"/>
+        <argument ref="accountSyncService"/>
     </bean>
 
     <jaxrsclient:client id="peopleServiceClient" threadSafe="true" 
@@ -57,7 +58,7 @@
     </jaxrs:server> 
      
     <bean id="gsuiteAuthzFilter" class="camp.xit.identity.services.rest.security.GSuiteGroupAuthorizationFilter">
-        <argument ref="gSuiteService"/>
+        <argument ref="gSuiteDirService"/>
         <argument ref="configuration"/>
     </bean>
 </blueprint>

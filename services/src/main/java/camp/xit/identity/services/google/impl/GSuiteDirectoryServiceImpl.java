@@ -4,12 +4,12 @@ import camp.xit.identity.services.config.AppConfiguration;
 import camp.xit.identity.services.google.GSuiteDirectoryService;
 import camp.xit.identity.services.google.model.GroupMembership;
 import camp.xit.identity.services.google.NoPrivateKeyException;
-import camp.xit.identity.services.google.model.Group;
+import camp.xit.identity.services.google.model.GSuiteGroup;
 import camp.xit.identity.services.google.model.GroupList;
 import camp.xit.identity.services.config.Configuration;
 import java.security.*;
 import java.text.MessageFormat;
-import java.util.Arrays;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 import javax.ws.rs.core.MediaType;
 import org.apache.cxf.interceptor.LoggingInInterceptor;
@@ -37,6 +37,7 @@ public class GSuiteDirectoryServiceImpl implements GSuiteDirectoryService, Event
     private static final Logger log = LoggerFactory.getLogger(GSuiteDirectoryServiceImpl.class);
     private PrivateKey privateKey;
     private Cache<Boolean, ClientAccessToken> tokenCache;
+    private Cache<Boolean, Map<GSuiteGroup, GroupMembership>> membershipCache;
 
     private final WebClient directoryApiClient;
     private final AppConfiguration config;
@@ -57,6 +58,12 @@ public class GSuiteDirectoryServiceImpl implements GSuiteDirectoryService, Event
                 .expireAfterWrite(tokenLifetime - 3, TimeUnit.SECONDS)
                 .loader((key) -> {
                     return key.equals(Boolean.TRUE) ? getAccessToken() : null;
+                }).build();
+        this.membershipCache = new Cache2kBuilder<Boolean, Map<GSuiteGroup, GroupMembership>>() {
+        }
+                .expireAfterWrite(15, TimeUnit.MINUTES)
+                .loader((key) -> {
+                    return key.equals(Boolean.TRUE) ? getAllGroupMembershipInternal() : null;
                 }).build();
         try {
             privateKey = config.getServiceAccountKey();
@@ -92,14 +99,14 @@ public class GSuiteDirectoryServiceImpl implements GSuiteDirectoryService, Event
 
 
     @Override
-    public Group getGroup(String groupKey) {
+    public GSuiteGroup getGroup(String groupKey) {
         String path = MessageFormat.format("groups/{0}", new Object[]{groupKey});
 
         WebClient webClient = WebClient.fromClient(directoryApiClient, true);
 
         ClientAccessToken accessToken = tokenCache.get(true);
         webClient.authorization(accessToken);
-        Group group = webClient.path(path).get(Group.class);
+        GSuiteGroup group = webClient.path(path).get(GSuiteGroup.class);
         return group;
     }
 
@@ -119,11 +126,7 @@ public class GSuiteDirectoryServiceImpl implements GSuiteDirectoryService, Event
 
     @Override
     public GroupList getAllGroups() {
-        WebClient webClient = WebClient.fromClient(directoryApiClient, true).path("groups");
-        webClient.authorization(tokenCache.get(true));
-        webClient.query("domain", config.getGSuiteDomain());
-        GroupList groupList = webClient.query("domain", config.getGSuiteDomain()).get(GroupList.class);
-        return groupList;
+        return getGroups(null);
     }
 
 
@@ -153,6 +156,22 @@ public class GSuiteDirectoryServiceImpl implements GSuiteDirectoryService, Event
         accessTokenService.type(MediaType.APPLICATION_FORM_URLENCODED).accept(MediaType.APPLICATION_JSON);
 
         return accessTokenService.post(grant, ClientAccessToken.class);
+    }
+
+
+    @Override
+    public Map<GSuiteGroup, GroupMembership> getAllGroupMembership() {
+        return membershipCache.get(Boolean.TRUE);
+    }
+
+
+    private Map<GSuiteGroup, GroupMembership> getAllGroupMembershipInternal() {
+        GroupList groups = getAllGroups();
+        Map<GSuiteGroup, GroupMembership> result = new HashMap<>();
+        groups.getGroups().forEach((group) -> {
+            result.put(group, getGroupMembers(group.getId()));
+        });
+        return result;
     }
 
 

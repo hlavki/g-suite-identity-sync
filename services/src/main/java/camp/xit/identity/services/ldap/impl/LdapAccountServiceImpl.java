@@ -11,8 +11,11 @@ import org.osgi.service.event.Event;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import camp.xit.identity.services.ldap.LdapAccountService;
+import camp.xit.identity.services.ldap.model.LdapGroup;
+import java.util.*;
+import org.osgi.service.event.EventHandler;
 
-public class LdapAccountServiceImpl implements LdapAccountService {
+public class LdapAccountServiceImpl implements LdapAccountService, EventHandler {
 
     private static final Logger log = LoggerFactory.getLogger(LdapAccountServiceImpl.class);
 
@@ -37,7 +40,8 @@ public class LdapAccountServiceImpl implements LdapAccountService {
     }
 
 
-    private String getAccountDN(String subject) throws LDAPException {
+    @Override
+    public String getAccountDN(String subject) throws LDAPException {
         try (LDAPConnection conn = ldapPool.getConnection()) {
             String baseDn = config.getLdapUserBaseDN();
             SearchResultEntry entry = conn.searchForEntry(baseDn, SearchScope.ONE, "(employeeNumber=" + subject + ")", "uid");
@@ -98,8 +102,74 @@ public class LdapAccountServiceImpl implements LdapAccountService {
 
 
     @Override
-    public void synchronizeUserGroups(UserInfo userInfo) throws LDAPException {
-        
+    public Map<String, LdapGroup> getAllLdapGroups() throws LDAPException {
+        Map<String, LdapGroup> result = new HashMap<>();
+        try (LDAPConnection conn = ldapPool.getConnection()) {
+            String baseDN = config.getLdapAppsBaseDN();
+            log.info("Group base DN: " + baseDN);
+            SearchResult searchResult = conn.search(baseDN, SearchScope.SUB, "(objectClass=groupOfUniqueNames)", "cn", "uniqueMember");
+            for (SearchResultEntry entry : searchResult.getSearchEntries()) {
+                String dn = entry.getDN();
+                Set<String> members = new HashSet<>(Arrays.asList(entry.getAttributeValues("uniqueMember")));
+                result.put(dn, new LdapGroup(dn, members));
+            }
+        }
+        return result;
+    }
+
+
+    @Override
+    public void addGroupMember(String accountDN, String groupDN) throws LDAPException {
+        try (LDAPConnection conn = ldapPool.getConnection()) {
+            LdapGroup group = getGroup(groupDN, conn);
+            if (group != null && group.getMembers().contains(accountDN)) {
+                log.info("Nothing to do. Account {} is already member of group {}", accountDN, groupDN);
+            } else {
+                if (group == null) {
+                    log.debug("Creating group {}", groupDN);
+                    Entry groupEntry = new Entry(groupDN);
+                    groupEntry.addAttribute("objectClass", "groupOfUniqueNames");
+                    groupEntry.addAttribute("uniqueMember", accountDN);
+                    conn.add(groupEntry);
+                    log.info("Group {} added", groupDN);
+                } else {
+                    Modification mod = new Modification(ModificationType.ADD, "uniqueMember", accountDN);
+                    conn.modify(new ModifyRequest(groupDN, mod));
+                    log.info("Added membership {} to {}", accountDN, groupDN);
+                }
+            }
+        }
+    }
+
+
+    @Override
+    public void removeGroupMember(String accountDN, String groupDN) throws LDAPException {
+        try (LDAPConnection conn = ldapPool.getConnection()) {
+            LdapGroup group = getGroup(groupDN, conn);
+            if (group == null || !group.getMembers().contains(accountDN)) {
+                log.info("Nothing to do. Account {} is not member of group {}", accountDN, groupDN);
+            } else {
+                Modification mod = new Modification(ModificationType.DELETE, "uniqueMember", accountDN);
+                conn.modify(new ModifyRequest(groupDN, mod));
+                log.info("Remove membership {} from {}", accountDN, groupDN);
+                if (group.getMembers().size() == 1) {
+                    log.info("Removing group {}", groupDN);
+                    conn.delete(groupDN);
+                }
+            }
+        }
+    }
+
+
+    protected LdapGroup getGroup(String groupDN, LDAPConnection conn) throws LDAPException {
+        LdapGroup result = null;
+        SearchResultEntry entry = conn.getEntry(groupDN, "cn", "uniqueMember");
+        if (entry != null) {
+            String dn = entry.getDN();
+            Set<String> members = new HashSet<>(Arrays.asList(entry.getAttributeValues("uniqueMember")));
+            result = new LdapGroup(dn, members);
+        }
+        return result;
     }
 
 

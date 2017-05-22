@@ -9,7 +9,7 @@
                 http://cxf.apache.org/blueprint/jaxrs-client http://cxf.apache.org/schemas/blueprint/jaxrs-client.xsd">
 
     
-    <!-- GSuiteService -->
+    <!-- GSuiteDirService -->
     <jaxrsclient:client id="directoryApiClient" threadSafe="true" 
                         address="https://www.googleapis.com/admin/directory/v1"
                         serviceClass="org.apache.cxf.jaxrs.client.WebClient">
@@ -22,13 +22,13 @@
         </jaxrsclient:providers>
     </jaxrsclient:client>
     
-    <bean id="gSuiteService" class="camp.xit.identity.services.google.impl.GSuiteDirectoryServiceImpl">
+    <bean id="gSuiteDirService" class="camp.xit.identity.services.google.impl.GSuiteDirectoryServiceImpl">
         <argument ref="configuration"/>
         <argument ref="directoryApiClient"/>
     </bean>
     
     <!-- Configuration listener -->
-    <service id="gSuiteServiceConfigHandler" ref="gSuiteService" interface="org.osgi.service.event.EventHandler">
+    <service id="gSuiteDirServiceConfigHandler" ref="gSuiteDirService" interface="org.osgi.service.event.EventHandler">
         <service-properties>
             <entry key="event.topics">
                 <array value-type="java.lang.String">
