@@ -57,7 +57,9 @@ export default {
       this.$http.get(this.$apiPrefix + '/xit/account').then(function (response) {
         console.info('Account Detail. Status: OK, Body: ' + Object.keys(response.data))
         _this.accountData = response.data
+        _this.showProgress = false
       }).catch(function (error) {
+        _this.showProgress = false
         if (error.response.status === 404) {
           if (_this.$isProduction) _this.$router.push('/create-account')
           else {

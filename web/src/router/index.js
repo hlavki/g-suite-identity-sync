@@ -5,6 +5,7 @@ import About from '@/components/About'
 import CreateAccount from '@/components/CreateAccount'
 import Home from '@/components/Home'
 import NotFound from '@/components/NotFound'
+import AuthProgress from '@/components/AuthProgress'
 
 Vue.use(Router)
 
@@ -35,6 +36,12 @@ export default new Router({
       name: 'About',
       meta: { auth: true },
       component: About
+    },
+    {
+      path: '/auth-wait',
+      name: 'AuthProgress',
+      meta: { auth: false },
+      component: AuthProgress
     },
     {
       path: '*',
