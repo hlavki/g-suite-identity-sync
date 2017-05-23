@@ -7,21 +7,21 @@
         <version>1.0-SNAPSHOT</version>
     </parent>
     <artifactId>account-manager-features</artifactId>
-    <packaging>kar</packaging>
+    <packaging>feature</packaging>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
     <build>
-        <resources>
+<!--        <resources>
             <resource>
                 <directory>src/main/features</directory>
                 <targetPath>../features</targetPath>
                 <filtering>true</filtering>
             </resource>
-        </resources>
+        </resources>-->
         <plugins>
-            <plugin>
+<!--            <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>build-helper-maven-plugin</artifactId>
                 <version>3.0.0</version>
@@ -43,7 +43,7 @@
                         </configuration>
                     </execution>
                 </executions>
-            </plugin>
+            </plugin>-->
             <plugin>
                 <groupId>org.apache.karaf.tooling</groupId>
                 <artifactId>karaf-maven-plugin</artifactId>
