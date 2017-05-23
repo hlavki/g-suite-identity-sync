@@ -33,7 +33,6 @@
             <classifier>features</classifier>
             <version>${cxf.version}</version>
             <type>xml</type>
-            <scope>runtime</scope>
         </dependency>
         <dependency>
             <groupId>camp.xit.identity</groupId>

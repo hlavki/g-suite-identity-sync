@@ -17,9 +17,6 @@
             <plugin>
                 <groupId>org.apache.karaf.tooling</groupId>
                 <artifactId>karaf-maven-plugin</artifactId>
-                <configuration>
-                    <featuresFile>${project.build.directory}/features/features.xml</featuresFile>
-                </configuration>
             </plugin>
         </plugins>
     </build>
