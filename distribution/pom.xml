@@ -12,24 +12,6 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
-
-    <repositories>
-        <repository>
-            <id>apache-snapshots</id>
-            <name>Apache Snapshots Repository</name>
-            <url>http://repository.apache.org/content/groups/snapshots/</url>
-            <layout>default</layout>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
-        </repository>
-        <repository>
-            <id>datalan-proxy</id>
-            <name>Datalan proxy repository</name>
-            <url>http://maven.datalan.sk/content/groups/remote-repos</url>
-            <layout>default</layout>
-        </repository>
-    </repositories>
     
     <dependencies>
         <dependency>
@@ -59,7 +41,6 @@
             <classifier>features</classifier>
             <version>${project.version}</version>
             <type>xml</type>
-            <scope>runtime</scope>
         </dependency>
     </dependencies>
 
@@ -69,6 +50,7 @@
                 <groupId>org.apache.karaf.tooling</groupId>
                 <artifactId>karaf-maven-plugin</artifactId>
                 <configuration>
+                    <finalName>${project.artifactId}</finalName>
                     <startupFeatures>
                         <feature>eventadmin</feature>
                     </startupFeatures>
@@ -96,6 +78,8 @@
                         <feature>account-manager-services</feature>
                         <feature>account-manager-web</feature>
                     </bootFeatures>
+                    <archiveZip>false</archiveZip>
+                    <javase>1.8</javase>
                 </configuration>
             </plugin>
         </plugins>
