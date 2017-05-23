@@ -46,13 +46,6 @@
             <type>xml</type>
         </dependency>
         <dependency>
-            <groupId>org.ops4j.pax.cdi</groupId>
-            <artifactId>pax-cdi-features</artifactId>
-            <classifier>features</classifier>
-            <version>0.12.0</version>
-            <type>xml</type>
-        </dependency>
-        <dependency>
             <groupId>org.apache.cxf.karaf</groupId>
             <artifactId>apache-cxf</artifactId>
             <classifier>features</classifier>
