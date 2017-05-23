@@ -3,8 +3,7 @@ package camp.xit.identity.services.sync.impl;
 import camp.xit.identity.services.config.AppConfiguration;
 import camp.xit.identity.services.config.Configuration;
 import camp.xit.identity.services.google.GSuiteDirectoryService;
-import camp.xit.identity.services.google.model.GSuiteGroup;
-import camp.xit.identity.services.google.model.GroupMembership;
+import camp.xit.identity.services.google.model.GroupList;
 import camp.xit.identity.services.ldap.LdapAccountService;
 import camp.xit.identity.services.ldap.model.LdapGroup;
 import camp.xit.identity.services.sync.AccountSyncService;
@@ -44,19 +43,18 @@ public class AccountSyncServiceImpl implements AccountSyncService, EventHandler 
 
     @Override
     public void synchronizeUserGroups(UserInfo userInfo) throws LDAPException {
-        Map<GSuiteGroup, GroupMembership> gsuiteGroups = gsuiteDirService.getAllGroupMembership();
-        Map<String, Set<String>> groupMapping = config.getLdapGroupMapping();
-        Map<String, LdapGroup> ldapGroups = ldapService.getAllLdapGroups();
         String accountDN = ldapService.getAccountDN(userInfo.getSubject());
+        GroupList gsuiteGroups = gsuiteDirService.getGroups(userInfo.getSubject());
+        Map<String, Set<String>> groupMapping = config.getLdapGroupMapping();
+        Map<String, LdapGroup> ldapGroups = ldapService.getAccountGroups(accountDN);
 
         Set<String> asIs = ldapGroups.values().stream()
                 .filter(g -> g.getMembers().contains(accountDN))
                 .map(g -> g.getDn())
                 .collect(Collectors.toSet());
 
-        Set<String> toBe = gsuiteGroups.entrySet().stream()
-                .filter(e -> e.getValue().isMember(userInfo.getSubject()))
-                .map(e -> e.getKey().getEmail())
+        Set<String> toBe = gsuiteGroups.getGroups().stream()
+                .map(g -> g.getEmail())
                 .flatMap(g -> (groupMapping.get(g) != null ? groupMapping.get(g).stream() : Collections.<String>emptySet().stream()))
                 .collect(Collectors.toSet());
 
