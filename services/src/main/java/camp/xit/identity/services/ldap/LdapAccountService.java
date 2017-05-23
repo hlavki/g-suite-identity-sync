@@ -21,7 +21,10 @@ public interface LdapAccountService {
     void updateAccount(UserInfo userInfo, CreateAccountData createData) throws LDAPException;
 
 
-    Map<String, LdapGroup> getAllLdapGroups() throws LDAPException;
+    Map<String, LdapGroup> getAllGroups() throws LDAPException;
+
+
+    Map<String, LdapGroup> getAccountGroups(String accountDN) throws LDAPException;
 
 
     String getAccountDN(String subject) throws LDAPException;

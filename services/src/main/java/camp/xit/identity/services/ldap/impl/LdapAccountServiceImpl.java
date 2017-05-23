@@ -102,12 +102,30 @@ public class LdapAccountServiceImpl implements LdapAccountService, EventHandler 
 
 
     @Override
-    public Map<String, LdapGroup> getAllLdapGroups() throws LDAPException {
+    public Map<String, LdapGroup> getAllGroups() throws LDAPException {
         Map<String, LdapGroup> result = new HashMap<>();
         try (LDAPConnection conn = ldapPool.getConnection()) {
             String baseDN = config.getLdapAppsBaseDN();
             log.info("Group base DN: " + baseDN);
             SearchResult searchResult = conn.search(baseDN, SearchScope.SUB, "(objectClass=groupOfUniqueNames)", "cn", "uniqueMember");
+            for (SearchResultEntry entry : searchResult.getSearchEntries()) {
+                String dn = entry.getDN();
+                Set<String> members = new HashSet<>(Arrays.asList(entry.getAttributeValues("uniqueMember")));
+                result.put(dn, new LdapGroup(dn, members));
+            }
+        }
+        return result;
+    }
+
+
+    @Override
+    public Map<String, LdapGroup> getAccountGroups(String accountDN) throws LDAPException {
+        Map<String, LdapGroup> result = new HashMap<>();
+        try (LDAPConnection conn = ldapPool.getConnection()) {
+            String baseDN = config.getLdapAppsBaseDN();
+            log.info("Group base DN: " + baseDN);
+            String filter = "(&(objectClass=groupOfUniqueNames)(uniqueMember=" + accountDN + "))";
+            SearchResult searchResult = conn.search(baseDN, SearchScope.SUB, filter, "cn", "uniqueMember");
             for (SearchResultEntry entry : searchResult.getSearchEntries()) {
                 String dn = entry.getDN();
                 Set<String> members = new HashSet<>(Arrays.asList(entry.getAttributeValues("uniqueMember")));
