@@ -17,6 +17,11 @@
         <unboundid.version>3.2.1</unboundid.version>
     </properties>
     
+    <scm>
+        <connection>scm:git:ssh://git@code.xit.camp:xit/account-manager.git</connection>
+        <tag>HEAD</tag>
+    </scm>
+    
     <modules>
         <module>web</module>
         <module>services</module>
@@ -24,6 +29,19 @@
         <module>features</module>
         <module>distribution</module>
     </modules>
+
+    <distributionManagement>
+        <repository>
+            <id>xit-releases</id>
+            <name>xIT distribution repository</name>
+            <url>https://repository.xit.camp/repository/maven-releases</url>
+        </repository>
+        <snapshotRepository>
+            <id>xit-snapshots</id>
+            <name>xIT snapshots repository</name>
+            <url>https://repository.xit.camp/repository/maven-snapshots</url>
+        </snapshotRepository>
+    </distributionManagement>
 
     <dependencyManagement>
         <dependencies>
