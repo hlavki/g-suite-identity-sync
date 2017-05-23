@@ -109,7 +109,7 @@
                     <plugin>
                         <groupId>io.fabric8</groupId>
                         <artifactId>docker-maven-plugin</artifactId>
-                        <version>0.20.1</version>
+                        <version>0.20.2</version>
                         <configuration>
                             <pushRegistry>docker.xit.camp</pushRegistry>
                             <images>
