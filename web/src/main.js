@@ -90,9 +90,9 @@ Vue.use(VueNotifications, {
 })
 
 VeeValidate.Validator.extend('password', {
-  getMessage: field => 'Requirements: 1 uppercase, 1 lowercase, 1 number, and one special character (E.g. , . _ & ? etc)',
+  getMessage: field => 'Invalid password! It must contain 1 uppercase, 1 lowercase, 1 number, and one punctation.',
   validate: value => {
-    var strongRegex = new RegExp('^(?=.*\\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#\\$%\\^&\\*])[0-9a-zA-Z!@#\\$%\\^&\\*]{8,}$')
+    var strongRegex = new RegExp('^(?=.*\\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[!\\?@#\\$%\\^&\\*_\\.,:;\\[\\]\\(\\){}<>\'"\\+\\-=~`])[0-9a-zA-Z!\\?@#\\$%\\^&\\*_\\.,:;\\[\\]\\(\\){}<>\'"\\+\\-=~`]{8,}$')
     return strongRegex.test(value)
   }
 })
