@@ -42,6 +42,14 @@
             <url>https://repository.xit.camp/repository/maven-snapshots</url>
         </snapshotRepository>
     </distributionManagement>
+    
+    <repositories>
+        <repository>
+            <id>xit-central</id>
+            <name>xIT central repository proxy</name>
+            <url>https://repository.xit.camp/repository/maven-central/</url>
+        </repository>
+    </repositories>
 
     <dependencyManagement>
         <dependencies>
