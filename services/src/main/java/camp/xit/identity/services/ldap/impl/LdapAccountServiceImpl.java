@@ -12,6 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import camp.xit.identity.services.ldap.LdapAccountService;
 import camp.xit.identity.services.ldap.model.LdapGroup;
+import camp.xit.identity.services.model.UpdateAccountData;
 import java.util.*;
 import org.osgi.service.event.EventHandler;
 
@@ -92,7 +93,7 @@ public class LdapAccountServiceImpl implements LdapAccountService, EventHandler 
 
 
     @Override
-    public void updateAccount(UserInfo userInfo, CreateAccountData createData) throws LDAPException {
+    public void updateAccount(UserInfo userInfo, UpdateAccountData createData) throws LDAPException {
         try (LDAPConnection conn = ldapPool.getConnection()) {
             String entryDN = getAccountDN(userInfo.getSubject());
             Modification mod = new Modification(ModificationType.REPLACE, "userPassword", createData.getPassword());

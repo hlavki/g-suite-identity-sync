@@ -1,36 +1,21 @@
 package camp.xit.identity.services.model;
 
-import camp.xit.identity.services.model.PrepareAccountData.Role;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement
-public class CreateAccountData {
+public class UpdateAccountData {
 
-    @NotNull
-    private String email;
     @NotNull
     @Pattern(regexp = "^(?=.*\\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[!\\?@#\\$%\\^&\\*_\\.,:;\\[\\]\\(\\){}<>\'\"\\+\\-=~`])[0-9a-zA-Z!\\?@#\\$%\\^&\\*_\\.,:;\\[\\]\\(\\){}<>\'\"\\+\\-=~`]{8,}$", message = "The password does not meet the defined rules. Don't try to fuck with me!")
     private String password;
     @NotNull
     private String confirmPassword;
     private boolean saveGSuitePassword;
-    @NotNull
-    private Role role;
 
 
-    public CreateAccountData() {
-    }
-
-
-    public String getEmail() {
-        return email;
-    }
-
-
-    public void setEmail(String email) {
-        this.email = email;
+    public UpdateAccountData() {
     }
 
 
@@ -61,15 +46,5 @@ public class CreateAccountData {
 
     public void setSaveGSuitePassword(boolean saveGSuitePassword) {
         this.saveGSuitePassword = saveGSuitePassword;
-    }
-
-
-    public Role getRole() {
-        return role;
-    }
-
-
-    public void setRole(Role role) {
-        this.role = role;
     }
 }
