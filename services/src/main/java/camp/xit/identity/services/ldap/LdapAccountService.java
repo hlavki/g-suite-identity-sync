@@ -3,6 +3,7 @@ package camp.xit.identity.services.ldap;
 import camp.xit.identity.services.ldap.model.LdapGroup;
 import camp.xit.identity.services.model.AccountInfo;
 import camp.xit.identity.services.model.CreateAccountData;
+import camp.xit.identity.services.model.UpdateAccountData;
 import com.unboundid.ldap.sdk.LDAPException;
 import java.util.Map;
 import org.apache.cxf.rs.security.oidc.common.UserInfo;
@@ -18,7 +19,7 @@ public interface LdapAccountService {
     void createAccount(UserInfo userInfo, CreateAccountData createData) throws LDAPException;
 
 
-    void updateAccount(UserInfo userInfo, CreateAccountData createData) throws LDAPException;
+    void updateAccount(UserInfo userInfo, UpdateAccountData createData) throws LDAPException;
 
 
     Map<String, LdapGroup> getAllGroups() throws LDAPException;

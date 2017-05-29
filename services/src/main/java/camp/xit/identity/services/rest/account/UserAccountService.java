@@ -27,8 +27,10 @@ import org.osgi.service.event.EventHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import camp.xit.identity.services.ldap.LdapAccountService;
+import camp.xit.identity.services.model.*;
 import camp.xit.identity.services.sync.AccountSyncService;
 import camp.xit.identity.services.util.AccountUtil;
+import javax.validation.Valid;
 import org.apache.cxf.rs.security.oidc.common.UserInfo;
 
 @Path("account")
@@ -83,7 +85,7 @@ public class UserAccountService implements EventHandler {
 
 
     @POST
-    public Response createAccount(CreateAccountData data) {
+    public Response createAccount(@Valid CreateAccountData data) {
         ResponseBuilder response;
         String subject = oidcContext.getUserInfo().getSubject();
         try {
@@ -119,7 +121,7 @@ public class UserAccountService implements EventHandler {
 
 
     @PUT
-    public Response updateAccount(CreateAccountData data) {
+    public Response updateAccount(@Valid UpdateAccountData data) {
         ResponseBuilder response;
         String subject = oidcContext.getUserInfo().getSubject();
         try {

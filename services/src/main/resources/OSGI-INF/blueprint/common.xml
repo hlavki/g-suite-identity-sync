@@ -13,7 +13,7 @@
     <!-- 1 -->
     <cxf:bus>
         <cxf:features>
-            <!--<cxf:logging/>-->
+            <cxf:logging/>
         </cxf:features>
     </cxf:bus>
 
@@ -38,5 +38,27 @@
             <entry key="service.pid" value="xit.camp.account"/>
         </service-properties>
     </service>
+    
+    <bean id="exceptionMapper" class="camp.xit.identity.services.util.ValidationExceptionMapper">
+        <property name="addMessageToResponse" value="true"/>
+    </bean>
+    
+    <bean id="hibernateValidator" class="org.hibernate.validator.HibernateValidator"/>
+
+    <bean id="validationProviderResolver" class="camp.xit.identity.services.util.SingleValidationProviderResolver">
+        <argument ref="hibernateValidator"/>
+    </bean>
+    
+    <bean id="validationProvider" class="org.apache.cxf.validation.BeanValidationProvider">
+        <argument ref="validationProviderResolver"/>
+    </bean>
+ 
+    <bean id="validationInInterceptor" class="org.apache.cxf.jaxrs.validation.JAXRSBeanValidationInInterceptor">
+        <property name="provider" ref="validationProvider" />
+    </bean>
+ 
+    <bean id="validationOutInterceptor" class="org.apache.cxf.jaxrs.validation.JAXRSBeanValidationOutInterceptor">
+        <property name="provider" ref="validationProvider" />
+    </bean>
 
 </blueprint>

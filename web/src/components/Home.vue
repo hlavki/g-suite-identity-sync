@@ -95,12 +95,14 @@ export default {
             }).catch(function (error) {
               console.warn('Error while synchronize groups! ' + error)
               _this.showProgress = false
-              _this.notifyError({ message: error.response.data })
+              var msgData = error.response.data
+              _this.notifyError({ message: typeof (msgData) === 'object' ? msgData.message : msgData })
             })
           }).catch(function (error) {
             console.warn('Error while creating account! ' + error)
             _this.showProgress = false
-            _this.notifyError({ message: error.response.data })
+            var msgData = error.response.data
+            _this.notifyError({ message: typeof (msgData) === 'object' ? msgData.message : msgData })
           })
         }).catch(function (e) {
           // Catch errors
