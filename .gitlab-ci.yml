@@ -1,0 +1,6 @@
+maven-build:
+  stage: build
+  tags:
+    - maven3
+  script:
+    - mvn clean install -B
