@@ -1,8 +1,6 @@
-image: docker:latest
-services:
-  - docker:dind
-
 maven-build:
-  image: maven:3-jdk-8
   stage: build
-  script: "mvn install -B"
+  tags:
+    - maven3
+  script:
+    - mvn clean install -B
