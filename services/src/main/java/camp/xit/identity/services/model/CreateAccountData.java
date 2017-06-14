@@ -1,6 +1,5 @@
 package camp.xit.identity.services.model;
 
-import camp.xit.identity.services.model.PrepareAccountData.Role;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -16,8 +15,6 @@ public class CreateAccountData {
     @NotNull
     private String confirmPassword;
     private boolean saveGSuitePassword;
-    @NotNull
-    private Role role;
 
 
     public CreateAccountData() {
@@ -61,15 +58,5 @@ public class CreateAccountData {
 
     public void setSaveGSuitePassword(boolean saveGSuitePassword) {
         this.saveGSuitePassword = saveGSuitePassword;
-    }
-
-
-    public Role getRole() {
-        return role;
-    }
-
-
-    public void setRole(Role role) {
-        this.role = role;
     }
 }

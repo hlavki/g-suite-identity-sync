@@ -216,12 +216,6 @@ public class Configuration implements ManagedService, AppConfiguration {
 
 
     @Override
-    public String getGSuiteImplicitGroup() {
-        return get(GSUITE_IMPLICIT_GROUP);
-    }
-
-
-    @Override
     public String getServiceAccountClientId() {
         return get(CLIENT_ID_PROP);
     }
@@ -253,17 +247,6 @@ public class Configuration implements ManagedService, AppConfiguration {
 
 
     @Override
-    public Map<String, Set<String>> getLdapGroupMapping() {
-        List<List<String>> values = getListOfList(LDAP_GROUP_MAPPING_PROP);
-        Map<String, Set<String>> result = new HashMap<>();
-        for (List<String> value : values) {
-            result.put(value.get(0), new HashSet<>(value.subList(1, value.size())));
-        }
-        return result;
-    }
-
-
-    @Override
     public String getBaseDN() {
         return get(LDAP_BASE_DN_PROP);
     }
@@ -276,7 +259,13 @@ public class Configuration implements ManagedService, AppConfiguration {
 
 
     @Override
-    public String getLdapAppsBaseDN() {
-        return get(LDAP_APPS_BASE_DN_PROP) + "," + getBaseDN();
+    public String getLdapGroupsBaseDN() {
+        return get(LDAP_GROUPS_BASE_DN_PROP) + "," + getBaseDN();
+    }
+
+
+    @Override
+    public Set<String> getAdmins() {
+        return getSet(ADMINS_PROP);
     }
 }

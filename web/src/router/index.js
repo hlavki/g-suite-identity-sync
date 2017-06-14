@@ -6,6 +6,7 @@ import CreateAccount from '@/components/CreateAccount'
 import Home from '@/components/Home'
 import NotFound from '@/components/NotFound'
 import AuthProgress from '@/components/AuthProgress'
+import Settings from '@/components/Settings'
 
 Vue.use(Router)
 
@@ -24,6 +25,12 @@ export default new Router({
       name: 'SignIn',
       meta: { auth: false },
       component: SignIn
+    },
+    {
+      path: '/settings',
+      name: 'Settings',
+      meta: { auth: true },
+      component: Settings
     },
     {
       path: '/create-account',

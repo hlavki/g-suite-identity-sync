@@ -1,13 +1,14 @@
 package camp.xit.identity.services.model;
 
 import camp.xit.identity.services.model.PrepareAccountData.Role;
+import java.util.Set;
 import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement
 public class AccountInfo {
 
     private String username;
-    private String email;
+    private Set<String> emails;
     private String subject;
     private String givenName;
     private String familyName;
@@ -19,13 +20,24 @@ public class AccountInfo {
     }
 
 
-    public String getEmail() {
-        return email;
+    public AccountInfo(String username, Set<String> emails, String subject, String givenName, String familyName, String name, Role role) {
+        this.username = username;
+        this.emails = emails;
+        this.subject = subject;
+        this.givenName = givenName;
+        this.familyName = familyName;
+        this.name = name;
+        this.role = role;
     }
 
 
-    public void setEmail(String email) {
-        this.email = email;
+    public Set<String> getEmails() {
+        return emails;
+    }
+
+
+    public void setEmails(Set<String> emails) {
+        this.emails = emails;
     }
 
 

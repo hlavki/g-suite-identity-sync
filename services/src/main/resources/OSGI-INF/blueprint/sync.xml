@@ -11,7 +11,7 @@
     </bean>
     
     <!-- Configuration listener -->
-    <service id="accountSyncServiceConfigHandler" ref="accountSyncService" interface="org.osgi.service.event.EventHandler">
+    <service ref="accountSyncService" interface="org.osgi.service.event.EventHandler">
         <service-properties>
             <entry key="event.topics">
                 <array value-type="java.lang.String">

@@ -2,7 +2,6 @@ package camp.xit.identity.services.config;
 
 import camp.xit.identity.services.google.NoPrivateKeyException;
 import java.security.PrivateKey;
-import java.util.Map;
 import java.util.Set;
 
 public interface AppConfiguration {
@@ -17,14 +16,11 @@ public interface AppConfiguration {
     static final long TOKEN_LIFETIME_DEFAULT = 3600;
     static final String LDAP_USERS_BASE_DN_PROP = "ldap.users.baseDN";
     static final String LDAP_BASE_DN_PROP = "ldap.baseDN";
-    static final String LDAP_APPS_BASE_DN_PROP = "ldap.apps.baseDN";
-    static final String LDAP_GROUP_MAPPING_PROP = "ldap.group.mapping";
+    static final String LDAP_GROUPS_BASE_DN_PROP = "ldap.apps.baseDN";
+    static final String ADMINS_PROP = "admins";
 
 
     String getGSuiteDomain();
-
-
-    String getGSuiteImplicitGroup();
 
 
     String getServiceAccountClientId();
@@ -45,8 +41,8 @@ public interface AppConfiguration {
     String getLdapUserBaseDN();
 
 
-    String getLdapAppsBaseDN();
+    String getLdapGroupsBaseDN();
 
 
-    Map<String, Set<String>> getLdapGroupMapping();
+    Set<String> getAdmins();
 }
