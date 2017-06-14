@@ -5,17 +5,30 @@ import java.util.Set;
 
 public class LdapGroup {
 
+    private String name;
     private String dn;
-    private Set<String> members;
+    private String description;
+    private Set<String> membersDn;
 
 
     public LdapGroup() {
     }
 
 
-    public LdapGroup(String dn, Set<String> members) {
+    public LdapGroup(String name, String dn, String description, Set<String> members) {
+        this.name = name;
         this.dn = dn;
-        this.members = members;
+        this.membersDn = members;
+    }
+
+
+    public String getName() {
+        return name;
+    }
+
+
+    public void setName(String name) {
+        this.name = name;
     }
 
 
@@ -29,18 +42,33 @@ public class LdapGroup {
     }
 
 
-    public Set<String> getMembers() {
-        return members;
+    /**
+     * Return set of membersDn DN.
+     *
+     * @return set of membersDn DN.
+     */
+    public Set<String> getMembersDn() {
+        return membersDn;
     }
 
 
-    public void setMembers(Set<String> members) {
-        this.members = members;
+    public void setMembersDn(Set<String> membersDn) {
+        this.membersDn = membersDn;
     }
 
 
     @Override
     public String toString() {
         return StringUtils.toStringLine(this);
+    }
+
+
+    public String getDescription() {
+        return description;
+    }
+
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 }

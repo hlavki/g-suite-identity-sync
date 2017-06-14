@@ -13,10 +13,17 @@
         <md-input v-model="accountData.name" disabled></md-input>
       </md-input-container>
   
-      <md-input-container>
-        <label>Primary email</label>
-        <md-input v-model="accountData.email" disabled></md-input>
-      </md-input-container>
+      <md-whiteframe class="group-frame">
+        <md-subheader style="color: rgba(0,0,0,.38);">Emails</md-subheader>
+        <md-list>
+          <md-list-item v-for="email in accountData.emails" :key="email" disabled>
+            <md-icon>email</md-icon>
+            <div class="md-list-text-container">
+              <span>{{ email }}</span>
+            </div>
+          </md-list-item>
+        </md-list>
+      </md-whiteframe>
   
       <md-input-container :class="{'md-input-invalid': errors.has('password')}" md-has-password>
         <label for="password">Type LDAP Password</label>
@@ -53,6 +60,7 @@ export default {
   },
   methods: {
     setAccountDetail() {
+      // this.showProgress = true
       var _this = this
       this.$http.get(this.$apiPrefix + '/xit/account').then(function (response) {
         console.info('Account Detail. Status: OK, Body: ' + Object.keys(response.data))
@@ -63,7 +71,7 @@ export default {
         if (error.response.status === 404) {
           if (_this.$isProduction) _this.$router.push('/create-account')
           else {
-            _this.accountData = { username: 'george@xit.camp', name: 'George Soros', email: 'george.soros@xit.camp', role: 'INTERNAL' }
+            _this.accountData = { username: 'george@xit.camp', name: 'George Soros', emails: ['george.soros@xit.camp', 'georgo@xit.camp'], role: 'INTERNAL' }
           }
         } else if (error.response.status === 401) {
           _this.$auth.logout()

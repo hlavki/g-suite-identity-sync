@@ -59,7 +59,7 @@ public class UserAccountService implements EventHandler {
 
 
     private void configure() {
-        log.info("Configuring UserInfoService ...");
+        log.info("Configuring UserAccountService ...");
     }
 
 
@@ -90,8 +90,7 @@ public class UserAccountService implements EventHandler {
         String subject = oidcContext.getUserInfo().getSubject();
         try {
             if (!ldapService.accountExists(subject)) {
-                data.setRole(AccountUtil.getAccountRole(config, oidcContext.getUserInfo()));
-                ldapService.createAccount(oidcContext.getUserInfo(), data);
+                ldapService.createAccount(oidcContext.getUserInfo(), getVerifiedEmails(), data);
                 response = Response.ok();
             } else {
                 response = Response.ok().status(Response.Status.CONFLICT);

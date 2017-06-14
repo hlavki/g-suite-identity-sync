@@ -9,14 +9,17 @@ public class UserInfo {
     private String name;
     private String email;
     private URI imageUri;
+    private boolean amAdmin;
+
 
     public UserInfo() {
     }
 
 
-    public UserInfo(String name, String email, URI imageUri) {
+    public UserInfo(String name, String email, boolean amAdmin, URI imageUri) {
         this.name = name;
         this.email = email;
+        this.amAdmin = amAdmin;
         this.imageUri = imageUri;
     }
 
@@ -48,5 +51,15 @@ public class UserInfo {
 
     public void setImageUri(URI imageUri) {
         this.imageUri = imageUri;
+    }
+
+
+    public boolean isAmAdmin() {
+        return amAdmin;
+    }
+
+
+    public void setAmAdmin(boolean amAdmin) {
+        this.amAdmin = amAdmin;
     }
 }

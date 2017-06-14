@@ -8,8 +8,15 @@
                 http://cxf.apache.org/blueprint/jaxrs http://cxf.apache.org/schemas/blueprint/jaxrs.xsd
                 http://cxf.apache.org/blueprint/jaxrs-client http://cxf.apache.org/schemas/blueprint/jaxrs-client.xsd">
 
-    <bean id="userInfoService" class="camp.xit.identity.services.rest.account.UserInfoService"/>     
-     
+    <bean id="userInfoService" class="camp.xit.identity.services.rest.account.UserInfoService">
+        <argument ref="configuration"/>
+    </bean>
+
+    <bean id="adminService" class="camp.xit.identity.services.rest.account.AdminService">
+        <argument ref="configuration"/>
+        <argument ref="accountSyncService"/>
+    </bean>
+
     <bean id="userAccountService" class="camp.xit.identity.services.rest.account.UserAccountService">
         <argument ref="configuration"/>
         <argument ref="gSuiteDirService"/>
@@ -29,8 +36,30 @@
         </jaxrsclient:providers>
     </jaxrsclient:client>
 
-    <!-- Configuration listener -->
-    <service id="userAccountConfigHandler" ref="userAccountService" interface="org.osgi.service.event.EventHandler">
+    <!-- Configuration listener for userAccountService -->
+    <service ref="userAccountService" interface="org.osgi.service.event.EventHandler">
+        <service-properties>
+            <entry key="event.topics">
+                <array value-type="java.lang.String">
+                    <value>camp/xit/account/Configuration/*</value>
+                </array>
+            </entry>
+        </service-properties>
+    </service>
+
+    <!-- Configuration listener for adminService -->
+    <service ref="adminService" interface="org.osgi.service.event.EventHandler">
+        <service-properties>
+            <entry key="event.topics">
+                <array value-type="java.lang.String">
+                    <value>camp/xit/account/Configuration/*</value>
+                </array>
+            </entry>
+        </service-properties>
+    </service>
+
+    <!-- Configuration listener for userInfoService -->
+    <service ref="userInfoService" interface="org.osgi.service.event.EventHandler">
         <service-properties>
             <entry key="event.topics">
                 <array value-type="java.lang.String">
@@ -53,6 +82,7 @@
         <jaxrs:serviceBeans>
             <ref component-id="userAccountService"/>
             <ref component-id="userInfoService"/>
+            <ref component-id="adminService"/>
         </jaxrs:serviceBeans>
         
         <jaxrs:providers>

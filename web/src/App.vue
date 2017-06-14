@@ -41,6 +41,10 @@
             <md-icon>home</md-icon>
             <span>Home</span>
           </md-list-item>
+          <md-list-item v-if="isAdmin()" @click.native="routeTo('/settings')">
+            <md-icon>settings</md-icon>
+            <span>Settings</span>
+          </md-list-item>
           <md-list-item v-if="$auth.loggedIn" @click.native="routeTo('/about')">
             <md-icon>help</md-icon>
             <span>About</span>
@@ -88,6 +92,9 @@ export default {
       console.info('Signing out...')
       this.$refs.sidebar.toggle()
       this.$auth.logout()
+    },
+    isAdmin() {
+      return this.$auth.loggedIn && this.$auth.userInfo.amAdmin
     }
   }
 }
