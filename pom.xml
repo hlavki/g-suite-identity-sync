@@ -3,7 +3,7 @@
 
     <groupId>camp.xit.identity</groupId>
     <artifactId>account-manager</artifactId>
-    <version>0.0.2</version>
+    <version>0.0.3-SNAPSHOT</version>
     <packaging>pom</packaging>
     
     <properties>
@@ -19,7 +19,7 @@
     
     <scm>
         <connection>scm:git:ssh://git@code.xit.camp:xit/account-manager.git</connection>
-        <tag>v0.0.2</tag>
+        <tag>HEAD</tag>
     </scm>
     
     <modules>
