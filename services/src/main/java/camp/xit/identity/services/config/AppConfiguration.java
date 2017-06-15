@@ -23,6 +23,9 @@ public interface AppConfiguration {
     String getGSuiteDomain();
 
 
+    String getGSuiteImplicitGroup();
+
+
     String getServiceAccountClientId();
 
 

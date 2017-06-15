@@ -4,7 +4,8 @@ import java.util.Date;
 import java.util.List;
 
 /**
- * See <a href=https://developers.google.com/admin-sdk/directory/v1/reference/users#resource">API Reference</a>
+ * See <a href=https://developers.google.com/admin-sdk/directory/v1/reference/users#resource">API
+ * Reference</a>
  *
  * @author Michal Hlavac
  */
@@ -304,5 +305,16 @@ public class GSuiteUser {
 
     public void setAliases(List<String> aliases) {
         this.aliases = aliases;
+    }
+
+
+    public final GroupMember toMember() {
+        GroupMember result = new GroupMember();
+        result.setId(getId());
+        result.setEmail(getPrimaryEmail());
+        result.setKind(getKind());
+        result.setStatus(GroupMember.Status.ACTIVE);
+        result.setType(GroupMember.Type.USER);
+        return result;
     }
 }
