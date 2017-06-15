@@ -2,6 +2,7 @@ package camp.xit.identity.services.google.model;
 
 import java.util.Date;
 import java.util.List;
+import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  * See <a href=https://developers.google.com/admin-sdk/directory/v1/reference/users#resource">API
@@ -9,6 +10,7 @@ import java.util.List;
  *
  * @author Michal Hlavac
  */
+@XmlRootElement
 public class GSuiteUser {
 
     public static class Name {

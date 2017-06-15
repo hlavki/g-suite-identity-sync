@@ -67,4 +67,7 @@ public interface GSuiteDirectoryService {
      * @return list of gsuite users
      */
     GSuiteUsers getAllUsers();
+
+
+    void updateUserPassword(String userKey, String password) throws InvalidPasswordException;
 }
