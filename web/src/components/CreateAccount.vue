@@ -12,8 +12,8 @@
         <md-input-container>
           <label>Select username (email)</label>
           <md-select name="emails" id="email" v-model="formData.email" required>
-            <md-option v-for="email in userData.emails" :key="email.email" v-bind:value="email.email">
-              {{ email.email }}
+            <md-option v-for="email in userData.emails" :key="email" v-bind:value="email">
+              {{ email }}
             </md-option>
           </md-select>
         </md-input-container>
@@ -36,7 +36,7 @@
             </md-list-item>
           </md-list>
         </md-whiteframe>
-  
+
         <md-input-container :class="{'md-input-invalid': errors.has('password')}" md-has-password>
           <label for="password">Type LDAP Password</label>
           <md-input v-model="formData.password" name="password" type="password" v-validate data-vv-name="password" data-vv-rules="required|min:8|password" required></md-input>
@@ -49,7 +49,7 @@
           <span class="md-error">{{errors.first('password-confirm')}}</span>
         </md-input-container>
   
-        <md-checkbox class="md-primary" v-if="showSaveGSuitePasswordCheckbox()" v-model="formData.saveGSuitePassword">Sync GSuite Password</md-checkbox>
+        <md-checkbox class="md-primary" v-if="showSaveGSuitePasswordCheckbox()" v-model="formData.saveGSuitePassword">Synchronize GSuite Password</md-checkbox>
         <br/>
         <md-button class="md-raised md-primary" @click.native="sendData">Create LDAP Profile</md-button>
   
@@ -85,7 +85,7 @@ export default {
         _this.notifyError({ message: error.response.data })
         if (_this.$isProduction) _this.$auth.logout()
         else {
-          _this.userData = { emails: [{ email: 'user@example.com', primary: false }, { email: 'user2@example.com', primary: true }], name: 'George Soros', role: 'INTERNAL', saveGSuitePassword: true, groups: [{ name: 'Group1', email: 'group1@example.com' }, { name: 'Group2', email: 'group2@example.com' }] }
+          _this.userData = { email: 'user@example.com', emails: ['user@example.com', 'user2@example.com'], name: 'George Soros', role: 'INTERNAL', saveGSuitePassword: true, groups: [{ name: 'Group1', email: 'group1@example.com' }, { name: 'Group2', email: 'group2@example.com' }] }
           _this.processFormData(_this.userData)
         }
         _this.showProgress = false
@@ -133,11 +133,7 @@ export default {
       return (typeof groups !== 'undefined') && groups.length > 0
     },
     processFormData(userData) {
-      for (var i = 0; i < userData.emails.length; i++) {
-        if (userData.emails[i].primary) {
-          this.formData.email = userData.emails[i].email
-        }
-      }
+      this.formData.email = userData.email
       this.formData.saveGSuitePassword = userData.saveGSuitePassword
     }
   },

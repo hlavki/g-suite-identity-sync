@@ -9,13 +9,13 @@ import camp.xit.identity.services.model.CreateAccountData;
 import camp.xit.identity.services.model.PrepareAccountData.Role;
 import camp.xit.identity.services.model.ServerError;
 import camp.xit.identity.services.config.Configuration;
+import camp.xit.identity.services.google.InvalidPasswordException;
 import camp.xit.identity.services.google.model.GSuiteUser;
 import com.unboundid.ldap.sdk.*;
 import java.util.stream.Collectors;
 import javax.ws.rs.*;
 import javax.ws.rs.core.*;
 import javax.ws.rs.core.Response.ResponseBuilder;
-import org.apache.cxf.jaxrs.client.WebClient;
 import org.apache.cxf.rs.security.oidc.rp.OidcClientTokenContext;
 import org.osgi.service.event.Event;
 import org.osgi.service.event.EventHandler;
@@ -39,17 +39,15 @@ public class UserAccountService implements EventHandler {
     @Context
     private OidcClientTokenContext oidcContext;
     private final AppConfiguration config;
-    private final GSuiteDirectoryService directoryService;
-    private final WebClient peopleServiceClient;
+    private final GSuiteDirectoryService gsuiteDirService;
     private final LdapAccountService ldapService;
     private final AccountSyncService syncService;
 
 
     public UserAccountService(Configuration config, GSuiteDirectoryService directoryService,
-            WebClient peopleServiceClient, LdapAccountService ldapService, AccountSyncService syncService) {
+            LdapAccountService ldapService, AccountSyncService syncService) {
         this.config = config;
-        this.directoryService = directoryService;
-        this.peopleServiceClient = peopleServiceClient;
+        this.gsuiteDirService = directoryService;
         this.ldapService = ldapService;
         this.syncService = syncService;
         configure();
@@ -69,11 +67,12 @@ public class UserAccountService implements EventHandler {
         detail.setGivenName(userInfo.getGivenName());
         detail.setFamilyName(userInfo.getFamilyName());
         detail.setName(userInfo.getName());
+        detail.setEmail(userInfo.getEmail());
         detail.setEmails(getUserEmails(userInfo.getSubject()));
         detail.setEmailVerified(userInfo.getEmailVerified());
         detail.setRole(AccountUtil.getAccountRole(config, userInfo));
         detail.setSaveGSuitePassword(detail.getRole() == Role.INTERNAL);
-        GroupList userGroups = directoryService.getGroups(userInfo.getSubject());
+        GroupList userGroups = gsuiteDirService.getGroups(userInfo.getSubject());
         if (userGroups.getGroups() != null) {
             detail.setGroups(userGroups.getGroups().stream().map(PrepareAccountData.Group::map).collect(Collectors.toList()));
         }
@@ -91,7 +90,43 @@ public class UserAccountService implements EventHandler {
                 Set<String> emails = getUserEmails(userInfo.getSubject());
                 LdapAccount account = LdapAccount.from(config, userInfo, emails, data);
                 ldapService.createAccount(account);
+                if (data.isSaveGSuitePassword()) {
+                    try {
+                        gsuiteDirService.updateUserPassword(subject, data.getPassword());
+                    } catch (InvalidPasswordException e) {
+                        log.warn("Can't update gsuite password", e);
+                    }
+                }
                 response = Response.ok();
+            } else {
+                response = Response.ok().status(Response.Status.CONFLICT);
+            }
+        } catch (LDAPException e) {
+            log.error("Can't create account", e);
+            response = ServerError.toResponse("LDAP_ERR", e);
+        }
+        return response.build();
+    }
+
+
+    @PUT
+    public Response updateAccount(@Valid UpdateAccountData data) {
+        ResponseBuilder response;
+        UserInfo userInfo = oidcContext.getUserInfo();
+        String subject = userInfo.getSubject();
+        try {
+            if (ldapService.accountExists(subject)) {
+                Set<String> emails = getUserEmails(userInfo.getSubject());
+                LdapAccount account = LdapAccount.from(config, userInfo, emails, data);
+                ldapService.updateAccount(account);
+                response = Response.ok();
+                if (data.isSaveGSuitePassword()) {
+                    try {
+                        gsuiteDirService.updateUserPassword(subject, data.getPassword());
+                    } catch (InvalidPasswordException e) {
+                        log.warn("Can't update gsuite password", e);
+                    }
+                }
             } else {
                 response = Response.ok().status(Response.Status.CONFLICT);
             }
@@ -114,28 +149,6 @@ public class UserAccountService implements EventHandler {
         } catch (LDAPException e) {
             log.error("Can't create account", e);
             response = ServerError.toResponse("SYNC_ERR", e);
-        }
-        return response.build();
-    }
-
-
-    @PUT
-    public Response updateAccount(@Valid UpdateAccountData data) {
-        ResponseBuilder response;
-        UserInfo userInfo = oidcContext.getUserInfo();
-        String subject = userInfo.getSubject();
-        try {
-            if (ldapService.accountExists(subject)) {
-                Set<String> emails = getUserEmails(userInfo.getSubject());
-                LdapAccount account = LdapAccount.from(config, userInfo, emails, data);
-                ldapService.updateAccount(account);
-                response = Response.ok();
-            } else {
-                response = Response.ok().status(Response.Status.CONFLICT);
-            }
-        } catch (LDAPException e) {
-            log.error("Can't create account", e);
-            response = ServerError.toResponse("LDAP_ERR", e);
         }
         return response.build();
     }
@@ -169,7 +182,7 @@ public class UserAccountService implements EventHandler {
 
 
     private Set<String> getUserEmails(String userKey) {
-        GSuiteUser user = directoryService.getUser(userKey);
+        GSuiteUser user = gsuiteDirService.getUser(userKey);
         Set<String> result = new HashSet<>(user.getAliases());
         result.add(user.getPrimaryEmail());
         return result;

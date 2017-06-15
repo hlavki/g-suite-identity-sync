@@ -20,12 +20,11 @@
     <bean id="userAccountService" class="camp.xit.identity.services.rest.account.UserAccountService">
         <argument ref="configuration"/>
         <argument ref="gSuiteDirService"/>
-        <argument ref="peopleServiceClient"/>
         <argument ref="ldapAccountService"/>
         <argument ref="accountSyncService"/>
     </bean>
 
-    <jaxrsclient:client id="peopleServiceClient" threadSafe="true" 
+<!--    <jaxrsclient:client id="peopleServiceClient" threadSafe="true" 
                         address="https://people.googleapis.com/v1/people/me"
                         serviceClass="org.apache.cxf.jaxrs.client.WebClient">
         <jaxrsclient:headers>
@@ -34,7 +33,7 @@
         <jaxrsclient:providers>
             <bean class="org.apache.cxf.jaxrs.provider.json.JsonMapObjectProvider"/>
         </jaxrsclient:providers>
-    </jaxrsclient:client>
+    </jaxrsclient:client>-->
 
     <!-- Configuration listener for userAccountService -->
     <service ref="userAccountService" interface="org.osgi.service.event.EventHandler">

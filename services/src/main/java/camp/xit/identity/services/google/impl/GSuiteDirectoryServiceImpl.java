@@ -7,12 +7,14 @@ import camp.xit.identity.services.google.NoPrivateKeyException;
 import camp.xit.identity.services.google.model.GSuiteGroup;
 import camp.xit.identity.services.google.model.GroupList;
 import camp.xit.identity.services.config.Configuration;
+import camp.xit.identity.services.google.InvalidPasswordException;
 import camp.xit.identity.services.google.model.*;
 import java.security.*;
 import java.text.MessageFormat;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 import org.apache.cxf.interceptor.LoggingInInterceptor;
 import org.apache.cxf.jaxrs.client.WebClient;
 import org.apache.cxf.rs.security.jose.common.JoseType;
@@ -151,6 +153,22 @@ public class GSuiteDirectoryServiceImpl implements GSuiteDirectoryService, Event
         webClient.authorization(accessToken);
         GSuiteUser user = webClient.path(path).get(GSuiteUser.class);
         return user;
+    }
+
+
+    @Override
+    public void updateUserPassword(String userKey, String password) throws InvalidPasswordException {
+        String path = MessageFormat.format("users/{0}", new Object[]{userKey});
+        WebClient webClient = WebClient.fromClient(directoryApiClient, true);
+
+        ClientAccessToken accessToken = tokenCache.get(true);
+        webClient.authorization(accessToken);
+        GSuiteUser user = new GSuiteUser();
+        user.setPassword(password);
+        Response response = webClient.path(path).put(user);
+        if (response.getStatus() != Response.Status.OK.getStatusCode()) {
+            throw new InvalidPasswordException("Can't change password. Response: " + response.readEntity(String.class));
+        }
     }
 
 

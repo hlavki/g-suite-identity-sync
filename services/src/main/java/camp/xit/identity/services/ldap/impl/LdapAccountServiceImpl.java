@@ -83,7 +83,8 @@ public class LdapAccountServiceImpl implements LdapAccountService, EventHandler 
     public void createAccount(LdapAccount account) throws LDAPException {
         try (LDAPConnection conn = ldapPool.getConnection()) {
             DN baseDN = new DN(config.getLdapUserBaseDN());
-            DN entryDN = new DN(new RDN("uid", account.getUsername()), baseDN);
+            String entryDN = AccountUtil.getAccountDN(account.getUsername(), config);
+            log.info("Creating user with DN {}", entryDN);
             Entry entry = new Entry(entryDN);
             entry.addAttribute("objectClass", "inetOrgPerson");
             for (String email : account.getEmails()) {
