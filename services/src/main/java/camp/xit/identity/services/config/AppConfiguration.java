@@ -16,7 +16,7 @@ public interface AppConfiguration {
     static final long TOKEN_LIFETIME_DEFAULT = 3600;
     static final String LDAP_USERS_BASE_DN_PROP = "ldap.users.baseDN";
     static final String LDAP_BASE_DN_PROP = "ldap.baseDN";
-    static final String LDAP_GROUPS_BASE_DN_PROP = "ldap.apps.baseDN";
+    static final String LDAP_GROUPS_BASE_DN_PROP = "ldap.groups.baseDN";
     static final String ADMINS_PROP = "admins";
 
 
