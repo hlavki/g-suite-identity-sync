@@ -9,4 +9,7 @@ public interface AccountSyncService {
 
 
     void synchronizeAllGroups() throws LDAPException;
+
+
+    void synchronizeGSuiteUsers() throws LDAPException;
 }

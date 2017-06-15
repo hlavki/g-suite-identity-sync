@@ -1,15 +1,12 @@
 package camp.xit.identity.services.ldap;
 
+import camp.xit.identity.services.ldap.model.LdapAccount;
 import camp.xit.identity.services.ldap.model.LdapGroup;
 import camp.xit.identity.services.model.AccountInfo;
-import camp.xit.identity.services.model.CreateAccountData;
-import camp.xit.identity.services.model.PrepareAccountData.EmailAddress;
-import camp.xit.identity.services.model.UpdateAccountData;
 import com.unboundid.ldap.sdk.LDAPException;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import org.apache.cxf.rs.security.oidc.common.UserInfo;
 
 public interface LdapAccountService {
 
@@ -22,10 +19,10 @@ public interface LdapAccountService {
     List<AccountInfo> getAllAccounts() throws LDAPException;
 
 
-    void createAccount(UserInfo userInfo, List<EmailAddress> emails, CreateAccountData createData) throws LDAPException;
+    void createAccount(LdapAccount account) throws LDAPException;
 
 
-    void updateAccount(UserInfo userInfo, UpdateAccountData createData) throws LDAPException;
+    void updateAccount(LdapAccount account) throws LDAPException;
 
 
     LdapGroup getGroup(String groupName) throws LDAPException;

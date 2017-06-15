@@ -1,8 +1,6 @@
 package camp.xit.identity.services.google;
 
-import camp.xit.identity.services.google.model.GSuiteGroup;
-import camp.xit.identity.services.google.model.GroupList;
-import camp.xit.identity.services.google.model.GroupMembership;
+import camp.xit.identity.services.google.model.*;
 import java.util.Map;
 
 public interface GSuiteDirectoryService {
@@ -51,4 +49,22 @@ public interface GSuiteDirectoryService {
      * @return members for all GSuite groups. Key is group info object and value is membership
      */
     Map<GSuiteGroup, GroupMembership> getAllGroupMembership();
+
+
+    /**
+     * Retrieves a gsuite user from Directory API
+     *
+     * @param userKey Identifies the user in the API request. The value can be the user's primary email
+     * address, alias email address, or unique user ID.
+     * @return gsuite user
+     */
+    GSuiteUser getUser(String userKey);
+
+
+    /**
+     * Retrieves list of users or all users in a domain.
+     *
+     * @return list of gsuite users
+     */
+    GSuiteUsers getAllUsers();
 }

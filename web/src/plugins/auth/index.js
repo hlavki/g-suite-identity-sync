@@ -15,7 +15,7 @@ const AuthPlugin = {
         login() {
           if (!options.isProduction) {
             this.loggedIn = true
-            this.userInfo = { givenName: 'Gabriel Hakan', familyName: 'Hakan', email: 'g.hakan@xit.camp', amAdmin: false, imageUri: 'https://encrypted-tbn3.gstatic.com/images?q=tbn:ANd9GcQ8TNF1mAw0VymIYZlqOUxktqmdgRyS5ylHtXeHyQyso8103P4sZA' }
+            this.userInfo = { givenName: 'Gabriel Hakan', familyName: 'Hakan', email: 'g.hakan@xit.camp', amAdmin: true, imageUri: 'https://encrypted-tbn3.gstatic.com/images?q=tbn:ANd9GcQ8TNF1mAw0VymIYZlqOUxktqmdgRyS5ylHtXeHyQyso8103P4sZA' }
           } else {
             options.router.push('/auth-wait')
             var _this = this
