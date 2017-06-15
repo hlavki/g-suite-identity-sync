@@ -3,11 +3,10 @@ package camp.xit.identity.services.sync.impl;
 import camp.xit.identity.services.config.AppConfiguration;
 import camp.xit.identity.services.config.Configuration;
 import camp.xit.identity.services.google.GSuiteDirectoryService;
-import camp.xit.identity.services.google.model.GSuiteGroup;
-import camp.xit.identity.services.google.model.GroupList;
+import camp.xit.identity.services.google.model.*;
 import camp.xit.identity.services.google.model.GroupMember.Status;
-import camp.xit.identity.services.google.model.GroupMembership;
 import camp.xit.identity.services.ldap.LdapAccountService;
+import camp.xit.identity.services.ldap.model.LdapAccount;
 import camp.xit.identity.services.ldap.model.LdapGroup;
 import camp.xit.identity.services.model.AccountInfo;
 import camp.xit.identity.services.sync.AccountSyncService;
@@ -129,6 +128,20 @@ public class AccountSyncServiceImpl implements AccountSyncService, EventHandler 
             ldapService.removeGroup(ldapGroup.getName());
         }
         return result;
+    }
+
+
+    @Override
+    public void synchronizeGSuiteUsers() throws LDAPException {
+        GSuiteUsers users = gsuiteDirService.getAllUsers();
+        for (GSuiteUser user : users.getUsers()) {
+            if (ldapService.accountExists(user.getId())) {
+                ldapService.updateAccount(LdapAccount.from(user));
+                log.info("User {} successfully updated.", user.getPrimaryEmail());
+            } else {
+                log.info("User {} does not exists in LDAP.", user.getPrimaryEmail());
+            }
+        }
     }
 
 

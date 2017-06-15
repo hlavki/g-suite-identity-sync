@@ -3,17 +3,13 @@ package camp.xit.identity.services.ldap.impl;
 import camp.xit.identity.services.config.AppConfiguration;
 import camp.xit.identity.services.model.AccountInfo;
 import camp.xit.identity.services.config.Configuration;
-import camp.xit.identity.services.model.CreateAccountData;
 import com.unboundid.ldap.sdk.*;
-import org.apache.cxf.rs.security.oidc.common.UserInfo;
 import org.osgi.service.event.Event;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import camp.xit.identity.services.ldap.LdapAccountService;
+import camp.xit.identity.services.ldap.model.LdapAccount;
 import camp.xit.identity.services.ldap.model.LdapGroup;
-import camp.xit.identity.services.model.PrepareAccountData.EmailAddress;
-import camp.xit.identity.services.model.PrepareAccountData.Role;
-import camp.xit.identity.services.model.UpdateAccountData;
 import camp.xit.identity.services.util.AccountUtil;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -84,33 +80,39 @@ public class LdapAccountServiceImpl implements LdapAccountService, EventHandler 
 
 
     @Override
-    public void createAccount(UserInfo userInfo, List<EmailAddress> emails, CreateAccountData createData) throws LDAPException {
+    public void createAccount(LdapAccount account) throws LDAPException {
         try (LDAPConnection conn = ldapPool.getConnection()) {
             DN baseDN = new DN(config.getLdapUserBaseDN());
-            DN entryDN = new DN(new RDN("uid", createData.getEmail()), baseDN);
+            DN entryDN = new DN(new RDN("uid", account.getUsername()), baseDN);
             Entry entry = new Entry(entryDN);
             entry.addAttribute("objectClass", "inetOrgPerson");
-            for (EmailAddress email : emails) {
-                entry.addAttribute("mail", email.getEmail());
+            for (String email : account.getEmails()) {
+                entry.addAttribute("mail", email);
             }
-            entry.addAttribute("givenName", userInfo.getGivenName());
-            entry.addAttribute("sn", userInfo.getFamilyName());
-            entry.addAttribute("cn", userInfo.getName());
-            entry.addAttribute("employeeNumber", userInfo.getSubject());
-            entry.addAttribute("userPassword", createData.getPassword());
-            Role role = AccountUtil.getAccountRole(config, userInfo);
-            entry.addAttribute("employeeType", role.toString());
+            entry.addAttribute("givenName", account.getGivenName());
+            entry.addAttribute("sn", account.getFamilyName());
+            entry.addAttribute("cn", account.getName());
+            entry.addAttribute("employeeNumber", account.getSubject());
+            entry.addAttribute("userPassword", account.getPassword());
+            entry.addAttribute("employeeType", account.getRole().toString());
             conn.add(entry);
         }
     }
 
 
     @Override
-    public void updateAccount(UserInfo userInfo, UpdateAccountData createData) throws LDAPException {
+    public void updateAccount(LdapAccount account) throws LDAPException {
         try (LDAPConnection conn = ldapPool.getConnection()) {
-            String entryDN = getAccountDN(userInfo.getSubject());
-            Modification mod = new Modification(ModificationType.REPLACE, "userPassword", createData.getPassword());
-            conn.modify(new ModifyRequest(entryDN, mod));
+            String entryDN = getAccountDN(account.getSubject());
+            List<Modification> mods = new ArrayList<>();
+            if (account.getPassword() != null) {
+                mods.add(new Modification(ModificationType.REPLACE, "userPassword", account.getPassword()));
+            }
+            mods.add(new Modification(ModificationType.REPLACE, "givenName", account.getGivenName()));
+            mods.add(new Modification(ModificationType.REPLACE, "sn", account.getFamilyName()));
+            mods.add(new Modification(ModificationType.REPLACE, "cn", account.getName()));
+            mods.add(new Modification(ModificationType.REPLACE, "mail", account.getEmails().toArray(new String[0])));
+            conn.modify(new ModifyRequest(entryDN, mods));
         }
     }
 

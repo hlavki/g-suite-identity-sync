@@ -21,6 +21,12 @@
     <bean id="jsonProvider" class="org.apache.cxf.jaxrs.provider.json.JSONProvider">
         <property name="dropRootElement" value="true"/> <!-- Serialization -->
         <property name="supportUnwrapped" value="true"/> <!-- Deserialization -->
+        <property name="serializeAsArray" value="true"/> <!-- Workaround for single valued collections -->
+        <property name="arrayKeys">
+            <list>
+                <value>emails</value>
+            </list>
+        </property>
     </bean>
     
     <!-- Configuration -->

@@ -37,7 +37,7 @@ public class AdminService implements EventHandler {
     }
 
 
-    @Path("sync")
+    @Path("sync/groups")
     @PUT
     public Response synchronizeGroups() {
         Response.ResponseBuilder response;
@@ -46,6 +46,21 @@ public class AdminService implements EventHandler {
             response = Response.ok();
         } catch (LDAPException e) {
             log.error("Can't synchronize groups", e);
+            response = ServerError.toResponse("LDAP_ERR", e);
+        }
+        return response.build();
+    }
+
+
+    @Path("sync/users")
+    @PUT
+    public Response synchronizeUsers() {
+        Response.ResponseBuilder response;
+        try {
+            syncService.synchronizeGSuiteUsers();
+            response = Response.ok();
+        } catch (LDAPException e) {
+            log.error("Can't synchronize users", e);
             response = ServerError.toResponse("LDAP_ERR", e);
         }
         return response.build();

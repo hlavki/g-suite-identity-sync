@@ -7,6 +7,7 @@ import camp.xit.identity.services.google.NoPrivateKeyException;
 import camp.xit.identity.services.google.model.GSuiteGroup;
 import camp.xit.identity.services.google.model.GroupList;
 import camp.xit.identity.services.config.Configuration;
+import camp.xit.identity.services.google.model.*;
 import java.security.*;
 import java.text.MessageFormat;
 import java.util.*;
@@ -86,7 +87,6 @@ public class GSuiteDirectoryServiceImpl implements GSuiteDirectoryService, Event
         WebClient webClient = WebClient.fromClient(directoryApiClient, true).path(path);
         ClientAccessToken accessToken = tokenCache.get(true);
         webClient.authorization(accessToken);
-        webClient.query("maxResults", 2);
         GroupMembership result;
         if (parent != null && parent.getNextPageToken() != null) {
             result = webClient.query("pageToken", parent.getNextPageToken()).get(GroupMembership.class);
@@ -130,6 +130,46 @@ public class GSuiteDirectoryServiceImpl implements GSuiteDirectoryService, Event
     }
 
 
+    @Override
+    public Map<GSuiteGroup, GroupMembership> getAllGroupMembership() {
+        return membershipCache.get(Boolean.TRUE);
+    }
+
+
+    @Override
+    public GSuiteUsers getAllUsers() {
+        return readAllUsers(null);
+    }
+
+
+    @Override
+    public GSuiteUser getUser(String userKey) {
+        String path = MessageFormat.format("users/{0}", new Object[]{userKey});
+        WebClient webClient = WebClient.fromClient(directoryApiClient, true);
+
+        ClientAccessToken accessToken = tokenCache.get(true);
+        webClient.authorization(accessToken);
+        GSuiteUser user = webClient.path(path).get(GSuiteUser.class);
+        return user;
+    }
+
+
+    private GSuiteUsers readAllUsers(GSuiteUsers parent) {
+        WebClient webClient = WebClient.fromClient(directoryApiClient, true).path("users");
+        ClientAccessToken accessToken = tokenCache.get(true);
+        webClient.authorization(accessToken);
+        GSuiteUsers result;
+        webClient.query("domain", config.getGSuiteDomain());
+        if (parent != null && parent.getNextPageToken() != null) {
+            result = webClient.query("pageToken", parent.getNextPageToken()).get(GSuiteUsers.class);
+            result.getUsers().addAll(parent.getUsers());
+        } else {
+            result = webClient.get(GSuiteUsers.class);
+        }
+        return result.getNextPageToken() != null ? readAllUsers(result) : result;
+    }
+
+
     private ClientAccessToken getAccessToken() {
         JwsHeaders headers = new JwsHeaders(JoseType.JWT, SignatureAlgorithm.RS256);
         JwtClaims claims = new JwtClaims();
@@ -141,7 +181,7 @@ public class GSuiteDirectoryServiceImpl implements GSuiteDirectoryService, Event
         long tokenTimeout = config.getServiceAccountTokenLifetime();
         claims.setIssuedAt(issuedAt);
         claims.setExpiryTime(issuedAt + tokenTimeout);
-        claims.setProperty("scope", "https://www.googleapis.com/auth/admin.directory.group.readonly");
+        claims.setProperty("scope", "https://www.googleapis.com/auth/admin.directory.group.readonly https://www.googleapis.com/auth/admin.directory.user");
 
         JwtToken token = new JwtToken(headers, claims);
         JwsJwtCompactProducer p = new JwsJwtCompactProducer(token);
@@ -156,12 +196,6 @@ public class GSuiteDirectoryServiceImpl implements GSuiteDirectoryService, Event
         accessTokenService.type(MediaType.APPLICATION_FORM_URLENCODED).accept(MediaType.APPLICATION_JSON);
 
         return accessTokenService.post(grant, ClientAccessToken.class);
-    }
-
-
-    @Override
-    public Map<GSuiteGroup, GroupMembership> getAllGroupMembership() {
-        return membershipCache.get(Boolean.TRUE);
     }
 
 

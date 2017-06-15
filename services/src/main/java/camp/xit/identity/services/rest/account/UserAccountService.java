@@ -9,27 +9,25 @@ import camp.xit.identity.services.model.CreateAccountData;
 import camp.xit.identity.services.model.PrepareAccountData.Role;
 import camp.xit.identity.services.model.ServerError;
 import camp.xit.identity.services.config.Configuration;
+import camp.xit.identity.services.google.model.GSuiteUser;
 import com.unboundid.ldap.sdk.*;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 import javax.ws.rs.*;
 import javax.ws.rs.core.*;
 import javax.ws.rs.core.Response.ResponseBuilder;
-import org.apache.cxf.helpers.CastUtils;
 import org.apache.cxf.jaxrs.client.WebClient;
-import org.apache.cxf.jaxrs.json.basic.JsonMapObject;
-import org.apache.cxf.rs.security.oauth2.common.ClientAccessToken;
 import org.apache.cxf.rs.security.oidc.rp.OidcClientTokenContext;
 import org.osgi.service.event.Event;
 import org.osgi.service.event.EventHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import camp.xit.identity.services.ldap.LdapAccountService;
+import camp.xit.identity.services.ldap.model.LdapAccount;
 import camp.xit.identity.services.model.*;
 import camp.xit.identity.services.sync.AccountSyncService;
 import camp.xit.identity.services.util.AccountUtil;
+import java.util.HashSet;
+import java.util.Set;
 import javax.validation.Valid;
 import org.apache.cxf.rs.security.oidc.common.UserInfo;
 
@@ -66,13 +64,12 @@ public class UserAccountService implements EventHandler {
     @GET
     @Path("prepare")
     public PrepareAccountData prepareAccount() {
-        final org.apache.cxf.rs.security.oidc.common.UserInfo userInfo = oidcContext.getUserInfo();
-
+        final UserInfo userInfo = oidcContext.getUserInfo();
         PrepareAccountData detail = new PrepareAccountData();
         detail.setGivenName(userInfo.getGivenName());
         detail.setFamilyName(userInfo.getFamilyName());
         detail.setName(userInfo.getName());
-        detail.setEmails(getVerifiedEmails());
+        detail.setEmails(getUserEmails(userInfo.getSubject()));
         detail.setEmailVerified(userInfo.getEmailVerified());
         detail.setRole(AccountUtil.getAccountRole(config, userInfo));
         detail.setSaveGSuitePassword(detail.getRole() == Role.INTERNAL);
@@ -87,10 +84,13 @@ public class UserAccountService implements EventHandler {
     @POST
     public Response createAccount(@Valid CreateAccountData data) {
         ResponseBuilder response;
-        String subject = oidcContext.getUserInfo().getSubject();
+        UserInfo userInfo = oidcContext.getUserInfo();
+        String subject = userInfo.getSubject();
         try {
             if (!ldapService.accountExists(subject)) {
-                ldapService.createAccount(oidcContext.getUserInfo(), getVerifiedEmails(), data);
+                Set<String> emails = getUserEmails(userInfo.getSubject());
+                LdapAccount account = LdapAccount.from(config, userInfo, emails, data);
+                ldapService.createAccount(account);
                 response = Response.ok();
             } else {
                 response = Response.ok().status(Response.Status.CONFLICT);
@@ -122,10 +122,13 @@ public class UserAccountService implements EventHandler {
     @PUT
     public Response updateAccount(@Valid UpdateAccountData data) {
         ResponseBuilder response;
-        String subject = oidcContext.getUserInfo().getSubject();
+        UserInfo userInfo = oidcContext.getUserInfo();
+        String subject = userInfo.getSubject();
         try {
             if (ldapService.accountExists(subject)) {
-                ldapService.updateAccount(oidcContext.getUserInfo(), data);
+                Set<String> emails = getUserEmails(userInfo.getSubject());
+                LdapAccount account = LdapAccount.from(config, userInfo, emails, data);
+                ldapService.updateAccount(account);
                 response = Response.ok();
             } else {
                 response = Response.ok().status(Response.Status.CONFLICT);
@@ -165,23 +168,10 @@ public class UserAccountService implements EventHandler {
     }
 
 
-    private List<PrepareAccountData.EmailAddress> getVerifiedEmails() {
-        List<PrepareAccountData.EmailAddress> result = new ArrayList<>();
-        ClientAccessToken accessToken = oidcContext.getToken();
-        peopleServiceClient.authorization(accessToken);
-        log.info("Reading email addresses");
-        JsonMapObject jsonMap = peopleServiceClient.query("requestMask.includeField", "person.email_addresses").get().readEntity(JsonMapObject.class);
-        List<Object> emails = CastUtils.cast((List<?>) jsonMap.getProperty("emailAddresses"));
-        for (Object email : emails) {
-            Map<String, Object> emailMap = CastUtils.cast((Map<String, Object>) email);
-            String value = (String) emailMap.get("value");
-            Map<String, Object> metadata = CastUtils.cast((Map<String, Object>) emailMap.get("metadata"));
-            boolean primary = metadata.containsKey("primary") ? (boolean) metadata.get("primary") : false;
-            boolean verified = metadata.containsKey("verified") ? (boolean) metadata.get("verified") : false;
-            if (verified) {
-                result.add(new PrepareAccountData.EmailAddress(value, primary, verified));
-            }
-        }
+    private Set<String> getUserEmails(String userKey) {
+        GSuiteUser user = directoryService.getUser(userKey);
+        Set<String> result = new HashSet<>(user.getAliases());
+        result.add(user.getPrimaryEmail());
         return result;
     }
 }
