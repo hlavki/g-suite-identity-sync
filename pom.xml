@@ -111,5 +111,14 @@
                 </plugin>
             </plugins>
         </pluginManagement>
+        <plugins>
+            <plugin>
+                <artifactId>maven-release-plugin</artifactId>
+                <version>2.5.3</version>
+                <configuration>
+                    <completionGoals>install</completionGoals>
+                </configuration>
+            </plugin>
+        </plugins>
     </build>
 </project>
