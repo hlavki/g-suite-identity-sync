@@ -216,6 +216,12 @@ public class Configuration implements ManagedService, AppConfiguration {
 
 
     @Override
+    public String getGSuiteImplicitGroup() {
+        return get(GSUITE_IMPLICIT_GROUP);
+    }
+
+
+    @Override
     public String getServiceAccountClientId() {
         return get(CLIENT_ID_PROP);
     }
