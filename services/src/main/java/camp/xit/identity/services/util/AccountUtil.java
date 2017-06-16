@@ -16,13 +16,13 @@ public final class AccountUtil {
     }
 
 
-    public static final boolean isAccountInternal(AppConfiguration cfg, UserInfo info) {
+    public static final boolean isAccountInternal(UserInfo info, AppConfiguration cfg) {
         return cfg.getGSuiteDomain().equals(info.getProperty("hd"));
     }
 
 
     public static final Role getAccountRole(AppConfiguration cfg, UserInfo userInfo) {
-        return isAccountInternal(cfg, userInfo) ? Role.INTERNAL : Role.EXTERNAL;
+        return isAccountInternal(userInfo, cfg) ? Role.INTERNAL : Role.EXTERNAL;
     }
 
 

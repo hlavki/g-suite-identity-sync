@@ -26,6 +26,8 @@ import camp.xit.identity.services.ldap.model.LdapAccount;
 import camp.xit.identity.services.model.*;
 import camp.xit.identity.services.sync.AccountSyncService;
 import camp.xit.identity.services.util.AccountUtil;
+import static camp.xit.identity.services.util.AccountUtil.isAccountInternal;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 import javax.validation.Valid;
@@ -68,7 +70,7 @@ public class UserAccountService implements EventHandler {
         detail.setFamilyName(userInfo.getFamilyName());
         detail.setName(userInfo.getName());
         detail.setEmail(userInfo.getEmail());
-        detail.setEmails(getUserEmails(userInfo.getSubject()));
+        detail.setEmails(getUserAliases(userInfo, config));
         detail.setEmailVerified(userInfo.getEmailVerified());
         detail.setRole(AccountUtil.getAccountRole(config, userInfo));
         detail.setSaveGSuitePassword(detail.getRole() == Role.INTERNAL && config.isGsuiteSyncPassword());
@@ -87,10 +89,10 @@ public class UserAccountService implements EventHandler {
         String subject = userInfo.getSubject();
         try {
             if (!ldapService.accountExists(subject)) {
-                Set<String> emails = getUserEmails(userInfo.getSubject());
+                Set<String> emails = getUserAliases(userInfo, config);
                 LdapAccount account = LdapAccount.from(config, userInfo, emails, data);
                 ldapService.createAccount(account);
-                if (data.isSaveGSuitePassword()) {
+                if (data.isSaveGSuitePassword() && isAccountInternal(userInfo, config)) {
                     try {
                         gsuiteDirService.updateUserPassword(subject, data.getPassword());
                     } catch (InvalidPasswordException e) {
@@ -116,11 +118,11 @@ public class UserAccountService implements EventHandler {
         String subject = userInfo.getSubject();
         try {
             if (ldapService.accountExists(subject)) {
-                Set<String> emails = getUserEmails(userInfo.getSubject());
+                Set<String> emails = getUserAliases(userInfo, config);
                 LdapAccount account = LdapAccount.from(config, userInfo, emails, data);
                 ldapService.updateAccount(account);
                 response = Response.ok();
-                if (data.isSaveGSuitePassword()) {
+                if (data.isSaveGSuitePassword() && isAccountInternal(userInfo, config)) {
                     try {
                         gsuiteDirService.updateUserPassword(subject, data.getPassword());
                     } catch (InvalidPasswordException e) {
@@ -181,10 +183,13 @@ public class UserAccountService implements EventHandler {
     }
 
 
-    private Set<String> getUserEmails(String userKey) {
-        GSuiteUser user = gsuiteDirService.getUser(userKey);
-        Set<String> result = new HashSet<>(user.getAliases());
-        result.add(user.getPrimaryEmail());
+    private Set<String> getUserAliases(UserInfo userInfo, AppConfiguration cfg) {
+        Set<String> result = Collections.emptySet();
+        if (isAccountInternal(userInfo, cfg)) {
+            GSuiteUser user = gsuiteDirService.getUser(userInfo.getSubject());
+            result = new HashSet<>(user.getAliases());
+            result.add(user.getPrimaryEmail());
+        }
         return result;
     }
 }
