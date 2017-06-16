@@ -274,4 +274,10 @@ public class Configuration implements ManagedService, AppConfiguration {
     public Set<String> getAdmins() {
         return getSet(ADMINS_PROP);
     }
+
+
+    @Override
+    public boolean isGsuiteSyncPassword() {
+        return getBoolean(GSUITE_SYNC_PASSWORD_PROP, GSUITE_SYNC_PASSWORD_DEFAULT);
+    }
 }

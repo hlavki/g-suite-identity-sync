@@ -16,35 +16,35 @@ import java.util.stream.Collectors;
 import org.osgi.service.event.EventHandler;
 
 public class LdapAccountServiceImpl implements LdapAccountService, EventHandler {
-
+    
     private static final Logger log = LoggerFactory.getLogger(LdapAccountServiceImpl.class);
-
+    
     private static final String GROUP_OCLASS = "groupOfNames";
     private static final String GROUP_MEMBER_ATTR = "member";
     public static final String GROUP_NAME_ATTR = "cn";
     private static final String GROUP_DESC_ATTR = "description";
-
+    
     private final LDAPConnectionPool ldapPool;
     private final AppConfiguration config;
-
-
+    
+    
     public LdapAccountServiceImpl(Configuration config, LDAPConnectionPool ldapPool) {
         this.config = config;
         this.ldapPool = ldapPool;
     }
-
-
+    
+    
     private static void configure() {
         log.info("Configuring UserLdapService...");
     }
-
-
+    
+    
     @Override
     public boolean accountExists(String subject) throws LDAPException {
         return getAccountDN(subject) != null;
     }
-
-
+    
+    
     @Override
     public String getAccountDN(String subject) throws LDAPException {
         try (LDAPConnection conn = ldapPool.getConnection()) {
@@ -53,8 +53,8 @@ public class LdapAccountServiceImpl implements LdapAccountService, EventHandler 
             return entry != null ? entry.getDN() : null;
         }
     }
-
-
+    
+    
     @Override
     public AccountInfo getAccountInfo(String subject) throws LDAPException {
         AccountInfo result = null;
@@ -63,12 +63,13 @@ public class LdapAccountServiceImpl implements LdapAccountService, EventHandler 
             SearchResultEntry entry = conn.searchForEntry(baseDn, SearchScope.ONE, "(employeeNumber=" + subject + ")");
             if (entry != null) {
                 result = AccountUtil.fromLdap(entry);
+                result.setSyncGsuitePassword(config.isGsuiteSyncPassword());
             }
         }
         return result;
     }
-
-
+    
+    
     @Override
     public List<AccountInfo> getAllAccounts() throws LDAPException {
         try (LDAPConnection conn = ldapPool.getConnection()) {
@@ -77,8 +78,8 @@ public class LdapAccountServiceImpl implements LdapAccountService, EventHandler 
             return searchResult.getSearchEntries().stream().map(entry -> AccountUtil.fromLdap(entry)).collect(Collectors.toList());
         }
     }
-
-
+    
+    
     @Override
     public void createAccount(LdapAccount account) throws LDAPException {
         try (LDAPConnection conn = ldapPool.getConnection()) {
@@ -99,8 +100,8 @@ public class LdapAccountServiceImpl implements LdapAccountService, EventHandler 
             conn.add(entry);
         }
     }
-
-
+    
+    
     @Override
     public void updateAccount(LdapAccount account) throws LDAPException {
         try (LDAPConnection conn = ldapPool.getConnection()) {
@@ -116,16 +117,16 @@ public class LdapAccountServiceImpl implements LdapAccountService, EventHandler 
             conn.modify(new ModifyRequest(entryDN, mods));
         }
     }
-
-
+    
+    
     @Override
     public LdapGroup getGroup(String groupName) throws LDAPException {
         try (LDAPConnection conn = ldapPool.getConnection()) {
             return getGroup(groupName, conn);
         }
     }
-
-
+    
+    
     @Override
     public Set<String> getAllGroupNames() throws LDAPException {
         Set<String> result = new HashSet<>();
@@ -141,8 +142,8 @@ public class LdapAccountServiceImpl implements LdapAccountService, EventHandler 
         }
         return result;
     }
-
-
+    
+    
     @Override
     public LdapGroup createOrUpdateGroup(LdapGroup group) throws LDAPException {
         try (LDAPConnection conn = ldapPool.getConnection()) {
@@ -168,8 +169,8 @@ public class LdapAccountServiceImpl implements LdapAccountService, EventHandler 
             return current;
         }
     }
-
-
+    
+    
     @Override
     public Map<String, LdapGroup> getAccountGroups(String accountDN) throws LDAPException {
         Map<String, LdapGroup> result = new HashMap<>();
@@ -190,8 +191,8 @@ public class LdapAccountServiceImpl implements LdapAccountService, EventHandler 
         }
         return result;
     }
-
-
+    
+    
     @Override
     public void addGroupMember(String accountDN, String groupName) throws LDAPException {
         try (LDAPConnection conn = ldapPool.getConnection()) {
@@ -215,8 +216,8 @@ public class LdapAccountServiceImpl implements LdapAccountService, EventHandler 
             }
         }
     }
-
-
+    
+    
     @Override
     public void removeGroupMember(String accountDN, String groupName) throws LDAPException {
         try (LDAPConnection conn = ldapPool.getConnection()) {
@@ -234,8 +235,8 @@ public class LdapAccountServiceImpl implements LdapAccountService, EventHandler 
             }
         }
     }
-
-
+    
+    
     @Override
     public void removeGroup(String groupName) throws LDAPException {
         try (LDAPConnection conn = ldapPool.getConnection()) {
@@ -271,8 +272,8 @@ public class LdapAccountServiceImpl implements LdapAccountService, EventHandler 
         }
         return result;
     }
-
-
+    
+    
     @Override
     public void handleEvent(Event event) {
         if (Configuration.TOPIC_CHANGE.equals(event.getTopic())) {

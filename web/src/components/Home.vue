@@ -52,7 +52,7 @@ export default {
     return {
       accountData: { username: '', name: '', role: '' },
       showProgress: false,
-      formData: { password: '', confirmPassword: '', saveGSuitePassword: true }
+      formData: { password: '', confirmPassword: '', saveGSuitePassword: false }
     }
   },
   created: function () {
@@ -65,6 +65,7 @@ export default {
       this.$http.get(this.$apiPrefix + '/xit/account').then(function (response) {
         console.info('Account Detail. Status: OK, Body: ' + Object.keys(response.data))
         _this.accountData = response.data
+        _this.processFormData(_this.accountData)
         _this.showProgress = false
       }).catch(function (error) {
         _this.showProgress = false
@@ -83,6 +84,9 @@ export default {
     },
     showSaveGSuitePasswordCheckbox() {
       return this.accountData.role === 'INTERNAL'
+    },
+    processFormData(userData) {
+      this.formData.saveGSuitePassword = accountData.saveGSuitePassword
     },
     sendData: function (event) {
       var _this = this
