@@ -26,12 +26,12 @@ import camp.xit.identity.services.ldap.model.LdapAccount;
 import camp.xit.identity.services.model.*;
 import camp.xit.identity.services.sync.AccountSyncService;
 import camp.xit.identity.services.util.AccountUtil;
-import static camp.xit.identity.services.util.AccountUtil.isAccountInternal;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 import javax.validation.Valid;
 import org.apache.cxf.rs.security.oidc.common.UserInfo;
+import static camp.xit.identity.services.util.AccountUtil.isInternalAccount;
 
 @Path("account")
 public class UserAccountService implements EventHandler {
@@ -92,7 +92,7 @@ public class UserAccountService implements EventHandler {
                 Set<String> emails = getUserAliases(userInfo, config);
                 LdapAccount account = LdapAccount.from(config, userInfo, emails, data);
                 ldapService.createAccount(account);
-                if (data.isSaveGSuitePassword() && isAccountInternal(userInfo, config)) {
+                if (data.isSaveGSuitePassword() && isInternalAccount(userInfo, config)) {
                     try {
                         gsuiteDirService.updateUserPassword(subject, data.getPassword());
                     } catch (InvalidPasswordException e) {
@@ -122,7 +122,7 @@ public class UserAccountService implements EventHandler {
                 LdapAccount account = LdapAccount.from(config, userInfo, emails, data);
                 ldapService.updateAccount(account);
                 response = Response.ok();
-                if (data.isSaveGSuitePassword() && isAccountInternal(userInfo, config)) {
+                if (data.isSaveGSuitePassword() && isInternalAccount(userInfo, config)) {
                     try {
                         gsuiteDirService.updateUserPassword(subject, data.getPassword());
                     } catch (InvalidPasswordException e) {
@@ -185,7 +185,7 @@ public class UserAccountService implements EventHandler {
 
     private Set<String> getUserAliases(UserInfo userInfo, AppConfiguration cfg) {
         Set<String> result = Collections.emptySet();
-        if (isAccountInternal(userInfo, cfg)) {
+        if (isInternalAccount(userInfo, cfg)) {
             GSuiteUser user = gsuiteDirService.getUser(userInfo.getSubject());
             result = new HashSet<>(user.getAliases());
             result.add(user.getPrimaryEmail());
