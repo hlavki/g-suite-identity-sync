@@ -85,7 +85,7 @@ export default {
     showSaveGSuitePasswordCheckbox() {
       return this.accountData.role === 'INTERNAL'
     },
-    processFormData(userData) {
+    processFormData(accountData) {
       this.formData.saveGSuitePassword = accountData.saveGSuitePassword
     },
     sendData: function (event) {
