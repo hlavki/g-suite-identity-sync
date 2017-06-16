@@ -30,18 +30,18 @@ public class GSuiteGroupAuthorizationFilter implements ContainerRequestFilter {
     private static final Logger log = LoggerFactory.getLogger(GSuiteGroupAuthorizationFilter.class);
     private static final String GSUITE_DOMAIN_PROP = "gsuite.domain";
     private static final String GSUITE_SIGN_UP_GROUPS_PROP = "gsuite.signUp.groups";
-    private final GSuiteDirectoryService directoryService;
+    private final GSuiteDirectoryService gsuiteDirService;
     private final Configuration config;
     private final Cache<String, Set<String>> groupCache;
 
 
-    public GSuiteGroupAuthorizationFilter(GSuiteDirectoryService directoryService, Configuration config) {
-        this.directoryService = directoryService;
+    public GSuiteGroupAuthorizationFilter(GSuiteDirectoryService gsuiteDirService, Configuration config) {
+        this.gsuiteDirService = gsuiteDirService;
         this.config = config;
         this.groupCache = new Cache2kBuilder<String, Set<String>>() {
         }.expireAfterWrite(15, TimeUnit.MINUTES)
-                .loader((key) -> {
-                    GroupList list = this.directoryService.getGroups(key);
+                .loader((userKey) -> {
+                    GroupList list = this.gsuiteDirService.getGroups(userKey);
                     Set<String> result = list.getGroups() != null
                             ? list.getGroups().stream().map(g -> g.getEmail()).collect(Collectors.toSet())
                             : Collections.emptySet();
