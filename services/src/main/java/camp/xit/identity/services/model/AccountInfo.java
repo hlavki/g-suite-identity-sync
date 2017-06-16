@@ -14,13 +14,15 @@ public class AccountInfo {
     private String familyName;
     private String name;
     private Role role;
+    private boolean syncGsuitePassword;
 
 
     public AccountInfo() {
     }
 
 
-    public AccountInfo(String username, Set<String> emails, String subject, String givenName, String familyName, String name, Role role) {
+    public AccountInfo(String username, Set<String> emails, String subject, String givenName,
+            String familyName, String name, Role role, boolean syncGsuitePassword) {
         this.username = username;
         this.emails = emails;
         this.subject = subject;
@@ -98,5 +100,15 @@ public class AccountInfo {
 
     public void setRole(Role role) {
         this.role = role;
+    }
+
+
+    public boolean isSyncGsuitePassword() {
+        return syncGsuitePassword;
+    }
+
+
+    public void setSyncGsuitePassword(boolean syncGsuitePassword) {
+        this.syncGsuitePassword = syncGsuitePassword;
     }
 }

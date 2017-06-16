@@ -122,12 +122,13 @@ public class LdapAccount {
 
 
     public final static LdapAccount from(AppConfiguration cfg, UserInfo userInfo, Set<String> emails,
-            UpdateAccountData createData) {
+            UpdateAccountData updateData) {
         LdapAccount account = new LdapAccount();
         account.setSubject(userInfo.getSubject());
         account.setGivenName(userInfo.getGivenName());
         account.setFamilyName(userInfo.getFamilyName());
         account.setName(userInfo.getName());
+        account.setPassword(updateData.getPassword());
         account.setRole(AccountUtil.getAccountRole(cfg, userInfo));
         account.setEmails(emails);
         return account;

@@ -18,6 +18,8 @@ public interface AppConfiguration {
     static final String LDAP_BASE_DN_PROP = "ldap.baseDN";
     static final String LDAP_GROUPS_BASE_DN_PROP = "ldap.groups.baseDN";
     static final String ADMINS_PROP = "admins";
+    static final String GSUITE_SYNC_PASSWORD_PROP = "gsuite.sync.password";
+    static final boolean GSUITE_SYNC_PASSWORD_DEFAULT = false;
 
 
     String getGSuiteDomain();
@@ -48,4 +50,7 @@ public interface AppConfiguration {
 
 
     Set<String> getAdmins();
+
+
+    boolean isGsuiteSyncPassword();
 }

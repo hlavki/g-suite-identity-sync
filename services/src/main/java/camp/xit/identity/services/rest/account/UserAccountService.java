@@ -71,7 +71,7 @@ public class UserAccountService implements EventHandler {
         detail.setEmails(getUserEmails(userInfo.getSubject()));
         detail.setEmailVerified(userInfo.getEmailVerified());
         detail.setRole(AccountUtil.getAccountRole(config, userInfo));
-        detail.setSaveGSuitePassword(detail.getRole() == Role.INTERNAL);
+        detail.setSaveGSuitePassword(detail.getRole() == Role.INTERNAL && config.isGsuiteSyncPassword());
         GroupList userGroups = gsuiteDirService.getGroups(userInfo.getSubject());
         if (userGroups.getGroups() != null) {
             detail.setGroups(userGroups.getGroups().stream().map(PrepareAccountData.Group::map).collect(Collectors.toList()));
