@@ -8,11 +8,15 @@ import camp.xit.identity.services.google.model.GSuiteGroup;
 import camp.xit.identity.services.google.model.GroupList;
 import camp.xit.identity.services.config.Configuration;
 import camp.xit.identity.services.google.InvalidPasswordException;
+import camp.xit.identity.services.google.ResourceNotFoundException;
 import camp.xit.identity.services.google.model.*;
+import com.google.common.base.Supplier;
+import com.google.common.base.Suppliers;
 import java.security.*;
 import java.text.MessageFormat;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
+import javax.ws.rs.NotFoundException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import org.apache.cxf.interceptor.LoggingInInterceptor;
@@ -28,8 +32,6 @@ import org.apache.cxf.rs.security.oauth2.common.ClientAccessToken;
 import org.apache.cxf.rs.security.oauth2.grants.jwt.JwtBearerGrant;
 import org.apache.cxf.rs.security.oauth2.provider.OAuthJSONProvider;
 import org.apache.cxf.rs.security.oauth2.utils.OAuthUtils;
-import org.cache2k.Cache;
-import org.cache2k.Cache2kBuilder;
 import org.osgi.service.event.Event;
 import org.osgi.service.event.EventHandler;
 import org.slf4j.Logger;
@@ -39,8 +41,8 @@ public class GSuiteDirectoryServiceImpl implements GSuiteDirectoryService, Event
 
     private static final Logger log = LoggerFactory.getLogger(GSuiteDirectoryServiceImpl.class);
     private PrivateKey privateKey;
-    private Cache<Boolean, ClientAccessToken> tokenCache;
-    private Cache<Boolean, Map<GSuiteGroup, GroupMembership>> membershipCache;
+    private Supplier<ClientAccessToken> tokenCache;
+    private Supplier<Map<GSuiteGroup, GroupMembership>> membershipCache;
 
     private final WebClient directoryApiClient;
     private final AppConfiguration config;
@@ -57,17 +59,8 @@ public class GSuiteDirectoryServiceImpl implements GSuiteDirectoryService, Event
         log.info("Configuring GSuiteDirectoryService ...");
         long tokenLifetime = config.getServiceAccountTokenLifetime();
         log.info("Token lifetime set to {}", tokenLifetime);
-        this.tokenCache = Cache2kBuilder.of(Boolean.class, ClientAccessToken.class)
-                .expireAfterWrite(tokenLifetime - 3, TimeUnit.SECONDS)
-                .loader((key) -> {
-                    return key.equals(Boolean.TRUE) ? getAccessToken() : null;
-                }).build();
-        this.membershipCache = new Cache2kBuilder<Boolean, Map<GSuiteGroup, GroupMembership>>() {
-        }
-                .expireAfterWrite(15, TimeUnit.MINUTES)
-                .loader((key) -> {
-                    return key.equals(Boolean.TRUE) ? getAllGroupMembershipInternal() : null;
-                }).build();
+        this.tokenCache = Suppliers.memoizeWithExpiration(() -> getAccessToken(), tokenLifetime - 3, TimeUnit.SECONDS);
+        this.membershipCache = Suppliers.memoizeWithExpiration(() -> getAllGroupMembershipInternal(), 15, TimeUnit.MINUTES);
         try {
             privateKey = config.getServiceAccountKey();
             log.info("Service account private key loaded");
@@ -78,25 +71,29 @@ public class GSuiteDirectoryServiceImpl implements GSuiteDirectoryService, Event
 
 
     @Override
-    public GroupMembership getGroupMembers(String groupKey) {
+    public GroupMembership getGroupMembers(String groupKey) throws ResourceNotFoundException {
         return readGroupMembers(groupKey, null);
     }
 
 
-    private GroupMembership readGroupMembers(String groupKey, GroupMembership parent) {
+    private GroupMembership readGroupMembers(String groupKey, GroupMembership parent) throws ResourceNotFoundException {
         String path = MessageFormat.format("groups/{0}/members", new Object[]{groupKey});
 
         WebClient webClient = WebClient.fromClient(directoryApiClient, true).path(path);
-        ClientAccessToken accessToken = tokenCache.get(true);
+        ClientAccessToken accessToken = tokenCache.get();
         webClient.authorization(accessToken);
         GroupMembership result;
-        if (parent != null && parent.getNextPageToken() != null) {
-            result = webClient.query("pageToken", parent.getNextPageToken()).get(GroupMembership.class);
-            result.getMembers().addAll(parent.getMembers());
-        } else {
-            result = webClient.get(GroupMembership.class);
+        try {
+            if (parent != null && parent.getNextPageToken() != null) {
+                result = webClient.query("pageToken", parent.getNextPageToken()).get(GroupMembership.class);
+                result.getMembers().addAll(parent.getMembers());
+            } else {
+                result = webClient.get(GroupMembership.class);
+            }
+            return result.getNextPageToken() != null ? readGroupMembers(groupKey, result) : result;
+        } catch (NotFoundException e) {
+            throw new ResourceNotFoundException("Group " + groupKey + " not found.", e);
         }
-        return result.getNextPageToken() != null ? readGroupMembers(groupKey, result) : result;
     }
 
 
@@ -106,7 +103,7 @@ public class GSuiteDirectoryServiceImpl implements GSuiteDirectoryService, Event
 
         WebClient webClient = WebClient.fromClient(directoryApiClient, true);
 
-        ClientAccessToken accessToken = tokenCache.get(true);
+        ClientAccessToken accessToken = tokenCache.get();
         webClient.authorization(accessToken);
         GSuiteGroup group = webClient.path(path).get(GSuiteGroup.class);
         return group;
@@ -117,7 +114,7 @@ public class GSuiteDirectoryServiceImpl implements GSuiteDirectoryService, Event
     public GroupList getGroups(String userKey) {
         WebClient webClient = WebClient.fromClient(directoryApiClient, true).path("groups");
 
-        webClient.authorization(tokenCache.get(true));
+        webClient.authorization(tokenCache.get());
         if (userKey != null) {
             webClient.query("userKey", userKey);
         }
@@ -133,8 +130,8 @@ public class GSuiteDirectoryServiceImpl implements GSuiteDirectoryService, Event
 
 
     @Override
-    public Map<GSuiteGroup, GroupMembership> getAllGroupMembership() {
-        return membershipCache.get(Boolean.TRUE);
+    public Map<GSuiteGroup, GroupMembership> getAllGroupMembership(boolean useCache) {
+        return useCache ? membershipCache.get() : getAllGroupMembershipInternal();
     }
 
 
@@ -149,7 +146,7 @@ public class GSuiteDirectoryServiceImpl implements GSuiteDirectoryService, Event
         String path = MessageFormat.format("users/{0}", new Object[]{userKey});
         WebClient webClient = WebClient.fromClient(directoryApiClient, true);
 
-        ClientAccessToken accessToken = tokenCache.get(true);
+        ClientAccessToken accessToken = tokenCache.get();
         webClient.authorization(accessToken);
         GSuiteUser user = webClient.path(path).get(GSuiteUser.class);
         return user;
@@ -161,7 +158,7 @@ public class GSuiteDirectoryServiceImpl implements GSuiteDirectoryService, Event
         String path = MessageFormat.format("users/{0}", new Object[]{userKey});
         WebClient webClient = WebClient.fromClient(directoryApiClient, true);
 
-        ClientAccessToken accessToken = tokenCache.get(true);
+        ClientAccessToken accessToken = tokenCache.get();
         webClient.authorization(accessToken);
         GSuiteUser user = new GSuiteUser();
         user.setPassword(password);
@@ -174,7 +171,7 @@ public class GSuiteDirectoryServiceImpl implements GSuiteDirectoryService, Event
 
     private GSuiteUsers readAllUsers(GSuiteUsers parent) {
         WebClient webClient = WebClient.fromClient(directoryApiClient, true).path("users");
-        ClientAccessToken accessToken = tokenCache.get(true);
+        ClientAccessToken accessToken = tokenCache.get();
         webClient.authorization(accessToken);
         GSuiteUsers result;
         webClient.query("domain", config.getGSuiteDomain());
@@ -220,9 +217,13 @@ public class GSuiteDirectoryServiceImpl implements GSuiteDirectoryService, Event
     private Map<GSuiteGroup, GroupMembership> getAllGroupMembershipInternal() {
         GroupList groups = getAllGroups();
         Map<GSuiteGroup, GroupMembership> result = new HashMap<>();
-        groups.getGroups().forEach((group) -> {
-            result.put(group, getGroupMembers(group.getId()));
-        });
+        for (GSuiteGroup group : groups.getGroups()) {
+            try {
+                result.put(group, getGroupMembers(group.getId()));
+            } catch (ResourceNotFoundException e) {
+                log.warn("Can't get group members for " + group.getEmail(), e);
+            }
+        }
         return result;
     }
 

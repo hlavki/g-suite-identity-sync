@@ -20,6 +20,7 @@ public interface AppConfiguration {
     static final String ADMINS_PROP = "admins";
     static final String GSUITE_SYNC_PASSWORD_PROP = "gsuite.sync.password";
     static final boolean GSUITE_SYNC_PASSWORD_DEFAULT = false;
+    static final String EXTERNAL_USER_GROUP_PROP = "gsuite.external.accounts.group";
 
 
     String getGSuiteDomain();
@@ -53,4 +54,7 @@ public interface AppConfiguration {
 
 
     boolean isGsuiteSyncPassword();
+
+
+    String getExternalAccountsGroup();
 }

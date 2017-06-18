@@ -80,7 +80,7 @@ public class AccountSyncServiceImpl implements AccountSyncService, EventHandler 
 
     @Override
     public void synchronizeAllGroups() throws LDAPException {
-        Map<GSuiteGroup, GroupMembership> gsuiteGroups = gsuiteDirService.getAllGroupMembership();
+        Map<GSuiteGroup, GroupMembership> gsuiteGroups = gsuiteDirService.getAllGroupMembership(false);
         Set<String> ldapGroups = ldapService.getAllGroupNames();
         GSuiteUsers allGsuiteUsers = gsuiteDirService.getAllUsers();
 
