@@ -59,7 +59,7 @@ public class GSuiteGroupAuthorizationFilter implements ContainerRequestFilter {
         String hdParam = idToken.getStringProperty("hd");
         boolean fromGsuite = config.getGSuiteDomain().equalsIgnoreCase(hdParam);
         Set<String> externalAccounts = externalAccountsCache.get();
-        if (!fromGsuite && !externalAccounts.contains(email) && !email.equals("hlavki@hlavki.eu")) {
+        if (!fromGsuite && !externalAccounts.contains(email)) {
             log.error("Unauthorized access from {}", hdParam);
             ServerError err = new ServerError("E001", "Sorry you are not allowed to exit camp");
             requestContext.abortWith(Response.status(Response.Status.UNAUTHORIZED).entity(err).type(MediaType.APPLICATION_JSON).build());
