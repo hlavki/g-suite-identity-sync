@@ -52,7 +52,8 @@ public class AccountSyncServiceImpl implements AccountSyncService, EventHandler 
                 .map(g -> g.getDn())
                 .collect(Collectors.toSet());
 
-        Set<String> toBe = gsuiteGroups.getGroups().stream()
+        List<GSuiteGroup> gg = gsuiteGroups.getGroups() != null ? gsuiteGroups.getGroups() : Collections.emptyList();
+        Set<String> toBe = gg.stream()
                 .map(group -> group.getEmail())
                 .map(email -> AccountUtil.getLdapGroupName(email))
                 .collect(Collectors.toSet());
