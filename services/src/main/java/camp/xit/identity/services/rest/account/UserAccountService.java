@@ -26,7 +26,6 @@ import camp.xit.identity.services.ldap.model.LdapAccount;
 import camp.xit.identity.services.model.*;
 import camp.xit.identity.services.sync.AccountSyncService;
 import camp.xit.identity.services.util.AccountUtil;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 import javax.validation.Valid;
@@ -184,11 +183,11 @@ public class UserAccountService implements EventHandler {
 
 
     private Set<String> getUserAliases(UserInfo userInfo, AppConfiguration cfg) {
-        Set<String> result = Collections.emptySet();
+        Set<String> result = new HashSet<>();
+        result.add(userInfo.getEmail());
         if (isInternalAccount(userInfo, cfg)) {
             GSuiteUser user = gsuiteDirService.getUser(userInfo.getSubject());
-            result = new HashSet<>(user.getAliases());
-            result.add(user.getPrimaryEmail());
+            result.addAll(user.getAliases());
         }
         return result;
     }
