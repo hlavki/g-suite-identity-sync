@@ -22,7 +22,7 @@ public interface GSuiteDirectoryService {
      * @param groupKey group identifier (email or ID)
      * @return group info
      */
-    GSuiteGroup getGroup(String groupKey);
+    GSuiteGroup getGroup(String groupKey) throws ResourceNotFoundException;
 
 
     /**
@@ -31,7 +31,7 @@ public interface GSuiteDirectoryService {
      * @param groupKey group identifier (email or ID)
      * @return group info and members
      */
-    GroupMembership getGroupMembers(String groupKey);
+    GroupMembership getGroupMembers(String groupKey) throws ResourceNotFoundException;
 
 
     /**
@@ -44,11 +44,14 @@ public interface GSuiteDirectoryService {
 
 
     /**
-     * Read members for all GSuite groups. Be aware that this is very expesive operation!
+     * Read members for all GSuite groups. Because it is very expesive operation, you can use cached values.
+     * Cache expires in 15 minutes. To use cache set useCache parameter to true.
      *
+     *
+     * @param useCache use cached values, if exists.
      * @return members for all GSuite groups. Key is group info object and value is membership
      */
-    Map<GSuiteGroup, GroupMembership> getAllGroupMembership();
+    Map<GSuiteGroup, GroupMembership> getAllGroupMembership(boolean useCache);
 
 
     /**

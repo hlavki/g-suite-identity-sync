@@ -280,4 +280,10 @@ public class Configuration implements ManagedService, AppConfiguration {
     public boolean isGsuiteSyncPassword() {
         return getBoolean(GSUITE_SYNC_PASSWORD_PROP, GSUITE_SYNC_PASSWORD_DEFAULT);
     }
+
+
+    @Override
+    public String getExternalAccountsGroup() {
+        return get(EXTERNAL_USER_GROUP_PROP);
+    }
 }

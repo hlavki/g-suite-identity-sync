@@ -1,9 +1,12 @@
 package camp.xit.identity.services.rest.security;
 
-import camp.xit.identity.services.config.Configuration;
+import camp.xit.identity.services.config.AppConfiguration;
 import camp.xit.identity.services.google.GSuiteDirectoryService;
-import camp.xit.identity.services.google.model.GroupList;
+import camp.xit.identity.services.google.ResourceNotFoundException;
+import camp.xit.identity.services.google.model.GroupMembership;
 import camp.xit.identity.services.model.ServerError;
+import com.google.common.base.Supplier;
+import com.google.common.base.Suppliers;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.Set;
@@ -19,8 +22,6 @@ import org.apache.cxf.jaxrs.utils.JAXRSUtils;
 import org.apache.cxf.rs.security.oauth2.client.ClientTokenContext;
 import org.apache.cxf.rs.security.oidc.common.IdToken;
 import org.apache.cxf.rs.security.oidc.rp.OidcClientTokenContext;
-import org.cache2k.Cache;
-import org.cache2k.Cache2kBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,25 +29,25 @@ import org.slf4j.LoggerFactory;
 public class GSuiteGroupAuthorizationFilter implements ContainerRequestFilter {
 
     private static final Logger log = LoggerFactory.getLogger(GSuiteGroupAuthorizationFilter.class);
-    private static final String GSUITE_DOMAIN_PROP = "gsuite.domain";
-    private static final String GSUITE_SIGN_UP_GROUPS_PROP = "gsuite.signUp.groups";
-    private final GSuiteDirectoryService gsuiteDirService;
-    private final Configuration config;
-    private final Cache<String, Set<String>> groupCache;
+    private final AppConfiguration config;
+    private final Supplier<Set<String>> externalAccountsCache;
 
 
-    public GSuiteGroupAuthorizationFilter(GSuiteDirectoryService gsuiteDirService, Configuration config) {
-        this.gsuiteDirService = gsuiteDirService;
+    public GSuiteGroupAuthorizationFilter(final GSuiteDirectoryService gsuiteDirService, AppConfiguration config) {
         this.config = config;
-        this.groupCache = new Cache2kBuilder<String, Set<String>>() {
-        }.expireAfterWrite(15, TimeUnit.MINUTES)
-                .loader((userKey) -> {
-                    GroupList list = this.gsuiteDirService.getGroups(userKey);
-                    Set<String> result = list.getGroups() != null
-                            ? list.getGroups().stream().map(g -> g.getEmail()).collect(Collectors.toSet())
-                            : Collections.emptySet();
+        this.externalAccountsCache = Suppliers.memoizeWithExpiration(
+                () -> {
+                    String allowGroup = config.getExternalAccountsGroup();
+                    Set<String> result = Collections.emptySet();
+                    try {
+                        GroupMembership membership = gsuiteDirService.getGroupMembers(allowGroup);
+                        result = membership.getMembers() == null ? Collections.emptySet()
+                        : membership.getMembers().stream().map(m -> m.getEmail()).collect(Collectors.toSet());
+                    } catch (ResourceNotFoundException e) {
+                        log.warn("Group for external accounts {} does not exists", allowGroup);
+                    }
                     return result;
-                }).build();
+                }, 15, TimeUnit.MINUTES);
     }
 
 
@@ -54,13 +55,11 @@ public class GSuiteGroupAuthorizationFilter implements ContainerRequestFilter {
     public void filter(ContainerRequestContext requestContext) throws IOException {
         OidcClientTokenContext ctx = (OidcClientTokenContext) JAXRSUtils.getCurrentMessage().getContent(ClientTokenContext.class);
         IdToken idToken = ctx.getIdToken();
-        String subject = idToken.getSubject();
+        String email = idToken.getEmail();
         String hdParam = idToken.getStringProperty("hd");
-        Set<String> allowGroups = config.getSet(GSUITE_SIGN_UP_GROUPS_PROP);
-        boolean fromGsuite = config.get(GSUITE_DOMAIN_PROP).equalsIgnoreCase(hdParam);
-        allowGroups.retainAll(groupCache.get(subject));
-        boolean memberOfAllowedGroup = !allowGroups.isEmpty();
-        if (!fromGsuite || memberOfAllowedGroup) {
+        boolean fromGsuite = config.getGSuiteDomain().equalsIgnoreCase(hdParam);
+        Set<String> externalAccounts = externalAccountsCache.get();
+        if (!fromGsuite && !externalAccounts.contains(email) && !email.equals("hlavki@hlavki.eu")) {
             log.error("Unauthorized access from {}", hdParam);
             ServerError err = new ServerError("E001", "Sorry you are not allowed to exit camp");
             requestContext.abortWith(Response.status(Response.Status.UNAUTHORIZED).entity(err).type(MediaType.APPLICATION_JSON).build());
