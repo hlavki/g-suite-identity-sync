@@ -11,6 +11,7 @@ import camp.xit.identity.services.ldap.model.LdapGroup;
 import camp.xit.identity.services.model.AccountInfo;
 import camp.xit.identity.services.sync.AccountSyncService;
 import camp.xit.identity.services.util.AccountUtil;
+import static camp.xit.identity.services.util.AccountUtil.isInternalAccount;
 import com.unboundid.ldap.sdk.LDAPException;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -58,8 +59,10 @@ public class AccountSyncServiceImpl implements AccountSyncService, EventHandler 
                 .map(email -> AccountUtil.getLdapGroupName(email))
                 .collect(Collectors.toSet());
 
-        // Hack for implicit group mapping
-        toBe.add(AccountUtil.getLdapGroupName(config.getGSuiteImplicitGroup()));
+        // Workaround for implicit group mapping
+        if (isInternalAccount(userInfo, config)) {
+            toBe.add(AccountUtil.getLdapGroupName(config.getGSuiteImplicitGroup()));
+        }
 
         Set<String> toRemove = new HashSet<>(asIs);
         toRemove.removeAll(toBe);
@@ -94,6 +97,8 @@ public class AccountSyncServiceImpl implements AccountSyncService, EventHandler 
         for (Map.Entry<GSuiteGroup, GroupMembership> entry : gsuiteGroups.entrySet()) {
             GSuiteGroup gsuiteGroup = entry.getKey();
             GroupMembership gsuiteMembership = entry.getValue();
+
+            // Workaround for implicit group mapping
             if (gsuiteGroup.getEmail().equals(config.getGSuiteImplicitGroup())) {
                 List<GroupMember> allMembers = allGsuiteUsers.getUsers().stream().map(u -> u.toMember()).collect(Collectors.toList());
                 gsuiteMembership.getMembers().addAll(allMembers);
