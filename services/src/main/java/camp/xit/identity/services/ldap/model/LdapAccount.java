@@ -142,7 +142,7 @@ public class LdapAccount {
         account.setFamilyName(user.getName().getFamilyName());
         account.setName(user.getName().getFullName());
         account.setRole(Role.INTERNAL);
-        Set<String> emails = new HashSet<>(user.getAliases());
+        Set<String> emails = new HashSet<>();
         emails.add(user.getPrimaryEmail());
         account.setEmails(emails);
         return account;

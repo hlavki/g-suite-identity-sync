@@ -69,7 +69,7 @@ public class UserAccountService implements EventHandler {
         detail.setFamilyName(userInfo.getFamilyName());
         detail.setName(userInfo.getName());
         detail.setEmail(userInfo.getEmail());
-        detail.setEmails(getUserAliases(userInfo, config));
+        detail.setEmails(getAccountAliases(userInfo, config));
         detail.setEmailVerified(userInfo.getEmailVerified());
         detail.setRole(AccountUtil.getAccountRole(config, userInfo));
         detail.setSaveGSuitePassword(detail.getRole() == Role.INTERNAL && config.isGsuiteSyncPassword());
@@ -88,7 +88,7 @@ public class UserAccountService implements EventHandler {
         String subject = userInfo.getSubject();
         try {
             if (!ldapService.accountExists(subject)) {
-                Set<String> emails = getUserAliases(userInfo, config);
+                Set<String> emails = getAccountEmails(userInfo, config);
                 LdapAccount account = LdapAccount.from(config, userInfo, emails, data);
                 ldapService.createAccount(account);
                 if (data.isSaveGSuitePassword() && isInternalAccount(userInfo, config)) {
@@ -117,7 +117,7 @@ public class UserAccountService implements EventHandler {
         String subject = userInfo.getSubject();
         try {
             if (ldapService.accountExists(subject)) {
-                Set<String> emails = getUserAliases(userInfo, config);
+                Set<String> emails = getAccountEmails(userInfo, config);
                 LdapAccount account = LdapAccount.from(config, userInfo, emails, data);
                 ldapService.updateAccount(account);
                 response = Response.ok();
@@ -182,7 +182,14 @@ public class UserAccountService implements EventHandler {
     }
 
 
-    private Set<String> getUserAliases(UserInfo userInfo, AppConfiguration cfg) {
+    private Set<String> getAccountEmails(UserInfo userInfo, AppConfiguration cfg) {
+        Set<String> result = new HashSet<>();
+        result.add(userInfo.getEmail());
+        return result;
+    }
+
+
+    private Set<String> getAccountAliases(UserInfo userInfo, AppConfiguration cfg) {
         Set<String> result = new HashSet<>();
         result.add(userInfo.getEmail());
         if (isInternalAccount(userInfo, cfg)) {
