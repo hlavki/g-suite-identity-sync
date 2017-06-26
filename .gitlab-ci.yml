@@ -1,3 +1,7 @@
+cache:
+  paths:
+    - .m2/
+
 maven-build:
   stage: build
   tags:
