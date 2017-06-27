@@ -1,9 +1,10 @@
+cache:
+  paths:
+    - /root/.m2
+
 maven-build:
   stage: build
   tags:
     - maven3
   script:
     - mvn clean install -B
-  cache:
-    paths:
-      - distribution/target/
