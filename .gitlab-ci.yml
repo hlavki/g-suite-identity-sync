@@ -1,7 +1,3 @@
-cache:
-  paths:
-    - /root/.m2
-
 maven-build:
   stage: build
   tags:
