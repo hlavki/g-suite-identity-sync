@@ -147,6 +147,8 @@
                 <version>2.5.3</version>
                 <configuration>
                     <preparationGoals>install</preparationGoals>
+                    <autoVersionSubmodules>true</autoVersionSubmodules>
+                    <tagNameFormat>v@{project.version}</tagNameFormat>
                 </configuration>
             </plugin>
         </plugins>
