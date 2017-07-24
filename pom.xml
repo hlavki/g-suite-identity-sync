@@ -5,7 +5,7 @@
     <artifactId>account-manager</artifactId>
     <version>0.1.0-SNAPSHOT</version>
     <packaging>pom</packaging>
-    
+
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>1.8</maven.compiler.source>
@@ -18,12 +18,12 @@
         <guava.version>22.0</guava.version>
         <javax.validation.version>1.1.0.Final</javax.validation.version>
     </properties>
-    
+
     <scm>
         <connection>scm:git:ssh://git@code.xit.camp:xit/account-manager.git</connection>
         <tag>HEAD</tag>
     </scm>
-    
+
     <modules>
         <module>web</module>
         <module>services</module>
@@ -44,12 +44,12 @@
             <url>https://repository.xit.camp/repository/maven-snapshots</url>
         </snapshotRepository>
     </distributionManagement>
-    
+
     <repositories>
         <repository>
             <id>xit-central</id>
             <name>xIT central repository proxy</name>
-            <url>https://repository.xit.camp/repository/maven-central/</url>
+            <url>https://repository.xit.camp/repository/maven-central</url>
         </repository>
     </repositories>
 
