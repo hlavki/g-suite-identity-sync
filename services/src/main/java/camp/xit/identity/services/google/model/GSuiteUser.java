@@ -1,5 +1,6 @@
 package camp.xit.identity.services.google.model;
 
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -291,7 +292,7 @@ public class GSuiteUser {
 
 
     public List<Email> getEmails() {
-        return emails;
+        return emails != null ? emails : Collections.emptyList();
     }
 
 
@@ -301,7 +302,7 @@ public class GSuiteUser {
 
 
     public List<String> getAliases() {
-        return aliases;
+        return aliases != null ? aliases : Collections.emptyList();
     }
 
 
