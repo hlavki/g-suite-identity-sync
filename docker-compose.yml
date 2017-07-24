@@ -16,8 +16,8 @@ services:
       - "80:80"
       - "443:443"
     volumes:
-      - /data/home/hlavki/develop/xit/docker-data/httpd/conf:/usr/local/apache2/conf
-      - /data/home/hlavki/develop/xit/docker-data/httpd/htdocs:/usr/local/apache2/htdocs
+      - /data/home/hlavki/develop/xit/projects/docker-data/httpd/conf:/usr/local/apache2/conf
+      - /data/home/hlavki/develop/xit/projects/docker-data/httpd/htdocs:/usr/local/apache2/htdocs
 
   ldap:
     image: dinkel/openldap
@@ -32,5 +32,5 @@ services:
       - SLAPD_ADDITIONAL_SCHEMAS=ppolicy
       - SLAPD_ADDITIONAL_MODULES=ppolicy,memberof
     volumes:
-      - /data/home/hlavki/develop/xit/docker-data/ldap/config:/etc/ldap
-      - /data/home/hlavki/develop/xit/docker-data/ldap/data:/var/lib/ldap
+      - /data/home/hlavki/develop/xit/projects/docker-data/ldap/config:/etc/ldap
+      - /data/home/hlavki/develop/xit/projects/docker-data/ldap/data:/var/lib/ldap
