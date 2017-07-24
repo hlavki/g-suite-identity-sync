@@ -1,5 +1,6 @@
 package camp.xit.identity.services.google.model;
 
+import java.util.ArrayList;
 import java.util.List;
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -37,6 +38,9 @@ public class GroupList {
 
 
     public void setGroups(List<GSuiteGroup> groups) {
+        if (groups == null) {
+            groups = new ArrayList<>();
+        }
         this.groups = groups;
     }
 

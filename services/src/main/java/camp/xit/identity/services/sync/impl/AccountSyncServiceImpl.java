@@ -120,6 +120,7 @@ public class AccountSyncServiceImpl implements AccountSyncService, EventHandler 
 
     private LdapGroup synchronizeGroup(GSuiteGroup gsuiteGroup, GroupMembership gsuiteMembership,
             Map<String, AccountInfo> emailAccountMap) throws LDAPException {
+        log.info("Starting to synchronize group {}", gsuiteGroup.getEmail());
         LdapGroup ldapGroup = new LdapGroup();
         ldapGroup.setName(AccountUtil.getLdapGroupName(gsuiteGroup.getEmail()));
         ldapGroup.setDescription(gsuiteGroup.getName());

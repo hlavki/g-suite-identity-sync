@@ -1,6 +1,7 @@
 package camp.xit.identity.services.google.model;
 
 import camp.xit.identity.services.util.StringUtils;
+import java.util.ArrayList;
 import java.util.List;
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -48,6 +49,9 @@ public class GroupMembership {
 
 
     public List<GroupMember> getMembers() {
+        if (members == null) {
+            members = new ArrayList<>();
+        }
         return members;
     }
 

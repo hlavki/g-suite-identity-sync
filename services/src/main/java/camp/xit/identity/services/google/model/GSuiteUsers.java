@@ -1,5 +1,6 @@
 package camp.xit.identity.services.google.model;
 
+import java.util.ArrayList;
 import java.util.List;
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -47,6 +48,9 @@ public class GSuiteUsers {
 
 
     public List<GSuiteUser> getUsers() {
+        if (users == null) {
+            users = new ArrayList<>();
+        }
         return users;
     }
 

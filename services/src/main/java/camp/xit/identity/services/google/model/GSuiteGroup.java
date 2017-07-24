@@ -1,6 +1,7 @@
 package camp.xit.identity.services.google.model;
 
 import camp.xit.identity.services.util.StringUtils;
+import java.util.ArrayList;
 import java.util.List;
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -104,6 +105,9 @@ public class GSuiteGroup {
 
 
     public List<String> getAliases() {
+        if (aliases == null) {
+            aliases = new ArrayList<>();
+        }
         return aliases;
     }
 
@@ -114,6 +118,9 @@ public class GSuiteGroup {
 
 
     public List<String> getNonEditableAliases() {
+        if (nonEditableAliases == null) {
+            nonEditableAliases = new ArrayList<>();
+        }
         return nonEditableAliases;
     }
 
