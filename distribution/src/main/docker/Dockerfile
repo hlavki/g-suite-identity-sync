@@ -1,5 +1,5 @@
 FROM openjdk:8-jdk-alpine
-MAINTAINER Michal Hlavac <m.hlavac@xit.camp>
+MAINTAINER Michal Hlavac <miso@hlavki.eu>
 
 ENV KARAF_USER karaf
 ENV KARAF_UID 8181

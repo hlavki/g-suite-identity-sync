@@ -3,7 +3,7 @@
     <md-whiteframe md-elevation="6" class="global-frame">
       <md-subheader>Settings</md-subheader>
       <md-progress md-indeterminate v-if="showProgress"></md-progress>
-  
+
       <md-button class="md-raised md-primary" @click.native="synchronizeGroups">Synchronize Groups to LDAP</md-button>
       <md-button class="md-raised md-primary" @click.native="synchronizeUsers">Synchronize GSuite User Attributes</md-button>
     </md-whiteframe>
@@ -33,7 +33,7 @@ export default {
         .then(function (response) {
           _this.showProgress = true
           console.info('Synchronizing all Gsuite groups to LDAP')
-          _this.$http.put(_this.$apiPrefix + '/xit/admin/sync/groups').then(function (response) {
+          _this.$http.put(_this.$apiPrefix + '/identity/admin/sync/groups').then(function (response) {
             console.info('All GSuite groups synchronized')
             _this.notifyGroupsSynchronized()
             _this.showProgress = false
@@ -55,7 +55,7 @@ export default {
         .then(function (response) {
           _this.showProgress = true
           console.info('Synchronizing Gsuite user attributes to LDAP')
-          _this.$http.put(_this.$apiPrefix + '/xit/admin/sync/users').then(function (response) {
+          _this.$http.put(_this.$apiPrefix + '/identity/admin/sync/users').then(function (response) {
             console.info('All GSuite user attributes synchronized')
             _this.notifyUsersSynchronized()
             _this.showProgress = false

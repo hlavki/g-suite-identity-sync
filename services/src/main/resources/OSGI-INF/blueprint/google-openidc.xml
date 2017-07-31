@@ -10,25 +10,25 @@
                 http://cxf.apache.org/blueprint/core http://cxf.apache.org/schemas/blueprint/core.xsd">
 
     <!-- Google OAuth2 -->
-    
+
     <!-- JAX-RS provider that makes OidcClientTokenContext available as JAX-RS @Context -->
     <bean id="clientTokenContextProvider" class="org.apache.cxf.rs.security.oauth2.client.ClientTokenContextProvider"/>
-     
+
     <bean id="oidcRpFilter" class="org.apache.cxf.rs.security.oidc.rp.OidcRpAuthenticationFilter">
-        <!-- 
-             This state manager is shared between this filter and the RP endpoint, 
-             the RP endpoint sets an OIDC context on it and this filter checks the context is available 
+        <!--
+             This state manager is shared between this filter and the RP endpoint,
+             the RP endpoint sets an OIDC context on it and this filter checks the context is available
         -->
         <property name="clientTokenContextManager" ref="stateManager"/>
-         
+
         <!-- The address to redirect to if no OIDC context is available. If not set, returns HTTP error 401 -->
         <!--<property name="redirectUri" value="/error"/>-->
     </bean>
-     
-    <!-- 
-       2. OIDC RP endpoint: authenticates a user by redirecting a user to Google, and redirects the user 
+
+    <!--
+       2. OIDC RP endpoint: authenticates a user by redirecting a user to Google, and redirects the user
                             to the initial application form once the authentication is done
-    -->                        
+    -->
     <jaxrs:server id="oidcRpServer" address="/oidc">
         <jaxrs:serviceBeans>
             <ref component-id="oidcRpService"/>
@@ -36,15 +36,15 @@
         <jaxrs:providers>
             <!-- the filter which does the actual work for obtaining an OIDC context -->
             <ref component-id="rpOidcRequestFilter"/>
-           
+
             <!-- JAX-RS provider that makes OidcClientTokenContext available as JAX-RS @Context -->
             <ref component-id="clientTokenContextProvider"/>
         </jaxrs:providers>
     </jaxrs:server>
-     
+
     <bean id="oidcRpService" class="org.apache.cxf.rs.security.oidc.rp.OidcRpAuthenticationService">
         <!-- This state manager is shared between this RP endpoint and the oidcRpFilter which protects
-        the application endpoint, the RP endpoint sets an OIDC context on it and the filter checks 
+        the application endpoint, the RP endpoint sets an OIDC context on it and the filter checks
         the context is available -->
         <property name="clientTokenContextManager" ref="stateManager"/>
         <!-- Where to redirect to once the authentication is complete -->
@@ -52,7 +52,7 @@
     </bean>
     <!-- The state manager shared between the RP and application endpoints -->
     <bean id="stateManager" class="org.apache.cxf.rs.security.oauth2.client.MemoryClientTokenContextManager"/>
-     
+
     <!-- This filter redirect to Google Authorization service, exchanges an authorization code for access token,
          extracts OIDC IdToken, requests OIDC UserInfo and makes it all available as OidcCientTokenContext
     -->
@@ -65,15 +65,15 @@
         <property name="consumer" ref="consumer"/>
         <property name="authorizationServiceUri" value="https://accounts.google.com/o/oauth2/auth"/>
         <property name="startUri" value="rp"/>
-        <property name="completeUri" value="https://account.xit.camp/cxf/oidc/rp/complete"/> <!-- Have to use absolute URI -->
+        <property name="completeUri" value="https://${hostname}/cxf/oidc/rp/complete"/> <!-- Have to use absolute URI -->
     </bean>
     <!-- This state manager creates an OAuth2 'state' parameter and saves it in the HTTP session -->
     <bean id="rpClientCodeStateManager" class="org.apache.cxf.rs.security.oauth2.client.MemoryClientCodeStateManager"/>
-     
+
     <!-- WebClient for requesting an OAuth2 Access token.
-    rpOidcRequestFilter uses it to exchange a code for a token --> 
-     
-    <jaxrsclient:client id="atServiceClient" threadSafe="true" 
+    rpOidcRequestFilter uses it to exchange a code for a token -->
+
+    <jaxrsclient:client id="atServiceClient" threadSafe="true"
                         address="https://accounts.google.com/o/oauth2/token"
                         serviceClass="org.apache.cxf.jaxrs.client.WebClient">
         <jaxrsclient:headers>
@@ -82,22 +82,22 @@
         <jaxrsclient:providers>
             <bean class="org.apache.cxf.jaxrs.provider.FormEncodingProvider">
                 <property name="expectedEncoded" value="true"/>
-            </bean> 
+            </bean>
         </jaxrsclient:providers>
-    </jaxrsclient:client> 
-     
+    </jaxrsclient:client>
+
     <bean id="idTokenReader" class="org.apache.cxf.rs.security.oidc.rp.IdTokenReader">
-        <property name="jwkSetClient" ref="jwkSetClient"/> 
+        <property name="jwkSetClient" ref="jwkSetClient"/>
         <property name="issuerId" value="accounts.google.com"/>
         <property name="clockOffset" value="10"/>
     </bean>
     <bean id="userInfoClient" class="org.apache.cxf.rs.security.oidc.rp.UserInfoClient">
         <property name="userInfoServiceClient" ref="userInfoServiceClient"/>
     </bean>
-     
-    <!-- WebClient for requesting an OIDC IDP JWK Set 
+
+    <!-- WebClient for requesting an OIDC IDP JWK Set
     This client is used to get a JWK key required to validate OIDC IdToken returned with the OAuth2 access token -->
-    <jaxrsclient:client id="jwkSetClient" threadSafe="true" 
+    <jaxrsclient:client id="jwkSetClient" threadSafe="true"
                         address="https://www.googleapis.com/oauth2/v2/certs"
                         serviceClass="org.apache.cxf.jaxrs.client.WebClient">
         <jaxrsclient:headers>
@@ -107,11 +107,11 @@
             <bean class="org.apache.cxf.rs.security.jose.jaxrs.JsonWebKeysProvider"/>
         </jaxrsclient:providers>
     </jaxrsclient:client>
-     
-    <!-- WebClient for requesting an OIDC UserInfo  
+
+    <!-- WebClient for requesting an OIDC UserInfo
     This client is optional if the application is happy working with OIDC IDToken only -->
-     
-    <jaxrsclient:client id="userInfoServiceClient" threadSafe="true" 
+
+    <jaxrsclient:client id="userInfoServiceClient" threadSafe="true"
                         address="https://www.googleapis.com/plus/v1/people/me/openIdConnect"
                         serviceClass="org.apache.cxf.jaxrs.client.WebClient">
         <jaxrsclient:headers>
@@ -124,8 +124,8 @@
 
     <!-- Client id and secret allocated in Google Developer Console -->
     <bean id="consumer" class="org.apache.cxf.rs.security.oauth2.client.Consumer">
-        <property name="clientId" value="${oauth2.web.clientId}"/> 
+        <property name="clientId" value="${oauth2.web.clientId}"/>
         <property name="clientSecret" value="${oauth2.web.clientSecret}"/>
-    </bean> 
+    </bean>
 
 </blueprint>

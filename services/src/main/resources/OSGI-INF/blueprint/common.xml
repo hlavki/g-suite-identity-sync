@@ -7,7 +7,7 @@
                 http://cxf.apache.org/blueprint/core http://cxf.apache.org/schemas/blueprint/core.xsd
                 http://aries.apache.org/blueprint/xmlns/blueprint-cm/v1.3.0 http://aries.apache.org/schemas/blueprint-cm/blueprint-cm-1.3.0.xsd">
 
-    <cm:property-placeholder persistent-id="camp.xit.identity"/>
+    <cm:property-placeholder persistent-id="eu.hlavki.identity"/>
 
     <!-- RESTFul Web Services Configuration -->
     <!-- 1 -->
@@ -28,41 +28,41 @@
             </list>
         </property>
     </bean>
-    
+
     <!-- Configuration -->
     <reference id="eventAdmin" interface="org.osgi.service.event.EventAdmin"/>
 
     <reference id="configurationAdmin" interface="org.osgi.service.cm.ConfigurationAdmin"/>
-   
-    <bean id="configuration" class="camp.xit.identity.services.config.Configuration">
+
+    <bean id="configuration" class="eu.hlavki.identity.services.config.Configuration">
         <argument ref="eventAdmin"/>
         <argument ref="configurationAdmin"/>
     </bean>
-    
+
     <service ref="configuration" interface="org.osgi.service.cm.ManagedService">
         <service-properties>
-            <entry key="service.pid" value="camp.xit.account"/>
+            <entry key="service.pid" value="eu.hlavki.identity"/>
         </service-properties>
     </service>
-    
-    <bean id="exceptionMapper" class="camp.xit.identity.services.util.ValidationExceptionMapper">
+
+    <bean id="exceptionMapper" class="eu.hlavki.identity.services.util.ValidationExceptionMapper">
         <property name="addMessageToResponse" value="true"/>
     </bean>
-    
+
     <bean id="hibernateValidator" class="org.hibernate.validator.HibernateValidator"/>
 
-    <bean id="validationProviderResolver" class="camp.xit.identity.services.util.SingleValidationProviderResolver">
+    <bean id="validationProviderResolver" class="eu.hlavki.identity.services.util.SingleValidationProviderResolver">
         <argument ref="hibernateValidator"/>
     </bean>
-    
+
     <bean id="validationProvider" class="org.apache.cxf.validation.BeanValidationProvider">
         <argument ref="validationProviderResolver"/>
     </bean>
- 
+
     <bean id="validationInInterceptor" class="org.apache.cxf.jaxrs.validation.JAXRSBeanValidationInInterceptor">
         <property name="provider" ref="validationProvider" />
     </bean>
- 
+
     <bean id="validationOutInterceptor" class="org.apache.cxf.jaxrs.validation.JAXRSBeanValidationOutInterceptor">
         <property name="provider" ref="validationProvider" />
     </bean>

@@ -18,7 +18,7 @@
                 <img v-bind:src="$auth.userInfo.imageUri" alt="People" />
               </md-avatar>
             </md-list-item>
-  
+
             <md-list-item>
               <div class="md-list-text-container">
                 <span>{{ $auth.userInfo.name }}</span>
@@ -27,7 +27,7 @@
             </md-list-item>
           </md-list>
         </md-toolbar>
-  
+
         <md-list>
           <md-list-item v-if="!$auth.loggedIn" @click.native="routeTo('/sign-in')">
             <md-icon>
@@ -70,7 +70,7 @@ export default {
   name: 'app',
   data() {
     return {
-      titleMsg: 'xIT Access Accout Manager'
+      titleMsg: 'Accout Manager'
     }
   },
   methods: {
