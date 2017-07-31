@@ -19,7 +19,7 @@ const AuthPlugin = {
           } else {
             options.router.push('/auth-wait')
             var _this = this
-            options.http.get(options.apiPrefix + '/xit/user').then(function (response) {
+            options.http.get(options.apiPrefix + '/identity/user').then(function (response) {
               console.info('Status: OK, Body: ' + Object.keys(response.data))
               _this.loggedIn = true
               _this.userInfo = response.data
@@ -30,7 +30,7 @@ const AuthPlugin = {
               console.info('ERRdata: ' + error.response.data)
               _this.logout()
               if (error.response.data.hasOwnProperty('code')) {
-                _this.notifyError({ message: 'Sorry, you are not allowed to exit camp' })
+                _this.notifyError({ message: 'Sorry, you are not allowed to enter this site' })
               }
             })
           }

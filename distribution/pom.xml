@@ -2,17 +2,17 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
-        <groupId>camp.xit.identity</groupId>
-        <artifactId>account-manager</artifactId>
+        <groupId>eu.hlavki.identity</groupId>
+        <artifactId>gsuite-identity-sync</artifactId>
         <version>0.1.0-SNAPSHOT</version>
     </parent>
-    <artifactId>account-manager-dist</artifactId>
+    <artifactId>gsuite-identity-sync-dist</artifactId>
     <packaging>karaf-assembly</packaging>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
-    
+
     <dependencies>
         <dependency>
             <groupId>org.apache.karaf.features</groupId>
@@ -35,8 +35,8 @@
             <type>xml</type>
         </dependency>
         <dependency>
-            <groupId>camp.xit.identity</groupId>
-            <artifactId>account-manager-features</artifactId>
+            <groupId>eu.hlavki.identity</groupId>
+            <artifactId>gsuite-identity-sync-features</artifactId>
             <classifier>features</classifier>
             <version>${project.version}</version>
             <type>xml</type>
@@ -92,12 +92,11 @@
                     <plugin>
                         <groupId>io.fabric8</groupId>
                         <artifactId>docker-maven-plugin</artifactId>
-                        <version>0.20.2</version>
+                        <version>0.21.0</version>
                         <configuration>
-                            <pushRegistry>docker.xit.camp</pushRegistry>
                             <images>
                                 <image>
-                                    <name>docker.xit.camp/account-manager</name>
+                                    <name>gsuite-identity-sync</name>
                                     <build>
                                         <dockerFileDir>.</dockerFileDir>
                                         <assembly>
@@ -120,7 +119,7 @@
                             <execution>
                                 <id>docker:push</id>
                                 <phase>deploy</phase>
-                                <goals>                                    
+                                <goals>
                                     <goal>push</goal>
                                     <goal>remove</goal>
                                 </goals>

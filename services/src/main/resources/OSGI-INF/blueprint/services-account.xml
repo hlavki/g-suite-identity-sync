@@ -8,23 +8,23 @@
                 http://cxf.apache.org/blueprint/jaxrs http://cxf.apache.org/schemas/blueprint/jaxrs.xsd
                 http://cxf.apache.org/blueprint/jaxrs-client http://cxf.apache.org/schemas/blueprint/jaxrs-client.xsd">
 
-    <bean id="userInfoService" class="camp.xit.identity.services.rest.account.UserInfoService">
+    <bean id="userInfoService" class="eu.hlavki.identity.services.rest.account.UserInfoService">
         <argument ref="configuration"/>
     </bean>
 
-    <bean id="adminService" class="camp.xit.identity.services.rest.account.AdminService">
+    <bean id="adminService" class="eu.hlavki.identity.services.rest.account.AdminService">
         <argument ref="configuration"/>
         <argument ref="accountSyncService"/>
     </bean>
 
-    <bean id="userAccountService" class="camp.xit.identity.services.rest.account.UserAccountService">
+    <bean id="userAccountService" class="eu.hlavki.identity.services.rest.account.UserAccountService">
         <argument ref="configuration"/>
         <argument ref="gSuiteDirService"/>
         <argument ref="ldapAccountService"/>
         <argument ref="accountSyncService"/>
     </bean>
 
-<!--    <jaxrsclient:client id="peopleServiceClient" threadSafe="true" 
+<!--    <jaxrsclient:client id="peopleServiceClient" threadSafe="true"
                         address="https://people.googleapis.com/v1/people/me"
                         serviceClass="org.apache.cxf.jaxrs.client.WebClient">
         <jaxrsclient:headers>
@@ -40,7 +40,7 @@
         <service-properties>
             <entry key="event.topics">
                 <array value-type="java.lang.String">
-                    <value>camp/xit/account/Configuration/*</value>
+                    <value>eu/hlavki/identity/Configuration/*</value>
                 </array>
             </entry>
         </service-properties>
@@ -51,7 +51,7 @@
         <service-properties>
             <entry key="event.topics">
                 <array value-type="java.lang.String">
-                    <value>camp/xit/account/Configuration/*</value>
+                    <value>eu/hlavki/identity/Configuration/*</value>
                 </array>
             </entry>
         </service-properties>
@@ -62,28 +62,28 @@
         <service-properties>
             <entry key="event.topics">
                 <array value-type="java.lang.String">
-                    <value>camp/xit/account/Configuration/*</value>
+                    <value>eu/hlavki/identity/Configuration/*</value>
                 </array>
             </entry>
         </service-properties>
     </service>
 
-    <!-- xIT REST service  -->
-    <jaxrs:server id="xitRestServer" address="/xit">
+    <!-- Identity REST service  -->
+    <jaxrs:server id="identityRestServer" address="/identity">
         <jaxrs:inInterceptors>
             <ref component-id="validationInInterceptor" />
         </jaxrs:inInterceptors>
-         
+
         <jaxrs:outInterceptors>
             <ref component-id="validationOutInterceptor" />
         </jaxrs:outInterceptors>
-        
+
         <jaxrs:serviceBeans>
             <ref component-id="userAccountService"/>
             <ref component-id="userInfoService"/>
             <ref component-id="adminService"/>
         </jaxrs:serviceBeans>
-        
+
         <jaxrs:providers>
             <ref component-id="jsonProvider"/>
             <!-- Checks that a client is authenticated with Google -->
@@ -95,9 +95,9 @@
             <!-- Bean validation exception mapper -->
             <ref component-id="exceptionMapper"/>
         </jaxrs:providers>
-    </jaxrs:server> 
-     
-    <bean id="gsuiteAuthzFilter" class="camp.xit.identity.services.rest.security.GSuiteGroupAuthorizationFilter">
+    </jaxrs:server>
+
+    <bean id="gsuiteAuthzFilter" class="eu.hlavki.identity.services.rest.security.GSuiteGroupAuthorizationFilter">
         <argument ref="gSuiteDirService"/>
         <argument ref="configuration"/>
     </bean>

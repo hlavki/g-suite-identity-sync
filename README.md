@@ -1,4 +1,4 @@
-# xIT Access Account Manager
+# GSuite Identity Synchronizer
 
 ## Instalačný postup
 
@@ -7,7 +7,7 @@
 #### Vytvorenie projektu
 
 1. Otvor [Developer console](https://console.cloud.google.com/cloud-resource-manager)
-1. Klikni na **Create Project**, do **Project Name** daj *xIT Account Manager* a klinkni **Create**
+1. Klikni na **Create Project**, do **Project Name** daj *Account Manager* a klinkni **Create**
 1. Počkaj na vytvorenie projektu
 
 #### Povolenie API
@@ -15,14 +15,14 @@
 1. Otvor API Manager -> [Library](https://console.cloud.google.com/apis/library)
 1. Skontroluj, ze ci mas vybraty projekt, ktory si vytvoril
 1. Vyhladaj a vyber *Google People API* a potom klikni na **Enable**
-1. Zopakuj predchadzajuci krok pre *Google+ API* a *Admin SDK* 
+1. Zopakuj predchadzajuci krok pre *Google+ API* a *Admin SDK*
 
 #### Vytvorenie OAuth Consent Screen
 
 1. Otvor Api Manager -> [Credentials](https://console.cloud.google.com/apis/credentials/consent)
 1. Nastav email
-1. Nazov projektu: *"xIT Account Manager"*
-1. Homepage URL `https://account.xit.camp/`
+1. Nazov projektu: *"Account Manager"*
+1. Homepage URL `https://accout.domain/`
 1. Popripade pridat logo
 
 #### Vytvorenie authorization credentials pre Web Application
@@ -32,7 +32,7 @@
 1. Cast *Authorized JavaScript origins* nechaj prazdnu
 1. Do pola *Authorized redirect URIs* zadaj 2 hodnoty
     - `https://localhost:8443/cxf/oidc/rp/complete`
-    - `https://account.xit.camp/cxf/oidc/rp/complete`
+    - `https://account.domain/cxf/oidc/rp/complete`
 
 #### Vytvorenie Service account a prav
 
@@ -86,10 +86,10 @@ For detailed explanation on how things work, checkout the [guide](http://vuejs-t
 ```
 /usr/java/default/bin/keytool -genkeypair -keyalg RSA -validity 3650 \
  -alias account-server \
- -dname "cn=account, ou=xIT s.r.o., o=xIT Account Manager, C=SK, L=Bratislava, S=Slovakia" \
+ -dname "cn=account, ou=company s.r.o., o=Account Manager, C=SK, L=Bratislava, S=Slovakia" \
  -keypass changeit -storepass changeit \
  -keystore account-manager.jks \
- -ext SAN=DNS:account.xit.camp,DNS:account.xit.camp
+ -ext SAN=DNS:account.domain,DNS:account.domain
 
 /usr/java/default/bin/keytool -exportcert -alias account-server -storepass changeit -keystore account-manager.jks -rfc -file account-server.pem
 ```
