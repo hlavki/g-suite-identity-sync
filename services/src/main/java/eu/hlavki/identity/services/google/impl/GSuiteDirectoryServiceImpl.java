@@ -60,10 +60,10 @@ public class GSuiteDirectoryServiceImpl implements GSuiteDirectoryService, Event
         long tokenLifetime = config.getServiceAccountTokenLifetime();
         log.info("Token lifetime set to {}", tokenLifetime);
         this.tokenCache = Suppliers.memoizeWithExpiration(() -> getAccessToken(), tokenLifetime - 3, TimeUnit.SECONDS);
-        this.membershipCache = Suppliers.memoizeWithExpiration(() -> getAllGroupMembershipInternal(), 15, TimeUnit.MINUTES);
+        this.membershipCache = Suppliers.memoizeWithExpiration(() -> getAllGroupMembershipInternal(), 3, TimeUnit.MINUTES);
         try {
             privateKey = config.getServiceAccountKey();
-            log.info("Service account private key loaded");
+            log.info("Service account private key {}loaded", privateKey != null ? "" : "was not ");
         } catch (NoPrivateKeyException e) {
             log.error(e.getMessage(), e.getCause());
         }
