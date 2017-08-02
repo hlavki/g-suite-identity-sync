@@ -1,4 +1,4 @@
-FROM openjdk:8-jdk-alpine
+FROM openjdk:8-alpine
 MAINTAINER Michal Hlavac <miso@hlavki.eu>
 
 ENV KARAF_USER karaf
@@ -14,7 +14,14 @@ ADD maven/karaf/ /opt/karaf
 RUN sed -i 's/log4j\.rootLogger=INFO,\ out,\ osgi\:\*/log4j\.rootLogger=INFO,\ out,\ stdout,\ osgi\:\*/' /opt/karaf/etc/org.ops4j.pax.logging.cfg \
     && echo -e "org.osgi.service.http.secure.enabled=true\norg.ops4j.pax.web.ssl.keystore=\${karaf.etc}/keystore/account-manager.jks\norg.ops4j.pax.web.ssl.password=changeit\norg.ops4j.pax.web.ssl.keypassword=changeit" >> /opt/karaf/etc/org.ops4j.pax.web.cfg \
     && mkdir -p /opt/karaf/data /opt/karaf/data/log \
-    && chown -R $KARAF_USER.$KARAF_USER /opt/karaf
+    && chown -R $KARAF_USER.$KARAF_USER /opt/karaf \
+    && mkdir /opt/karaf/etc/keystore \
+    && keytool -genkeypair -keyalg RSA -validity 3650 \
+         -alias account-server \
+         -dname "cn=account, ou=hlavki, o=Account Manager, C=SK, L=Bratislava, S=Slovakia" \
+         -keypass changeit -storepass changeit \
+         -keystore /opt/karaf/etc/keystore/account-manager.jks \
+         -ext SAN=DNS:account.domain,DNS:account.domain
 
 EXPOSE 8101 8181
 
