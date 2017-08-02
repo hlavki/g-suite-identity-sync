@@ -20,6 +20,7 @@
         <feature version="${cache2k.version}">cache2k</feature>
         <bundle>mvn:com.google.guava/guava/${guava.version}</bundle>
         <bundle>mvn:com.unboundid/unboundid-ldapsdk/${unboundid.version}</bundle>
+        <configfile finalname="${karaf.etc}/eu.hlavki.identity.cfg">mvn:eu.hlavki.identity/gsuite-identity-sync-services/${project.version}/cfg/configuration</configfile>
         <bundle>mvn:org.apache.cxf/cxf-rt-rs-security-sso-oidc/${cxf.version}</bundle> <!-- Missing in features!!! Maybe bug -->
         <bundle>mvn:eu.hlavki.identity/gsuite-identity-sync-services/${project.version}</bundle>
     </feature>
