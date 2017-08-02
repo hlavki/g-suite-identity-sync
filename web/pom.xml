@@ -42,7 +42,7 @@
                     </supportedProjectTypes>
                     <manifestLocation>target/bnd</manifestLocation>
                     <instructions>
-                        <Web-ContextPath>identity</Web-ContextPath>
+                        <Web-ContextPath>/</Web-ContextPath>
                         <Export-Package>!*</Export-Package>
                     </instructions>
                 </configuration>
