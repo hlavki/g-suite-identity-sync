@@ -234,14 +234,19 @@ public class Configuration implements ManagedService, AppConfiguration {
 
     @Override
     public PrivateKey getServiceAccountKey() throws NoPrivateKeyException {
-        try (InputStream is = new FileInputStream(get(PRIVATE_KEY_PROP))) {
-            KeyStore store = KeyStore.getInstance("PKCS12");
-            char[] password = get(PRIVATE_KEY_PASS_PROP).toCharArray();
-            store.load(is, password);
-            return (PrivateKey) store.getKey("privateKey", password);
-        } catch (IOException | CertificateException | KeyStoreException | NoSuchAlgorithmException | UnrecoverableKeyException e) {
-            throw new NoPrivateKeyException("Could not load private key", e);
+        String keyFile = get(PRIVATE_KEY_PROP);
+        PrivateKey result = null;
+        if (keyFile != null) {
+            try (InputStream is = new FileInputStream(keyFile)) {
+                KeyStore store = KeyStore.getInstance("PKCS12");
+                char[] password = get(PRIVATE_KEY_PASS_PROP).toCharArray();
+                store.load(is, password);
+                result = (PrivateKey) store.getKey("privateKey", password);
+            } catch (IOException | CertificateException | KeyStoreException | NoSuchAlgorithmException | UnrecoverableKeyException e) {
+                throw new NoPrivateKeyException("Could not load private key", e);
+            }
         }
+        return result;
     }
 
 
