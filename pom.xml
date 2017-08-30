@@ -14,8 +14,8 @@
         <cxf.version>3.1.12</cxf.version>
         <karaf.version>4.1.2</karaf.version>
         <cache2k.version>1.0.0.CR4</cache2k.version>
-        <osgi.version>5.0.0</osgi.version>
-        <unboundid.version>3.2.1</unboundid.version>
+        <osgi.version>6.0.0</osgi.version>
+        <unboundid.version>4.0.0</unboundid.version>
         <guava.version>22.0</guava.version>
         <javax.validation.version>1.1.0.Final</javax.validation.version>
     </properties>
@@ -37,12 +37,12 @@
         <repository>
             <id>xit-releases</id>
             <name>xIT distribution repository</name>
-            <url>https://repository.xit.camp/repository/maven-releases</url>
+            <url>https://repository.xit.camp/repository/maven-releases/</url>
         </repository>
         <snapshotRepository>
             <id>xit-snapshots</id>
             <name>xIT snapshots repository</name>
-            <url>https://repository.xit.camp/repository/maven-snapshots</url>
+            <url>https://repository.xit.camp/repository/maven-snapshots/</url>
         </snapshotRepository>
     </distributionManagement>
 
@@ -50,7 +50,7 @@
         <repository>
             <id>xit-central</id>
             <name>xIT central repository proxy</name>
-            <url>https://repository.xit.camp/repository/maven-central</url>
+            <url>https://repository.xit.camp/repository/maven-central/</url>
         </repository>
     </repositories>
 
@@ -64,8 +64,14 @@
             </dependency>
             <dependency>
                 <groupId>org.osgi</groupId>
-                <artifactId>org.osgi.compendium</artifactId>
+                <artifactId>osgi.enterprise</artifactId>
                 <version>${osgi.version}</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.osgi</groupId>
+                <artifactId>org.osgi.compendium</artifactId>
+                <version>5.0.0</version>
                 <scope>provided</scope>
             </dependency>
             <dependency>
