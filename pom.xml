@@ -35,24 +35,14 @@
 
     <distributionManagement>
         <repository>
-            <id>xit-releases</id>
-            <name>xIT distribution repository</name>
-            <url>https://repository.xit.camp/repository/maven-releases/</url>
+            <id>xit-public-releases</id>
+            <url>https://repository.xit.camp/repository/maven-public-releases/</url>
         </repository>
         <snapshotRepository>
-            <id>xit-snapshots</id>
-            <name>xIT snapshots repository</name>
-            <url>https://repository.xit.camp/repository/maven-snapshots/</url>
+            <id>xit-public-snapshots</id>
+            <url>https://repository.xit.camp/repository/maven-public-snapshots/</url>
         </snapshotRepository>
     </distributionManagement>
-
-    <repositories>
-        <repository>
-            <id>xit-central</id>
-            <name>xIT central repository proxy</name>
-            <url>https://repository.xit.camp/repository/maven-central/</url>
-        </repository>
-    </repositories>
 
     <dependencyManagement>
         <dependencies>
