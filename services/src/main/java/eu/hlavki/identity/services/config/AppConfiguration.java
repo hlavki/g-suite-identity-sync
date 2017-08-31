@@ -29,6 +29,9 @@ public interface AppConfiguration {
     String getGSuiteImplicitGroup();
 
 
+    boolean isSetGSuiteImplicitGroup();
+
+
     String getServiceAccountClientId();
 
 

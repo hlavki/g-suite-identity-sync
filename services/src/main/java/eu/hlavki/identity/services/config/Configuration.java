@@ -51,6 +51,11 @@ public class Configuration implements ManagedService, AppConfiguration {
     }
 
 
+    public boolean isSet(String name) {
+        return get(name) != null;
+    }
+
+
     public Long getLong(String name, Long defaultValue) {
         Long result = defaultValue;
         try {
@@ -217,6 +222,12 @@ public class Configuration implements ManagedService, AppConfiguration {
     @Override
     public String getGSuiteImplicitGroup() {
         return get(GSUITE_IMPLICIT_GROUP);
+    }
+
+
+    @Override
+    public boolean isSetGSuiteImplicitGroup() {
+        return isSet(GSUITE_IMPLICIT_GROUP);
     }
 
 
