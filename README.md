@@ -4,7 +4,7 @@
 
 GSuite Identity Sychronizer synchronize accounts and groups managed by GSuite to LDAP.
 Account synchronization is driven by users. It means that account is synchronized when user uses account manager web to create account.
-Every account must be GSuite account or for regular gmail account member of specific GSuite group.
+Every account must be GSuite account or regular gmail account with specific GSuite group membership.
 There is no possibility to use gsuite password but you can synchronize LDAP password to GSuite.
 Groups are synchronized on user creation, scheduler on manually.
 
