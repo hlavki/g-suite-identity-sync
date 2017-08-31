@@ -1,4 +1,4 @@
-# GSuite Identity Synchronizer
+# GSuite to LDAP Identity Synchronizer
 
 *Tento dokument si môžeš prečítať aj v týchto jazykoch: [English](README.md).*
 
