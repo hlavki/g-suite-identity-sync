@@ -1,6 +1,6 @@
 # GSuite Identity Synchronizer
 
-*Read this in other languages: [English](README.md), [Slovenčina](README_sk.md).*
+*Read this in other languages: [Slovenčina](README_sk.md).*
 
 GSuite Identity Sychronizer synchronize accounts and groups managed by GSuite to LDAP.
 Account synchronization is driven by users. It means that account is synchronized when user uses account manager web to create account.
