@@ -19,10 +19,10 @@ RUN sed -i 's/log4j\.rootLogger=INFO,\ out,\ osgi\:\*/log4j\.rootLogger=INFO,\ o
     && mkdir /opt/karaf/etc/keystore \
     && keytool -genkeypair -keyalg RSA -validity 3650 \
          -alias account-server \
-         -dname "cn=account, ou=hlavki, o=Account Manager, C=SK, L=Bratislava, S=Slovakia" \
+         -dname "cn=identity, ou=hlavki, o=Account Manager, C=SK, L=Bratislava, S=Slovakia" \
          -keypass changeit -storepass changeit \
          -keystore /opt/karaf/etc/keystore/account-manager.jks \
-         -ext SAN=DNS:account.domain,DNS:account.domain
+         -ext SAN=DNS:identity.domain,DNS:identity.domain
 
 EXPOSE 8101 8181
 
