@@ -60,7 +60,7 @@ public class AccountSyncServiceImpl implements AccountSyncService, EventHandler 
                 .collect(Collectors.toSet());
 
         // Workaround for implicit group mapping
-        if (isInternalAccount(userInfo, config)) {
+        if (isInternalAccount(userInfo, config) && config.isSetGSuiteImplicitGroup()) {
             toBe.add(AccountUtil.getLdapGroupName(config.getGSuiteImplicitGroup()));
         }
 
