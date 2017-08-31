@@ -1,4 +1,6 @@
-# xIT Access Account Manager
+# GSuite Identity Synchronizer
+
+*Tento dokument si môžeš prečítať aj v týchto jazykoch: [English](README.md).*
 
 ## Instalačný postup
 
