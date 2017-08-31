@@ -87,13 +87,18 @@ config:property-set -p eu.hlavki.identity oauth2.serviceAccount.privateKey.file 
 
 Open in browser [https://localhost:8443/](https://localhost:8443/) and click *Sign in*.
 
-## Build
+
+------------------------
+
+## Development notes
+
+### Build
 
 ```
 mvn clean install -Pdocker
 ```
 
-## Generovanie SSL self-signed certifikatu pre proxy komunikaciu Apache HTTPd a Apache karaf
+### Generovanie SSL self-signed certifikatu pre proxy komunikaciu Apache HTTPd a Apache karaf
 
 ```
 /usr/java/default/bin/keytool -genkeypair -keyalg RSA -validity 3650 \
@@ -106,7 +111,7 @@ mvn clean install -Pdocker
 /usr/java/default/bin/keytool -exportcert -alias account-server -storepass changeit -keystore account-manager.jks -rfc -file account-server.pem
 ```
 
-# Links
+### Links
 
 https://developers.google.com/identity/protocols/OAuth2WebServer#protectauthcode
 
