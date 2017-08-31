@@ -1,36 +1,41 @@
 version: "3"
 
 services:
-  account:
-    image: gsuite-identity-sync
-    hostname: account
+  identity:
+    image: gsuite-identity-sync:0.1.0-SNAPSHOT
+    ports:
+      - 8443:8443
+      - 8101:8101
+    environment:
+      - SLAPD_BIND_DN=cn=admin,dc=example,dc=org
+      - SLAPD_BASE_DN=dc=example,dc=org
+      - SLAPD_PASSWORD=changeme
+      - GSUITE_DOMAIN=example.org
+      - GSUITE_SERVICE_ACCOUNT_EMAIL=gsuite-services-client@******.gserviceaccount.com
+      - GSUITE_SERVICE_ACCOUNT_SUBJECT=some-admin@example.org
+      - GSUITE_CLIENT_ID=*******.apps.googleusercontent.com
+      - GSUITE_CLIENT_SECRET=******
     depends_on:
       - ldap
     volumes:
-      - /data/home/hlavki/develop/xit/_config/eu.hlavki.identity.cfg:/opt/karaf/etc/eu.hlavki.identity.cfg
-      - /data/home/hlavki/develop/xit/_config/keystore:/opt/karaf/etc/keystore
-
-  httpd:
-    image: httpd
-    ports:
-      - "80:80"
-      - "443:443"
-    volumes:
-      - /data/home/hlavki/develop/xit/projects/docker-data/httpd/conf:/usr/local/apache2/conf
-      - /data/home/hlavki/develop/xit/projects/docker-data/httpd/htdocs:/usr/local/apache2/htdocs
+      - account-config:/opt/karaf/etc
 
   ldap:
     image: dinkel/openldap
-    hostname: ldap
     ports:
       - "389:389"
     environment:
-      #- SLAPD_PASSWORD=
-      #- SLAPD_CONFIG_PASSWORD=
-      - SLAPD_DOMAIN=xit.camp
-      - SLAPD_ORGANIZATION=xIT
+      - SLAPD_PASSWORD=changeme
+      - SLAPD_CONFIG_PASSWORD=changeme
+      - SLAPD_DOMAIN=example.org
+      - SLAPD_ORGANIZATION=Example ltd.
       - SLAPD_ADDITIONAL_SCHEMAS=ppolicy
       - SLAPD_ADDITIONAL_MODULES=ppolicy,memberof
     volumes:
-      - /data/home/hlavki/develop/xit/projects/docker-data/ldap/config:/etc/ldap
-      - /data/home/hlavki/develop/xit/projects/docker-data/ldap/data:/var/lib/ldap
+      - ldap-config:/etc/ldap
+      - ldap-data:/var/lib/ldap
+
+volumes:
+  account-config:
+  ldap-config:
+  ldap-data:
