@@ -69,7 +69,7 @@
                 <configuration>
                     <images>
                         <image>
-                            <name>gsuite-identity-sync:${project.version}</name>
+                            <name>hlavki/gsuite-identity-sync:${project.version}</name>
                             <build>
                                 <dockerFileDir>.</dockerFileDir>
                                 <assembly>
