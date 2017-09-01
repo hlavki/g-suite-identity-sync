@@ -3,10 +3,10 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>eu.hlavki.identity</groupId>
-        <artifactId>gsuite-identity-sync</artifactId>
+        <artifactId>g-suite-identity-sync</artifactId>
         <version>0.1.0-SNAPSHOT</version>
     </parent>
-    <artifactId>gsuite-identity-sync-dist</artifactId>
+    <artifactId>g-suite-identity-sync-dist</artifactId>
     <packaging>karaf-assembly</packaging>
 
     <properties>
@@ -36,7 +36,7 @@
         </dependency>
         <dependency>
             <groupId>eu.hlavki.identity</groupId>
-            <artifactId>gsuite-identity-sync-features</artifactId>
+            <artifactId>g-suite-identity-sync-features</artifactId>
             <classifier>features</classifier>
             <version>${project.version}</version>
             <type>xml</type>
@@ -69,7 +69,7 @@
                 <configuration>
                     <images>
                         <image>
-                            <name>hlavki/gsuite-identity-sync:${project.version}</name>
+                            <name>hlavki/g-suite-identity-sync:${project.version}</name>
                             <build>
                                 <dockerFileDir>.</dockerFileDir>
                                 <assembly>
