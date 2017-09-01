@@ -1,4 +1,4 @@
-# GSuite to LDAP Identity Synchronizer
+# GSuite to LDAP Identity Synchronizer [![Build Status](https://travis-ci.org/hlavki/gsuite-identity-sync.svg?branch=master)](https://travis-ci.org/hlavki/gsuite-identity-sync)
 
 *Read this in other languages: [Slovenčina](README_sk.md).*
 
