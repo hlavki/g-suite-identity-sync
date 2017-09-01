@@ -1,6 +1,6 @@
 # GSuite to LDAP Identity Synchronizer [![Build Status](https://travis-ci.org/hlavki/gsuite-identity-sync.svg?branch=master)](https://travis-ci.org/hlavki/gsuite-identity-sync)
 
-*Read this in other languages: [Slovenčina](README_sk.md).*
+Read [Wiki](https://github.com/hlavki/gsuite-identity-sync/wiki) to [install](https://github.com/hlavki/gsuite-identity-sync/wiki/Install) application.
 
 GSuite Identity Sychronizer synchronize accounts and groups managed by GSuite to LDAP. It can be used as authentication and authorization provider to practicaly any service that supports LDAP (e.g. [Gitlab](https://about.gitlab.com/), [Sonatype Nexus](http://www.sonatype.org/nexus/), [Artifactory](https://www.jfrog.com/artifactory/), etc.) while user & group management is still managed by GSuite.
 
