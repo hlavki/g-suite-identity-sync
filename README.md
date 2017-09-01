@@ -2,7 +2,20 @@
 
 *Read this in other languages: [Slovenčina](README_sk.md).*
 
-GSuite Identity Sychronizer synchronize accounts and groups managed by GSuite to LDAP.
+GSuite Identity Sychronizer synchronize accounts and groups managed by GSuite to LDAP. It can be used as authentication and authorization provider to practicaly any service that supports LDAP (e.g. [Gitlab](https://about.gitlab.com/), [Sonatype Nexus](http://www.sonatype.org/nexus/), [Artifactory](https://www.jfrog.com/artifactory/), etc.) while user & group management is still managed by GSuite.
+
+## Features
+
+* Synchronize GSuite accounts or regular gmail accounts to LDAP
+* Synchronize LDAP password to GSuite (One password for everything)
+* Synchronize GSuite groups to LDAP groups
+* Synchronize name changes to LDAP
+* Support to choose username from GSuite aliases
+* Scheduled synchronizers (TODO)
+
+
+## How it works
+
 Account synchronization is driven by users. It means that account is synchronized when user uses account manager web to create account.
 Every account must be GSuite account or regular gmail account with specific GSuite group membership.
 There is no possibility to use gsuite password but you can synchronize LDAP password to GSuite.
@@ -10,12 +23,14 @@ Groups are synchronized on user creation, scheduler on manually.
 
 ## Installation
 
+Best and recommended way to run application is via docker compose. There are several docker-compose.yml templates for various scenarios. Anyway, there are some steps, that need to be done on GSuite site.
+
 ### GSuite preparation
 
 #### Project creation
 
 1. Open [Developer console](https://console.cloud.google.com/cloud-resource-manager)
-1. Click on **Create Project**, type **Project Name** value *Account Manager* and click **Create**
+1. Click on **Create Project**, type **Project Name** value *Account Manager* and click *s *Create**
 1. Wait for project creation
 1. Select created project
 
@@ -89,6 +104,7 @@ Open in browser [https://localhost:8443/](https://localhost:8443/) and click *Si
 
 
 ------------------------
+
 
 ## Development notes
 
