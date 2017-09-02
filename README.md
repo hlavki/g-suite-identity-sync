@@ -1,9 +1,9 @@
 # G Suite to LDAP Identity Synchronizer
 [![Join the chat at https://gitter.im/g-suite-identity-sync/Lobby](https://badges.gitter.im/g-suite-identity-sync/Lobby.svg)](https://gitter.im/g-suite-identity-sync/Lobby?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)  [![Build Status](https://travis-ci.org/hlavki/g-suite-identity-sync.svg?branch=master)](https://travis-ci.org/hlavki/g-suite-identity-sync)
 
-Read [Wiki](https://github.com/hlavki/g-suite-identity-sync/wiki) to [install](https://github.com/hlavki/g-suite-identity-sync/wiki/Install) application.
-
 G Suite Identity Sychronizer synchronize accounts and groups managed by G Suite to LDAP. It can be used as authentication and authorization provider to practicaly any service that supports LDAP (e.g. [Gitlab](https://about.gitlab.com/), [Sonatype Nexus](http://www.sonatype.org/nexus/), [Artifactory](https://www.jfrog.com/artifactory/), [Jira](https://www.atlassian.com/software/jira), etc.) while user & group management is still managed by G Suite.
+
+Read [Wiki](https://github.com/hlavki/g-suite-identity-sync/wiki) to [install](https://github.com/hlavki/g-suite-identity-sync/wiki/Install) application.
 
 ## Features
 
@@ -15,6 +15,9 @@ G Suite Identity Sychronizer synchronize accounts and groups managed by G Suite 
 * Support to choose username from G Suite aliases
 * Scheduled synchronizers (TODO)
 
+## What is this good for
+
+TODO
 
 ## How it works
 
