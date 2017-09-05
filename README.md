@@ -1,7 +1,7 @@
 # G Suite to LDAP Identity Synchronizer
 [![Join the chat at https://gitter.im/g-suite-identity-sync/Lobby](https://badges.gitter.im/g-suite-identity-sync/Lobby.svg)](https://gitter.im/g-suite-identity-sync/Lobby?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)  [![Build Status](https://travis-ci.org/hlavki/g-suite-identity-sync.svg?branch=master)](https://travis-ci.org/hlavki/g-suite-identity-sync)
 
-G Suite Identity Sychronizer synchronize accounts and groups managed by G Suite to LDAP. It can be used as authentication and authorization provider to practicaly any service that supports LDAP (e.g. [Gitlab](https://about.gitlab.com/), [Sonatype Nexus](http://www.sonatype.org/nexus/), [Artifactory](https://www.jfrog.com/artifactory/), [Jira](https://www.atlassian.com/software/jira), etc.) while user & group management is still managed by G Suite.
+G Suite Identity Sychronizer synchronize accounts and groups managed by G Suite to LDAP. It can be used as authentication and authorization provider to practicaly any service that supports LDAP (e.g. [Gitlab](https://about.gitlab.com/), [Sonatype Nexus](http://www.sonatype.org/nexus/), [Artifactory](https://www.jfrog.com/artifactory/), [Jira](https://www.atlassian.com/software/jira), [Freeradius](https://freeradius.org/), etc.) while user & group management is still managed by G Suite.
 
 Read [Wiki](https://github.com/hlavki/g-suite-identity-sync/wiki) to [install](https://github.com/hlavki/g-suite-identity-sync/wiki/Install) application.
 
@@ -17,7 +17,7 @@ Read [Wiki](https://github.com/hlavki/g-suite-identity-sync/wiki) to [install](h
 
 ## What is this good for
 
-TODO
+This software is good for all G Suite customers who need to use services that support only LDAP authentication or authorization, especially for software startup companies.
 
 ## How it works
 
