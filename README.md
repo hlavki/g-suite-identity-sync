@@ -17,7 +17,7 @@ Read [Wiki](https://github.com/hlavki/g-suite-identity-sync/wiki) to [install](h
 
 ## What is this good for
 
-TODO
+This software is good for all G Suite customers who need to use services that support only LDAP authentication or authorization, especially for software startup companies.
 
 ## How it works
 
