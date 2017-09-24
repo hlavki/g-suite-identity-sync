@@ -73,6 +73,9 @@
                             <name>hlavki/g-suite-identity-sync:${project.version}</name>
                             <build>
                                 <dockerFileDir>.</dockerFileDir>
+                                <tags>
+                                    <tag>${docker.release.tag}</tag>
+                                </tags>
                                 <assembly>
                                     <descriptor>assembly.xml</descriptor>
                                     <user>karaf:karaf:root</user>
