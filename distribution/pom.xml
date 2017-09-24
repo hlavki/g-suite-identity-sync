@@ -4,7 +4,7 @@
     <parent>
         <groupId>eu.hlavki.identity</groupId>
         <artifactId>g-suite-identity-sync</artifactId>
-        <version>0.3.0-SNAPSHOT</version>
+        <version>0.2.1</version>
     </parent>
     <artifactId>g-suite-identity-sync-dist</artifactId>
     <packaging>karaf-assembly</packaging>
