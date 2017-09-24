@@ -19,7 +19,6 @@ public class LdapAccountServiceImpl implements LdapAccountService, EventHandler 
 
     private static final Logger log = LoggerFactory.getLogger(LdapAccountServiceImpl.class);
 
-    private static final String GROUP_MEMBER_ATTR = "member";
     public static final String GROUP_NAME_ATTR = "cn";
     private static final String GROUP_DESC_ATTR = "description";
 
@@ -154,7 +153,7 @@ public class LdapAccountServiceImpl implements LdapAccountService, EventHandler 
             if (current != null) {
                 Modification[] mods = new Modification[]{
                     new Modification(ModificationType.REPLACE, GROUP_DESC_ATTR, group.getDescription()),
-                    new Modification(ModificationType.REPLACE, GROUP_MEMBER_ATTR, group.getMembersDn().toArray(new String[0]))
+                    new Modification(ModificationType.REPLACE, config.getLdapGroupsMemberAttr(), group.getMembersDn().toArray(new String[0]))
                 };
                 conn.modify(current.getDn(), mods);
                 current.setDescription(group.getDescription());
@@ -164,7 +163,7 @@ public class LdapAccountServiceImpl implements LdapAccountService, EventHandler 
                 Entry entry = new Entry(dn);
                 entry.setAttribute(GROUP_NAME_ATTR, group.getName());
                 entry.setAttribute(GROUP_DESC_ATTR, group.getDescription());
-                entry.setAttribute(GROUP_MEMBER_ATTR, group.getMembersDn());
+                entry.setAttribute(config.getLdapGroupsMemberAttr(), group.getMembersDn());
                 entry.setAttribute("objectClass", config.getLdapGroupsObjectClass());
                 conn.add(entry);
                 current = new LdapGroup(dn, group.getName(), group.getDescription(), group.getMembersDn());
@@ -182,14 +181,14 @@ public class LdapAccountServiceImpl implements LdapAccountService, EventHandler 
             log.info("Group base DN: " + baseDN);
             Filter filter = Filter.createANDFilter(
                     Filter.createEqualityFilter("objectClass", config.getLdapGroupsObjectClass()),
-                    Filter.createEqualityFilter(GROUP_MEMBER_ATTR, accountDN));
+                    Filter.createEqualityFilter(config.getLdapGroupsMemberAttr(), accountDN));
             SearchResult searchResult = conn.search(baseDN, SearchScope.SUB, filter,
-                    GROUP_NAME_ATTR, GROUP_MEMBER_ATTR, GROUP_DESC_ATTR);
+                    GROUP_NAME_ATTR, config.getLdapGroupsMemberAttr(), GROUP_DESC_ATTR);
             for (SearchResultEntry entry : searchResult.getSearchEntries()) {
                 String dn = entry.getDN();
                 String name = entry.getAttributeValue(GROUP_NAME_ATTR);
                 String description = entry.getAttributeValue(GROUP_DESC_ATTR);
-                Set<String> members = new HashSet<>(Arrays.asList(entry.getAttributeValues(GROUP_MEMBER_ATTR)));
+                Set<String> members = new HashSet<>(Arrays.asList(entry.getAttributeValues(config.getLdapGroupsMemberAttr())));
                 result.put(dn, new LdapGroup(name, dn, description, members));
             }
         }
@@ -209,11 +208,11 @@ public class LdapAccountServiceImpl implements LdapAccountService, EventHandler 
                     DN groupDN = new DN(new RDN(GROUP_NAME_ATTR, groupName), new DN(config.getLdapGroupsBaseDN()));
                     Entry groupEntry = new Entry(groupDN);
                     groupEntry.addAttribute("objectClass", config.getLdapGroupsObjectClass());
-                    groupEntry.addAttribute(GROUP_MEMBER_ATTR, accountDN);
+                    groupEntry.addAttribute(config.getLdapGroupsMemberAttr(), accountDN);
                     conn.add(groupEntry);
                     log.info("Group {} added", groupDN);
                 } else {
-                    Modification mod = new Modification(ModificationType.ADD, GROUP_MEMBER_ATTR, accountDN);
+                    Modification mod = new Modification(ModificationType.ADD, config.getLdapGroupsMemberAttr(), accountDN);
                     conn.modify(new ModifyRequest(group.getDn(), mod));
                     log.info("Added membership {} to {}", accountDN, group.getName());
                 }
@@ -229,7 +228,7 @@ public class LdapAccountServiceImpl implements LdapAccountService, EventHandler 
             if (group == null || !group.getMembersDn().contains(accountDN)) {
                 log.info("Nothing to do. Account {} is not member of group {}", accountDN, groupName);
             } else {
-                Modification mod = new Modification(ModificationType.DELETE, GROUP_MEMBER_ATTR, accountDN);
+                Modification mod = new Modification(ModificationType.DELETE, config.getLdapGroupsMemberAttr(), accountDN);
                 conn.modify(new ModifyRequest(group.getDn(), mod));
                 log.info("Remove membership {} from {}", accountDN, group.getName());
                 if (group.getMembersDn().size() == 1) {
@@ -266,12 +265,12 @@ public class LdapAccountServiceImpl implements LdapAccountService, EventHandler 
         String baseDN = config.getLdapGroupsBaseDN();
         Filter groupFilter = Filter.createEqualityFilter(GROUP_NAME_ATTR, groupName);
         SearchResultEntry entry = conn.searchForEntry(baseDN, SearchScope.ONE, groupFilter,
-                GROUP_NAME_ATTR, GROUP_MEMBER_ATTR, GROUP_DESC_ATTR);
+                GROUP_NAME_ATTR, config.getLdapGroupsMemberAttr(), GROUP_DESC_ATTR);
         if (entry != null) {
             String dn = entry.getDN();
             String name = entry.getAttributeValue(GROUP_NAME_ATTR);
             String description = entry.getAttributeValue(GROUP_DESC_ATTR);
-            Set<String> members = new HashSet<>(Arrays.asList(entry.getAttributeValues(GROUP_MEMBER_ATTR)));
+            Set<String> members = new HashSet<>(Arrays.asList(entry.getAttributeValues(config.getLdapGroupsMemberAttr())));
             result = new LdapGroup(name, dn, description, members);
         }
         return result;

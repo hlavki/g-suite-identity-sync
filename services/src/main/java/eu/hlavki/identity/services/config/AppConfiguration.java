@@ -19,6 +19,8 @@ public interface AppConfiguration {
     static final String LDAP_GROUPS_BASE_DN_PROP = "ldap.groups.baseDN";
     static final String LDAP_GROUPS_OBJECT_CLASS_PROP = "ldap.groups.objectClass";
     static final String LDAP_GROUPS_OBJECT_CLASS_DEFAULT = "groupOfUniqueNames";
+    static final String LDAP_GROUPS_MEMBER_ATTR_PROP = "ldap.groups.memberAttr";
+    static final String LDAP_GROUPS_MEMBER_ATTR_DEFAULT = "uniqueMember";
     static final String ADMINS_PROP = "admins";
     static final String GSUITE_SYNC_PASSWORD_PROP = "gsuite.sync.password";
     static final boolean GSUITE_SYNC_PASSWORD_DEFAULT = false;
@@ -56,6 +58,9 @@ public interface AppConfiguration {
 
 
     String getLdapGroupsObjectClass();
+
+
+    String getLdapGroupsMemberAttr();
 
 
     Set<String> getAdmins();
