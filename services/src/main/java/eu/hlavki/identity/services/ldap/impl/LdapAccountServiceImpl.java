@@ -19,7 +19,6 @@ public class LdapAccountServiceImpl implements LdapAccountService, EventHandler 
 
     private static final Logger log = LoggerFactory.getLogger(LdapAccountServiceImpl.class);
 
-    private static final String GROUP_OCLASS = "groupOfNames";
     private static final String GROUP_MEMBER_ATTR = "member";
     public static final String GROUP_NAME_ATTR = "cn";
     private static final String GROUP_DESC_ATTR = "description";
@@ -137,7 +136,7 @@ public class LdapAccountServiceImpl implements LdapAccountService, EventHandler 
         try (LDAPConnection conn = ldapPool.getConnection()) {
             String baseDN = config.getLdapGroupsBaseDN();
             log.info("Group base DN: " + baseDN);
-            String filter = "(objectClass=" + GROUP_OCLASS + ")";
+            String filter = "(objectClass=" + config.getLdapGroupsObjectClass() + ")";
             SearchResult searchResult = conn.search(baseDN, SearchScope.SUB, filter, GROUP_NAME_ATTR);
             for (SearchResultEntry entry : searchResult.getSearchEntries()) {
                 String name = entry.getAttributeValue(GROUP_NAME_ATTR);
@@ -166,7 +165,7 @@ public class LdapAccountServiceImpl implements LdapAccountService, EventHandler 
                 entry.setAttribute(GROUP_NAME_ATTR, group.getName());
                 entry.setAttribute(GROUP_DESC_ATTR, group.getDescription());
                 entry.setAttribute(GROUP_MEMBER_ATTR, group.getMembersDn());
-                entry.setAttribute("objectClass", GROUP_OCLASS);
+                entry.setAttribute("objectClass", config.getLdapGroupsObjectClass());
                 conn.add(entry);
                 current = new LdapGroup(dn, group.getName(), group.getDescription(), group.getMembersDn());
             }
@@ -181,7 +180,8 @@ public class LdapAccountServiceImpl implements LdapAccountService, EventHandler 
         try (LDAPConnection conn = ldapPool.getConnection()) {
             String baseDN = config.getLdapGroupsBaseDN();
             log.info("Group base DN: " + baseDN);
-            Filter filter = Filter.createANDFilter(Filter.createEqualityFilter("objectClass", GROUP_OCLASS),
+            Filter filter = Filter.createANDFilter(
+                    Filter.createEqualityFilter("objectClass", config.getLdapGroupsObjectClass()),
                     Filter.createEqualityFilter(GROUP_MEMBER_ATTR, accountDN));
             SearchResult searchResult = conn.search(baseDN, SearchScope.SUB, filter,
                     GROUP_NAME_ATTR, GROUP_MEMBER_ATTR, GROUP_DESC_ATTR);
@@ -208,7 +208,7 @@ public class LdapAccountServiceImpl implements LdapAccountService, EventHandler 
                     log.debug("Creating group {}", groupName);
                     DN groupDN = new DN(new RDN(GROUP_NAME_ATTR, groupName), new DN(config.getLdapGroupsBaseDN()));
                     Entry groupEntry = new Entry(groupDN);
-                    groupEntry.addAttribute("objectClass", GROUP_OCLASS);
+                    groupEntry.addAttribute("objectClass", config.getLdapGroupsObjectClass());
                     groupEntry.addAttribute(GROUP_MEMBER_ATTR, accountDN);
                     conn.add(groupEntry);
                     log.info("Group {} added", groupDN);

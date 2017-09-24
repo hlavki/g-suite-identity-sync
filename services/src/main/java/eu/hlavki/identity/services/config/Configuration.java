@@ -286,6 +286,12 @@ public class Configuration implements ManagedService, AppConfiguration {
 
 
     @Override
+    public String getLdapGroupsObjectClass() {
+        return get(LDAP_GROUPS_OBJECT_CLASS_PROP, LDAP_GROUPS_OBJECT_CLASS_DEFAULT);
+    }
+
+
+    @Override
     public Set<String> getAdmins() {
         return getSet(ADMINS_PROP);
     }
