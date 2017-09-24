@@ -19,7 +19,6 @@ import java.util.concurrent.TimeUnit;
 import javax.ws.rs.NotFoundException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import org.apache.cxf.interceptor.LoggingInInterceptor;
 import org.apache.cxf.jaxrs.client.WebClient;
 import org.apache.cxf.rs.security.jose.common.JoseType;
 import org.apache.cxf.rs.security.jose.jwa.SignatureAlgorithm;
@@ -206,7 +205,6 @@ public class GSuiteDirectoryServiceImpl implements GSuiteDirectoryService, Event
 
         WebClient accessTokenService = WebClient.create("https://accounts.google.com/o/oauth2/token",
                 Arrays.asList(new OAuthJSONProvider(), new AccessTokenGrantWriter()));
-        WebClient.getConfig(accessTokenService).getInInterceptors().add(new LoggingInInterceptor());
 
         accessTokenService.type(MediaType.APPLICATION_FORM_URLENCODED).accept(MediaType.APPLICATION_JSON);
 

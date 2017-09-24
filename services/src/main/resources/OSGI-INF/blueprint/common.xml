@@ -13,7 +13,7 @@
     <!-- 1 -->
     <cxf:bus>
         <cxf:features>
-            <cxf:logging/>
+            <cxf:logging />
         </cxf:features>
     </cxf:bus>
 
