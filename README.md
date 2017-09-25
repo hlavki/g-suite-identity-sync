@@ -25,3 +25,7 @@ Account synchronization is driven by users. It means that account is synchronize
 Every account must be G Suite account or regular gmail account with specific G Suite group membership.
 There is no possibility to use G Suite password but you can synchronize LDAP password to G Suite.
 Groups are synchronized on user creation, scheduler on manually.
+
+## Screenshots
+
+![](https://i.imgur.com/1raqCVF.png)
