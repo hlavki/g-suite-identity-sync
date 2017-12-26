@@ -3,7 +3,7 @@ package eu.hlavki.identity.services.ldap.model;
 import eu.hlavki.identity.services.config.AppConfiguration;
 import eu.hlavki.identity.services.google.model.GSuiteUser;
 import eu.hlavki.identity.services.model.CreateAccountData;
-import eu.hlavki.identity.services.model.PrepareAccountData.Role;
+import eu.hlavki.identity.services.model.Role;
 import eu.hlavki.identity.services.model.UpdateAccountData;
 import eu.hlavki.identity.services.util.AccountUtil;
 import java.util.HashSet;
@@ -12,14 +12,14 @@ import org.apache.cxf.rs.security.oidc.common.UserInfo;
 
 public class LdapAccount {
 
-    String givenName;
-    String familyName;
-    String name;
-    String username;
-    String subject;
-    Set<String> emails;
-    String password;
-    Role role;
+    private String givenName;
+    private String familyName;
+    private String name;
+    private String username;
+    private String subject;
+    private Set<String> emails;
+    private String password;
+    private Role role;
 
 
     public LdapAccount() {

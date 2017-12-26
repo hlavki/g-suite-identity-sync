@@ -9,7 +9,7 @@ import eu.hlavki.identity.services.google.model.GSuiteUser;
 import eu.hlavki.identity.services.google.model.GroupList;
 import eu.hlavki.identity.services.ldap.LdapAccountService;
 import eu.hlavki.identity.services.ldap.model.LdapAccount;
-import eu.hlavki.identity.services.model.PrepareAccountData.Role;
+import eu.hlavki.identity.services.model.Role;
 import eu.hlavki.identity.services.model.*;
 import eu.hlavki.identity.services.sync.AccountSyncService;
 import eu.hlavki.identity.services.util.AccountUtil;

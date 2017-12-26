@@ -1,6 +1,6 @@
 package eu.hlavki.identity.services.model;
 
-import eu.hlavki.identity.services.model.PrepareAccountData.Role;
+import eu.hlavki.identity.services.model.Role;
 import java.util.Set;
 import javax.xml.bind.annotation.XmlRootElement;
 

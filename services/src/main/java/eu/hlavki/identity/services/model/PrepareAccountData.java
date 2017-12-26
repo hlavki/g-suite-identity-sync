@@ -8,9 +8,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement
 public class PrepareAccountData {
 
-    public enum Role {
-        INTERNAL, EXTERNAL
-    }
 
     public static class Group {
 

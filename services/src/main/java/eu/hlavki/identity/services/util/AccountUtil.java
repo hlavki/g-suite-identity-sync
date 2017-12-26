@@ -3,7 +3,7 @@ package eu.hlavki.identity.services.util;
 import eu.hlavki.identity.services.config.AppConfiguration;
 import eu.hlavki.identity.services.ldap.impl.LdapAccountServiceImpl;
 import eu.hlavki.identity.services.model.AccountInfo;
-import eu.hlavki.identity.services.model.PrepareAccountData.Role;
+import eu.hlavki.identity.services.model.Role;
 import com.unboundid.ldap.sdk.SearchResultEntry;
 import java.util.Arrays;
 import java.util.Collections;
