@@ -13,6 +13,10 @@
         <bundle>mvn:org.cache2k/cache2k-all/${cache2k.version}</bundle>
     </feature>
 
+    <feature name="plugins" version="${project.version}">
+        <bundle>mvn:eu.hlavki.identity/g-suite-identity-sync-plugin-api/${project.version}</bundle>
+    </feature>
+
     <feature name="g-suite-identity-services" version="${project.version}">
         <feature>aries-blueprint</feature>
         <feature>eventadmin</feature>
@@ -20,6 +24,7 @@
         <feature version="${cxf.version}">cxf-rs-security-oauth2</feature>
         <feature version="${cxf.version}">cxf-bean-validation-core</feature>
         <feature version="${cache2k.version}">cache2k</feature>
+        <feature version="${project.version}">plugins</feature>
         <bundle>mvn:com.google.guava/guava/${guava.version}</bundle>
         <bundle>mvn:com.unboundid/unboundid-ldapsdk/${unboundid.version}</bundle>
         <configfile finalname="${karaf.etc}/eu.hlavki.identity.cfg">mvn:eu.hlavki.identity/g-suite-identity-sync-services/${project.version}/cfg/configuration</configfile>

@@ -1,5 +1,6 @@
 package eu.hlavki.identity.services.ldap.model;
 
+import eu.hlavki.identity.plugin.api.model.CreatedUser;
 import eu.hlavki.identity.services.config.AppConfiguration;
 import eu.hlavki.identity.services.google.model.GSuiteUser;
 import eu.hlavki.identity.services.model.CreateAccountData;
@@ -107,7 +108,7 @@ public class LdapAccount {
 
 
     public final static LdapAccount from(AppConfiguration cfg, UserInfo userInfo, Set<String> emails,
-            CreateAccountData createData) {
+        CreateAccountData createData) {
         LdapAccount account = new LdapAccount();
         account.setSubject(userInfo.getSubject());
         account.setGivenName(userInfo.getGivenName());
@@ -122,7 +123,7 @@ public class LdapAccount {
 
 
     public final static LdapAccount from(AppConfiguration cfg, UserInfo userInfo, Set<String> emails,
-            UpdateAccountData updateData) {
+        UpdateAccountData updateData) {
         LdapAccount account = new LdapAccount();
         account.setSubject(userInfo.getSubject());
         account.setGivenName(userInfo.getGivenName());
@@ -146,5 +147,17 @@ public class LdapAccount {
         emails.add(user.getPrimaryEmail());
         account.setEmails(emails);
         return account;
+    }
+
+
+    public final CreatedUser toCreated() {
+        return new CreatedUser(
+            getGivenName(),
+            getFamilyName(),
+            getName(),
+            getUsername(),
+            getSubject(),
+            getEmails(),
+            eu.hlavki.identity.plugin.api.model.Role.valueOf(getRole().toString()));
     }
 }

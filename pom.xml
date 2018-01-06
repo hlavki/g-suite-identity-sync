@@ -10,8 +10,8 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
-        <cxf.version>3.2.0</cxf.version>
-        <karaf.version>4.1.2</karaf.version>
+        <cxf.version>3.2.1</cxf.version>
+        <karaf.version>4.1.4</karaf.version>
         <cache2k.version>1.0.1.Final</cache2k.version>
         <osgi.version>6.0.0</osgi.version>
         <unboundid.version>4.0.0</unboundid.version>
@@ -31,6 +31,7 @@
         <module>sync</module>
         <module>features</module>
         <module>distribution</module>
+        <module>plugins</module>
     </modules>
 
     <distributionManagement>
@@ -46,6 +47,11 @@
 
     <dependencyManagement>
         <dependencies>
+            <dependency>
+                <groupId>eu.hlavki.identity</groupId>
+                <artifactId>g-suite-identity-sync-plugin-api</artifactId>
+                <version>${project.version}</version>
+            </dependency>
             <dependency>
                 <groupId>org.osgi</groupId>
                 <artifactId>org.osgi.core</artifactId>

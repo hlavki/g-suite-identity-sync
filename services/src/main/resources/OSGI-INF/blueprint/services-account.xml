@@ -8,6 +8,8 @@
                 http://cxf.apache.org/blueprint/jaxrs http://cxf.apache.org/schemas/blueprint/jaxrs.xsd
                 http://cxf.apache.org/blueprint/jaxrs-client http://cxf.apache.org/schemas/blueprint/jaxrs-client.xsd">
 
+    <reference-list id="userPlugins" member-type="service-object" availability="optional" interface="eu.hlavki.identity.plugin.api.UserInterceptor"/>
+
     <bean id="userInfoService" class="eu.hlavki.identity.services.rest.account.UserInfoService">
         <argument ref="configuration"/>
     </bean>
@@ -22,6 +24,7 @@
         <argument ref="gSuiteDirService"/>
         <argument ref="ldapAccountService"/>
         <argument ref="accountSyncService"/>
+        <argument ref="userPlugins"/>
     </bean>
 
 <!--    <jaxrsclient:client id="peopleServiceClient" threadSafe="true"

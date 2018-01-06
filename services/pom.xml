@@ -12,6 +12,10 @@
 
     <dependencies>
         <dependency>
+            <groupId>eu.hlavki.identity</groupId>
+            <artifactId>g-suite-identity-sync-plugin-api</artifactId>
+        </dependency>
+        <dependency>
             <groupId>org.osgi</groupId>
             <artifactId>org.osgi.core</artifactId>
         </dependency>

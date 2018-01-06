@@ -1,6 +1,8 @@
 package eu.hlavki.identity.services.rest.account;
 
 import com.unboundid.ldap.sdk.LDAPException;
+import eu.hlavki.identity.plugin.api.ProcessException;
+import eu.hlavki.identity.plugin.api.UserInterceptor;
 import eu.hlavki.identity.services.config.AppConfiguration;
 import eu.hlavki.identity.services.config.Configuration;
 import eu.hlavki.identity.services.google.GSuiteDirectoryService;
@@ -15,6 +17,7 @@ import eu.hlavki.identity.services.sync.AccountSyncService;
 import eu.hlavki.identity.services.util.AccountUtil;
 import static eu.hlavki.identity.services.util.AccountUtil.isInternalAccount;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 import javax.validation.Valid;
@@ -43,14 +46,16 @@ public class UserAccountService implements EventHandler {
     private final GSuiteDirectoryService gsuiteDirService;
     private final LdapAccountService ldapService;
     private final AccountSyncService syncService;
+    private final List<UserInterceptor> userPlugins;
 
 
     public UserAccountService(Configuration config, GSuiteDirectoryService directoryService,
-            LdapAccountService ldapService, AccountSyncService syncService) {
+        LdapAccountService ldapService, AccountSyncService syncService, List<UserInterceptor> userPlugins) {
         this.config = config;
         this.gsuiteDirService = directoryService;
         this.ldapService = ldapService;
         this.syncService = syncService;
+        this.userPlugins = userPlugins;
         configure();
     }
 
@@ -98,6 +103,14 @@ public class UserAccountService implements EventHandler {
                         log.warn("Can't update gsuite password", e);
                     }
                 }
+                for (UserInterceptor plugin : userPlugins) {
+                    try {
+                        plugin.userCreated(account.toCreated());
+                    } catch (ProcessException e) {
+                        log.warn("User plugin execution failed!", e);
+                    }
+                }
+
                 response = Response.ok();
             } else {
                 response = Response.ok().status(Response.Status.CONFLICT);
