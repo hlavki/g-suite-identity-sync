@@ -31,7 +31,7 @@
         <module>services-google</module>
         <module>services-ldap</module>
         <module>services-rest</module>
-        <module>sync</module>
+        <module>schedule</module>
         <module>features</module>
         <module>distribution</module>
         <module>plugins</module>
