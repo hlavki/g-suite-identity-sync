@@ -1,4 +1,4 @@
-package eu.hlavki.identity.services.model;
+package eu.hlavki.identity.services.rest.model;
 
 import java.util.Set;
 import javax.xml.bind.annotation.XmlRootElement;

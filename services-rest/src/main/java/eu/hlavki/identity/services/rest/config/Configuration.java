@@ -1,4 +1,4 @@
-package eu.hlavki.identity.services.config;
+package eu.hlavki.identity.services.rest.config;
 
 import java.util.Set;
 

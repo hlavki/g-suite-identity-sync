@@ -14,6 +14,8 @@
 
     <reference id="gSuiteDirService" interface="eu.hlavki.identity.services.google.GSuiteDirectoryService" />
 
+    <reference id="accountSyncService" interface="eu.hlavki.identity.services.sync.AccountSyncService" />
+
     <bean id="userInfoService" class="eu.hlavki.identity.services.rest.account.UserInfoService">
         <argument ref="configuration"/>
     </bean>

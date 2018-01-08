@@ -1,6 +1,6 @@
-package eu.hlavki.identity.services.util;
+package eu.hlavki.identity.services.rest.util;
 
-import eu.hlavki.identity.services.model.AppError;
+import eu.hlavki.identity.services.rest.model.AppError;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.Provider;
 

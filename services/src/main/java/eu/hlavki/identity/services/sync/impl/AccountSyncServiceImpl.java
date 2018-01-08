@@ -5,10 +5,8 @@ import eu.hlavki.identity.services.google.model.GroupMember.Status;
 import eu.hlavki.identity.services.ldap.LdapAccountService;
 import eu.hlavki.identity.services.ldap.model.LdapAccount;
 import eu.hlavki.identity.services.ldap.model.LdapGroup;
-import eu.hlavki.identity.services.model.AccountInfo;
 import eu.hlavki.identity.services.sync.AccountSyncService;
-import eu.hlavki.identity.services.util.AccountUtil;
-import static eu.hlavki.identity.services.util.AccountUtil.isInternalAccount;
+import static eu.hlavki.identity.services.sync.impl.AccountUtil.isInternalAccount;
 import eu.hlavki.identity.services.google.model.*;
 import eu.hlavki.identity.services.ldap.LdapSystemException;
 import java.util.*;
@@ -77,9 +75,9 @@ public class AccountSyncServiceImpl implements AccountSyncService {
         Set<String> ldapGroups = ldapService.getAllGroupNames();
         GSuiteUsers allGsuiteUsers = gsuiteDirService.getAllUsers();
 
-        Map<String, AccountInfo> emailAccountMap = new HashMap<>();
+        Map<String, LdapAccount> emailAccountMap = new HashMap<>();
         for (LdapAccount info : ldapService.getAllAccounts()) {
-            info.getEmails().forEach(email -> emailAccountMap.put(email, AccountUtil.fromLdap(info)));
+            info.getEmails().forEach(email -> emailAccountMap.put(email, info));
         }
 
         Set<String> syncedGroups = new HashSet<>();
@@ -108,7 +106,7 @@ public class AccountSyncServiceImpl implements AccountSyncService {
 
 
     private LdapGroup synchronizeGroup(GSuiteGroup gsuiteGroup, GroupMembership gsuiteMembership,
-        Map<String, AccountInfo> emailAccountMap) throws LdapSystemException {
+        Map<String, LdapAccount> emailAccountMap) throws LdapSystemException {
         log.info("Starting to synchronize group {}", gsuiteGroup.getEmail());
         LdapGroup ldapGroup = new LdapGroup();
         ldapGroup.setName(AccountUtil.getLdapGroupName(gsuiteGroup.getEmail()));

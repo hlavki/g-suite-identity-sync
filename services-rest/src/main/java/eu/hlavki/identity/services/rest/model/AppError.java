@@ -1,4 +1,4 @@
-package eu.hlavki.identity.services.model;
+package eu.hlavki.identity.services.rest.model;
 
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;

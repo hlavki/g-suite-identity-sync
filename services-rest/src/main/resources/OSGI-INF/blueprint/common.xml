@@ -22,22 +22,27 @@
         <property name="dropRootElement" value="true"/> <!-- Serialization -->
         <property name="supportUnwrapped" value="true"/> <!-- Deserialization -->
         <property name="serializeAsArray" value="true"/> <!-- Workaround for single valued collections -->
+        <property name="arrayKeys">
+            <list>
+                <value>emails</value>
+            </list>
+        </property>
     </bean>
 
     <!-- Configuration -->
     <reference id="configurationAdmin" interface="org.osgi.service.cm.ConfigurationAdmin"/>
 
-    <bean id="configuration" class="eu.hlavki.identity.services.config.ConfigurationImpl">
+    <bean id="configuration" class="eu.hlavki.identity.services.rest.config.ConfigurationImpl">
         <argument ref="configurationAdmin"/>
     </bean>
 
-    <bean id="exceptionMapper" class="eu.hlavki.identity.services.util.ValidationExceptionMapper">
+    <bean id="exceptionMapper" class="eu.hlavki.identity.services.rest.util.ValidationExceptionMapper">
         <property name="addMessageToResponse" value="true"/>
     </bean>
 
     <bean id="hibernateValidator" class="org.hibernate.validator.HibernateValidator"/>
 
-    <bean id="validationProviderResolver" class="eu.hlavki.identity.services.util.SingleValidationProviderResolver">
+    <bean id="validationProviderResolver" class="eu.hlavki.identity.services.rest.util.SingleValidationProviderResolver">
         <argument ref="hibernateValidator"/>
     </bean>
 

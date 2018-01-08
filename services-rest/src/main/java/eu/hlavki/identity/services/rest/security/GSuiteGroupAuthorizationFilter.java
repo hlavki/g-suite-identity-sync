@@ -3,7 +3,7 @@ package eu.hlavki.identity.services.rest.security;
 import eu.hlavki.identity.services.google.GSuiteDirectoryService;
 import eu.hlavki.identity.services.google.ResourceNotFoundException;
 import eu.hlavki.identity.services.google.model.GroupMembership;
-import eu.hlavki.identity.services.model.ServerError;
+import eu.hlavki.identity.services.rest.model.ServerError;
 import com.google.common.base.Supplier;
 import com.google.common.base.Suppliers;
 import java.io.IOException;
@@ -23,7 +23,7 @@ import org.apache.cxf.rs.security.oidc.common.IdToken;
 import org.apache.cxf.rs.security.oidc.rp.OidcClientTokenContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import eu.hlavki.identity.services.config.Configuration;
+import eu.hlavki.identity.services.rest.config.Configuration;
 
 @Priority(Priorities.AUTHORIZATION)
 public class GSuiteGroupAuthorizationFilter implements ContainerRequestFilter {

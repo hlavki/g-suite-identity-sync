@@ -1,16 +1,16 @@
-package eu.hlavki.identity.services.util;
+package eu.hlavki.identity.services.rest.util;
 
 import eu.hlavki.identity.plugin.api.model.CreatedUser;
 import eu.hlavki.identity.services.google.model.GSuiteUser;
-import eu.hlavki.identity.services.model.AccountInfo;
-import eu.hlavki.identity.services.model.Role;
+import eu.hlavki.identity.services.rest.model.AccountInfo;
+import eu.hlavki.identity.services.rest.model.Role;
 import eu.hlavki.identity.services.ldap.model.LdapAccount;
-import eu.hlavki.identity.services.model.CreateAccountData;
-import eu.hlavki.identity.services.model.UpdateAccountData;
+import eu.hlavki.identity.services.rest.model.CreateAccountData;
+import eu.hlavki.identity.services.rest.model.UpdateAccountData;
 import java.util.HashSet;
 import java.util.Set;
 import org.apache.cxf.rs.security.oidc.common.UserInfo;
-import eu.hlavki.identity.services.config.Configuration;
+import eu.hlavki.identity.services.rest.config.Configuration;
 
 public final class AccountUtil {
 
@@ -56,20 +56,6 @@ public final class AccountUtil {
             info.setRole(Role.valueOf(ldapAccount.getRole().toString()));
         }
         return info;
-    }
-
-
-    public final static LdapAccount toLdapAccount(GSuiteUser user) {
-        LdapAccount account = new LdapAccount();
-        account.setSubject(user.getId());
-        account.setGivenName(user.getName().getGivenName());
-        account.setFamilyName(user.getName().getFamilyName());
-        account.setName(user.getName().getFullName());
-        account.setRole(LdapAccount.Role.INTERNAL);
-        Set<String> emails = new HashSet<>();
-        emails.add(user.getPrimaryEmail());
-        account.setEmails(emails);
-        return account;
     }
 
 

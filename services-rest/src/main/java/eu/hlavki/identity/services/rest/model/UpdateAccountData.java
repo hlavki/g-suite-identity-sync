@@ -1,4 +1,4 @@
-package eu.hlavki.identity.services.model;
+package eu.hlavki.identity.services.rest.model;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
