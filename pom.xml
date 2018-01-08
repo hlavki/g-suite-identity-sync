@@ -28,6 +28,8 @@
     <modules>
         <module>web</module>
         <module>services</module>
+        <module>services-google</module>
+        <module>services-ldap</module>
         <module>sync</module>
         <module>features</module>
         <module>distribution</module>
@@ -50,6 +52,16 @@
             <dependency>
                 <groupId>eu.hlavki.identity</groupId>
                 <artifactId>g-suite-identity-sync-plugin-api</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>eu.hlavki.identity</groupId>
+                <artifactId>g-suite-identity-sync-services-ldap</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>eu.hlavki.identity</groupId>
+                <artifactId>g-suite-identity-sync-services-google</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>

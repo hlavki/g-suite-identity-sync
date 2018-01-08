@@ -7,22 +7,10 @@
         <version>0.3.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>g-suite-identity-sync-services</artifactId>
+    <artifactId>g-suite-identity-sync-services-ldap</artifactId>
     <packaging>bundle</packaging>
 
     <dependencies>
-        <dependency>
-            <groupId>eu.hlavki.identity</groupId>
-            <artifactId>g-suite-identity-sync-plugin-api</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>eu.hlavki.identity</groupId>
-            <artifactId>g-suite-identity-sync-services-ldap</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>eu.hlavki.identity</groupId>
-            <artifactId>g-suite-identity-sync-services-google</artifactId>
-        </dependency>
         <dependency>
             <groupId>org.osgi</groupId>
             <artifactId>org.osgi.core</artifactId>
@@ -36,24 +24,8 @@
             <artifactId>slf4j-api</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.google.guava</groupId>
-            <artifactId>guava</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.cxf</groupId>
-            <artifactId>cxf-rt-frontend-jaxrs</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.cxf</groupId>
-            <artifactId>cxf-rt-rs-security-sso-oidc</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.cache2k</groupId>
-            <artifactId>cache2k-core</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>javax.validation</groupId>
-            <artifactId>validation-api</artifactId>
+            <groupId>com.unboundid</groupId>
+            <artifactId>unboundid-ldapsdk</artifactId>
         </dependency>
     </dependencies>
 
@@ -65,10 +37,10 @@
                 <extensions>true</extensions>
                 <configuration>
                     <instructions>
-                        <Import-Package>
-                            *,
-                            org.apache.cxf.jaxrs.client
-                        </Import-Package>
+                        <Export-Package>
+                            eu.hlavki.identity.services.ldap,
+                            eu.hlavki.identity.services.ldap.model
+                        </Export-Package>
                     </instructions>
                 </configuration>
             </plugin>
@@ -85,7 +57,7 @@
                         <configuration>
                             <artifacts>
                                 <artifact>
-                                    <file>src/main/config/eu.hlavki.identity.properties</file>
+                                    <file>src/main/config/eu.hlavki.identity.ldap.properties</file>
                                     <type>cfg</type>
                                     <classifier>configuration</classifier>
                                 </artifact>

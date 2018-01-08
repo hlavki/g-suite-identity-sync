@@ -10,6 +10,10 @@
 
     <reference-list id="userPlugins" member-type="service-object" availability="optional" interface="eu.hlavki.identity.plugin.api.UserInterceptor"/>
 
+    <reference id="ldapAccountService" interface="eu.hlavki.identity.services.ldap.LdapAccountService" />
+
+    <reference id="gSuiteDirService" interface="eu.hlavki.identity.services.google.GSuiteDirectoryService" />
+
     <bean id="userInfoService" class="eu.hlavki.identity.services.rest.account.UserInfoService">
         <argument ref="configuration"/>
     </bean>
@@ -37,39 +41,6 @@
             <bean class="org.apache.cxf.jaxrs.provider.json.JsonMapObjectProvider"/>
         </jaxrsclient:providers>
     </jaxrsclient:client>-->
-
-    <!-- Configuration listener for userAccountService -->
-    <service ref="userAccountService" interface="org.osgi.service.event.EventHandler">
-        <service-properties>
-            <entry key="event.topics">
-                <array value-type="java.lang.String">
-                    <value>eu/hlavki/identity/Configuration/*</value>
-                </array>
-            </entry>
-        </service-properties>
-    </service>
-
-    <!-- Configuration listener for adminService -->
-    <service ref="adminService" interface="org.osgi.service.event.EventHandler">
-        <service-properties>
-            <entry key="event.topics">
-                <array value-type="java.lang.String">
-                    <value>eu/hlavki/identity/Configuration/*</value>
-                </array>
-            </entry>
-        </service-properties>
-    </service>
-
-    <!-- Configuration listener for userInfoService -->
-    <service ref="userInfoService" interface="org.osgi.service.event.EventHandler">
-        <service-properties>
-            <entry key="event.topics">
-                <array value-type="java.lang.String">
-                    <value>eu/hlavki/identity/Configuration/*</value>
-                </array>
-            </entry>
-        </service-properties>
-    </service>
 
     <!-- Identity REST service  -->
     <jaxrs:server id="identityRestServer" address="/identity">

@@ -1,6 +1,5 @@
 package eu.hlavki.identity.services.model;
 
-import eu.hlavki.identity.services.model.Role;
 import java.util.Set;
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -22,7 +21,7 @@ public class AccountInfo {
 
 
     public AccountInfo(String username, Set<String> emails, String subject, String givenName,
-            String familyName, String name, Role role, boolean syncGsuitePassword) {
+        String familyName, String name, Role role, boolean syncGsuitePassword) {
         this.username = username;
         this.emails = emails;
         this.subject = subject;

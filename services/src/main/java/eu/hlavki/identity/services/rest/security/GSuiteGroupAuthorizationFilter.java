@@ -1,6 +1,5 @@
 package eu.hlavki.identity.services.rest.security;
 
-import eu.hlavki.identity.services.config.AppConfiguration;
 import eu.hlavki.identity.services.google.GSuiteDirectoryService;
 import eu.hlavki.identity.services.google.ResourceNotFoundException;
 import eu.hlavki.identity.services.google.model.GroupMembership;
@@ -24,30 +23,31 @@ import org.apache.cxf.rs.security.oidc.common.IdToken;
 import org.apache.cxf.rs.security.oidc.rp.OidcClientTokenContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import eu.hlavki.identity.services.config.Configuration;
 
 @Priority(Priorities.AUTHORIZATION)
 public class GSuiteGroupAuthorizationFilter implements ContainerRequestFilter {
 
     private static final Logger log = LoggerFactory.getLogger(GSuiteGroupAuthorizationFilter.class);
-    private final AppConfiguration config;
     private final Supplier<Set<String>> externalAccountsCache;
+    private final GSuiteDirectoryService gsuiteService;
 
 
-    public GSuiteGroupAuthorizationFilter(final GSuiteDirectoryService gsuiteDirService, AppConfiguration config) {
-        this.config = config;
+    public GSuiteGroupAuthorizationFilter(final GSuiteDirectoryService gsuiteDirService, Configuration config) {
+        this.gsuiteService = gsuiteDirService;
         this.externalAccountsCache = Suppliers.memoizeWithExpiration(
-                () -> {
-                    String allowGroup = config.getExternalAccountsGroup();
-                    Set<String> result = Collections.emptySet();
-                    try {
-                        GroupMembership membership = gsuiteDirService.getGroupMembers(allowGroup);
-                        result = membership.getMembers() == null ? Collections.emptySet()
-                        : membership.getMembers().stream().map(m -> m.getEmail()).collect(Collectors.toSet());
-                    } catch (ResourceNotFoundException e) {
-                        log.warn("Group for external accounts {} does not exists", allowGroup);
-                    }
-                    return result;
-                }, 15, TimeUnit.MINUTES);
+            () -> {
+                String allowGroup = config.getExternalAccountsGroup();
+                Set<String> result = Collections.emptySet();
+                try {
+                    GroupMembership membership = gsuiteDirService.getGroupMembers(allowGroup);
+                    result = membership.getMembers() == null ? Collections.emptySet()
+                    : membership.getMembers().stream().map(m -> m.getEmail()).collect(Collectors.toSet());
+                } catch (ResourceNotFoundException e) {
+                    log.warn("Group for external accounts {} does not exists", allowGroup);
+                }
+                return result;
+            }, 15, TimeUnit.MINUTES);
     }
 
 
@@ -57,7 +57,7 @@ public class GSuiteGroupAuthorizationFilter implements ContainerRequestFilter {
         IdToken idToken = ctx.getIdToken();
         String email = idToken.getEmail();
         String hdParam = idToken.getStringProperty("hd");
-        boolean fromGsuite = config.getGSuiteDomain().equalsIgnoreCase(hdParam);
+        boolean fromGsuite = gsuiteService.getDomainName().equalsIgnoreCase(hdParam);
         Set<String> externalAccounts = externalAccountsCache.get();
         if (!fromGsuite && !externalAccounts.contains(email)) {
             log.error("Unauthorized access from {}", hdParam);

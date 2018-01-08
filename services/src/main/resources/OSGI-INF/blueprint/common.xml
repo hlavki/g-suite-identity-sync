@@ -22,28 +22,14 @@
         <property name="dropRootElement" value="true"/> <!-- Serialization -->
         <property name="supportUnwrapped" value="true"/> <!-- Deserialization -->
         <property name="serializeAsArray" value="true"/> <!-- Workaround for single valued collections -->
-        <property name="arrayKeys">
-            <list>
-                <value>emails</value>
-            </list>
-        </property>
     </bean>
 
     <!-- Configuration -->
-    <reference id="eventAdmin" interface="org.osgi.service.event.EventAdmin"/>
-
     <reference id="configurationAdmin" interface="org.osgi.service.cm.ConfigurationAdmin"/>
 
-    <bean id="configuration" class="eu.hlavki.identity.services.config.Configuration">
-        <argument ref="eventAdmin"/>
+    <bean id="configuration" class="eu.hlavki.identity.services.config.ConfigurationImpl">
         <argument ref="configurationAdmin"/>
     </bean>
-
-    <service ref="configuration" interface="org.osgi.service.cm.ManagedService">
-        <service-properties>
-            <entry key="service.pid" value="eu.hlavki.identity"/>
-        </service-properties>
-    </service>
 
     <bean id="exceptionMapper" class="eu.hlavki.identity.services.util.ValidationExceptionMapper">
         <property name="addMessageToResponse" value="true"/>

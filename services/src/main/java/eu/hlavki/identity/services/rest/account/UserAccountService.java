@@ -1,10 +1,7 @@
 package eu.hlavki.identity.services.rest.account;
 
-import com.unboundid.ldap.sdk.LDAPException;
 import eu.hlavki.identity.plugin.api.ProcessException;
 import eu.hlavki.identity.plugin.api.UserInterceptor;
-import eu.hlavki.identity.services.config.AppConfiguration;
-import eu.hlavki.identity.services.config.Configuration;
 import eu.hlavki.identity.services.google.GSuiteDirectoryService;
 import eu.hlavki.identity.services.google.InvalidPasswordException;
 import eu.hlavki.identity.services.google.model.GSuiteUser;
@@ -30,19 +27,20 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
 import org.apache.cxf.rs.security.oidc.common.UserInfo;
 import org.apache.cxf.rs.security.oidc.rp.OidcClientTokenContext;
-import org.osgi.service.event.Event;
-import org.osgi.service.event.EventHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import eu.hlavki.identity.services.config.Configuration;
+import eu.hlavki.identity.services.ldap.LdapSystemException;
+import java.util.Collections;
 
 @Path("account")
-public class UserAccountService implements EventHandler {
+public class UserAccountService {
 
     private static final Logger log = LoggerFactory.getLogger(UserAccountService.class);
 
     @Context
     private OidcClientTokenContext oidcContext;
-    private final AppConfiguration config;
+    private final Configuration config;
     private final GSuiteDirectoryService gsuiteDirService;
     private final LdapAccountService ldapService;
     private final AccountSyncService syncService;
@@ -56,12 +54,6 @@ public class UserAccountService implements EventHandler {
         this.ldapService = ldapService;
         this.syncService = syncService;
         this.userPlugins = userPlugins;
-        configure();
-    }
-
-
-    private void configure() {
-        log.info("Configuring UserAccountService ...");
     }
 
 
@@ -69,14 +61,15 @@ public class UserAccountService implements EventHandler {
     @Path("prepare")
     public PrepareAccountData prepareAccount() {
         final UserInfo userInfo = oidcContext.getUserInfo();
+        String gsuiteDomain = gsuiteDirService.getDomainName();
         PrepareAccountData detail = new PrepareAccountData();
         detail.setGivenName(userInfo.getGivenName());
         detail.setFamilyName(userInfo.getFamilyName());
         detail.setName(userInfo.getName());
         detail.setEmail(userInfo.getEmail());
-        detail.setEmails(getAccountAliases(userInfo, config));
+        detail.setEmails(getAccountAliases(userInfo, gsuiteDomain));
         detail.setEmailVerified(userInfo.getEmailVerified());
-        detail.setRole(AccountUtil.getAccountRole(config, userInfo));
+        detail.setRole(AccountUtil.getAccountRole(userInfo, gsuiteDomain));
         detail.setSaveGSuitePassword(detail.getRole() == Role.INTERNAL && config.isGsuiteSyncPassword());
         GroupList userGroups = gsuiteDirService.getGroups(userInfo.getSubject());
         if (userGroups.getGroups() != null) {
@@ -93,10 +86,11 @@ public class UserAccountService implements EventHandler {
         String subject = userInfo.getSubject();
         try {
             if (!ldapService.accountExists(subject)) {
-                Set<String> emails = getAccountEmails(userInfo, config);
-                LdapAccount account = LdapAccount.from(config, userInfo, emails, data);
+                Set<String> emails = Collections.singleton(userInfo.getEmail());
+                String gsuiteDomain = gsuiteDirService.getDomainName();
+                LdapAccount account = AccountUtil.toLdapAccount(gsuiteDomain, userInfo, emails, data);
                 ldapService.createAccount(account);
-                if (data.isSaveGSuitePassword() && isInternalAccount(userInfo, config)) {
+                if (data.isSaveGSuitePassword() && isInternalAccount(userInfo, gsuiteDomain)) {
                     try {
                         gsuiteDirService.updateUserPassword(subject, data.getPassword());
                     } catch (InvalidPasswordException e) {
@@ -105,7 +99,7 @@ public class UserAccountService implements EventHandler {
                 }
                 for (UserInterceptor plugin : userPlugins) {
                     try {
-                        plugin.userCreated(account.toCreated());
+                        plugin.userCreated(AccountUtil.toCreated(account));
                     } catch (ProcessException e) {
                         log.warn("User plugin execution failed!", e);
                     }
@@ -115,7 +109,7 @@ public class UserAccountService implements EventHandler {
             } else {
                 response = Response.ok().status(Response.Status.CONFLICT);
             }
-        } catch (LDAPException e) {
+        } catch (LdapSystemException e) {
             log.error("Can't create account", e);
             response = ServerError.toResponse("LDAP_ERR", e);
         }
@@ -130,11 +124,12 @@ public class UserAccountService implements EventHandler {
         String subject = userInfo.getSubject();
         try {
             if (ldapService.accountExists(subject)) {
-                Set<String> emails = getAccountEmails(userInfo, config);
-                LdapAccount account = LdapAccount.from(config, userInfo, emails, data);
+                String gsuiteDomain = gsuiteDirService.getDomainName();
+                Set<String> emails = Collections.singleton(userInfo.getEmail());
+                LdapAccount account = AccountUtil.toLdapAccount(gsuiteDomain, userInfo, emails, data);
                 ldapService.updateAccount(account);
                 response = Response.ok();
-                if (data.isSaveGSuitePassword() && isInternalAccount(userInfo, config)) {
+                if (data.isSaveGSuitePassword() && isInternalAccount(userInfo, gsuiteDomain)) {
                     try {
                         gsuiteDirService.updateUserPassword(subject, data.getPassword());
                     } catch (InvalidPasswordException e) {
@@ -144,7 +139,7 @@ public class UserAccountService implements EventHandler {
             } else {
                 response = Response.ok().status(Response.Status.CONFLICT);
             }
-        } catch (LDAPException e) {
+        } catch (LdapSystemException e) {
             log.error("Can't create account", e);
             response = ServerError.toResponse("LDAP_ERR", e);
         }
@@ -160,7 +155,7 @@ public class UserAccountService implements EventHandler {
         try {
             syncService.synchronizeUserGroups(userInfo);
             response = Response.ok();
-        } catch (LDAPException e) {
+        } catch (LdapSystemException e) {
             log.error("Can't create account", e);
             response = ServerError.toResponse("SYNC_ERR", e);
         }
@@ -173,13 +168,14 @@ public class UserAccountService implements EventHandler {
         ResponseBuilder response;
         String subject = oidcContext.getUserInfo().getSubject();
         try {
-            AccountInfo info = ldapService.getAccountInfo(subject);
+            LdapAccount ldapAcc = ldapService.getAccountInfo(subject);
+            AccountInfo info = AccountUtil.fromLdap(ldapAcc);
             if (info != null) {
                 response = Response.ok(info);
             } else {
                 response = Response.ok().status(Response.Status.NOT_FOUND);
             }
-        } catch (LDAPException e) {
+        } catch (LdapSystemException e) {
             log.error("Can't obtain account info", e);
             response = ServerError.toResponse("LDAP_ERR", e);
         }
@@ -187,25 +183,10 @@ public class UserAccountService implements EventHandler {
     }
 
 
-    @Override
-    public void handleEvent(Event event) {
-        if (Configuration.TOPIC_CHANGE.equals(event.getTopic())) {
-            configure();
-        }
-    }
-
-
-    private Set<String> getAccountEmails(UserInfo userInfo, AppConfiguration cfg) {
+    private Set<String> getAccountAliases(UserInfo userInfo, String gsuiteDomain) {
         Set<String> result = new HashSet<>();
         result.add(userInfo.getEmail());
-        return result;
-    }
-
-
-    private Set<String> getAccountAliases(UserInfo userInfo, AppConfiguration cfg) {
-        Set<String> result = new HashSet<>();
-        result.add(userInfo.getEmail());
-        if (isInternalAccount(userInfo, cfg)) {
+        if (isInternalAccount(userInfo, gsuiteDomain)) {
             GSuiteUser user = gsuiteDirService.getUser(userInfo.getSubject());
             result.addAll(user.getAliases());
         }

@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xmlns:cm="http://aries.apache.org/blueprint/xmlns/blueprint-cm/v1.3.0"
+           xsi:schemaLocation="http://www.osgi.org/xmlns/blueprint/v1.0.0 https://osgi.org/xmlns/blueprint/v1.0.0/blueprint.xsd
+               http://aries.apache.org/blueprint/xmlns/blueprint-cm/v1.3.0 http://aries.apache.org/schemas/blueprint-cm/blueprint-cm-1.3.0.xsd">
+
+    <cm:property-placeholder persistent-id="eu.hlavki.identity.ldap"/>
+
+    <reference id="configurationAdmin" interface="org.osgi.service.cm.ConfigurationAdmin"/>
+
+    <bean id="configuration" class="eu.hlavki.identity.services.ldap.config.ConfigurationImpl">
+        <argument ref="configurationAdmin"/>
+    </bean>
+
+    <!-- LDAP -->
+    <bean id="ldapConnOptions" class="com.unboundid.ldap.sdk.LDAPConnectionOptions">
+        <!-- configure options -->
+    </bean>
+
+    <bean id="ldapConnection" class="com.unboundid.ldap.sdk.LDAPConnection">
+        <argument ref="ldapConnOptions"/>
+        <argument value="${ldap.host}"/>
+        <argument value="${ldap.port}"/>
+        <argument value="${ldap.bindDN}"/>
+        <argument value="${ldap.password}"/>
+    </bean>
+
+    <bean id="ldapConnectionPool" class="com.unboundid.ldap.sdk.LDAPConnectionPool">
+        <argument ref="ldapConnection"/>
+        <argument value="${ldap.pool.initSize}"/>
+        <argument value="${ldap.pool.maxSize}"/>
+    </bean>
+
+    <bean id="ldapAccountService" class="eu.hlavki.identity.services.ldap.impl.LdapAccountServiceImpl">
+        <argument ref="configuration"/>
+        <argument ref="ldapConnectionPool"/>
+    </bean>
+
+    <service ref="ldapAccountService" interface="eu.hlavki.identity.services.ldap.LdapAccountService" />
+
+    <bean id="cfgManagedService" class="eu.hlavki.identity.services.ldap.config.ConfigManagerService">
+        <argument>
+            <list>
+                <ref component-id="ldapAccountService"/>
+            </list>
+        </argument>
+    </bean>
+
+    <service ref="cfgManagedService" interface="org.osgi.service.cm.ManagedService">
+        <service-properties>
+            <entry key="service.pid" value="eu.hlavki.identity.ldap"/>
+        </service-properties>
+    </service>
+</blueprint>

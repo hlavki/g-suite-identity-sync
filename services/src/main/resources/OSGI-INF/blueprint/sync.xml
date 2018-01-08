@@ -5,19 +5,7 @@
 
 
     <bean id="accountSyncService" class="eu.hlavki.identity.services.sync.impl.AccountSyncServiceImpl">
-        <argument ref="configuration"/>
         <argument ref="ldapAccountService"/>
         <argument ref="gSuiteDirService"/>
     </bean>
-
-    <!-- Configuration listener -->
-    <service ref="accountSyncService" interface="org.osgi.service.event.EventHandler">
-        <service-properties>
-            <entry key="event.topics">
-                <array value-type="java.lang.String">
-                    <value>eu/hlavki/identity/Configuration/*</value>
-                </array>
-            </entry>
-        </service-properties>
-    </service>
 </blueprint>

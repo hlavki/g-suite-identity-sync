@@ -1,15 +1,15 @@
 package eu.hlavki.identity.services.sync;
 
-import com.unboundid.ldap.sdk.LDAPException;
+import eu.hlavki.identity.services.ldap.LdapSystemException;
 import org.apache.cxf.rs.security.oidc.common.UserInfo;
 
 public interface AccountSyncService {
 
-    void synchronizeUserGroups(UserInfo userInfo) throws LDAPException;
+    void synchronizeUserGroups(UserInfo userInfo) throws LdapSystemException;
 
 
-    void synchronizeAllGroups() throws LDAPException;
+    void synchronizeAllGroups() throws LdapSystemException;
 
 
-    void synchronizeGSuiteUsers() throws LDAPException;
+    void synchronizeGSuiteUsers() throws LdapSystemException;
 }

@@ -1,7 +1,5 @@
 package eu.hlavki.identity.services.sync.impl;
 
-import eu.hlavki.identity.services.config.AppConfiguration;
-import eu.hlavki.identity.services.config.Configuration;
 import eu.hlavki.identity.services.google.GSuiteDirectoryService;
 import eu.hlavki.identity.services.google.model.GroupMember.Status;
 import eu.hlavki.identity.services.ldap.LdapAccountService;
@@ -11,57 +9,48 @@ import eu.hlavki.identity.services.model.AccountInfo;
 import eu.hlavki.identity.services.sync.AccountSyncService;
 import eu.hlavki.identity.services.util.AccountUtil;
 import static eu.hlavki.identity.services.util.AccountUtil.isInternalAccount;
-import com.unboundid.ldap.sdk.LDAPException;
 import eu.hlavki.identity.services.google.model.*;
+import eu.hlavki.identity.services.ldap.LdapSystemException;
 import java.util.*;
 import java.util.stream.Collectors;
 import org.apache.cxf.rs.security.oidc.common.UserInfo;
-import org.osgi.service.event.Event;
-import org.osgi.service.event.EventHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class AccountSyncServiceImpl implements AccountSyncService, EventHandler {
+public class AccountSyncServiceImpl implements AccountSyncService {
 
     private static final Logger log = LoggerFactory.getLogger(AccountSyncServiceImpl.class);
-    private final AppConfiguration config;
     private final LdapAccountService ldapService;
     private final GSuiteDirectoryService gsuiteDirService;
 
 
-    public AccountSyncServiceImpl(AppConfiguration config, LdapAccountService ldapService,
-            GSuiteDirectoryService gsuiteDirService) {
-        this.config = config;
+    public AccountSyncServiceImpl(LdapAccountService ldapService, GSuiteDirectoryService gsuiteDirService) {
         this.ldapService = ldapService;
         this.gsuiteDirService = gsuiteDirService;
     }
 
 
-    private static void configure() {
-        log.info("Configuring AccountSyncService...");
-    }
-
-
     @Override
-    public void synchronizeUserGroups(UserInfo userInfo) throws LDAPException {
+    public void synchronizeUserGroups(UserInfo userInfo) throws LdapSystemException {
         String accountDN = ldapService.getAccountDN(userInfo.getSubject());
         GroupList gsuiteGroups = gsuiteDirService.getGroups(userInfo.getSubject());
         Map<String, LdapGroup> ldapGroups = ldapService.getAccountGroups(accountDN);
 
         Set<String> asIs = ldapGroups.values().stream()
-                .filter(g -> g.getMembersDn().contains(accountDN))
-                .map(g -> g.getDn())
-                .collect(Collectors.toSet());
+            .filter(g -> g.getMembersDn().contains(accountDN))
+            .map(g -> g.getDn())
+            .collect(Collectors.toSet());
 
         List<GSuiteGroup> gg = gsuiteGroups.getGroups() != null ? gsuiteGroups.getGroups() : Collections.emptyList();
         Set<String> toBe = gg.stream()
-                .map(group -> group.getEmail())
-                .map(email -> AccountUtil.getLdapGroupName(email))
-                .collect(Collectors.toSet());
+            .map(group -> group.getEmail())
+            .map(email -> AccountUtil.getLdapGroupName(email))
+            .collect(Collectors.toSet());
 
         // Workaround for implicit group mapping
-        if (isInternalAccount(userInfo, config) && config.isSetGSuiteImplicitGroup()) {
-            toBe.add(AccountUtil.getLdapGroupName(config.getGSuiteImplicitGroup()));
+        boolean implicitGroup = gsuiteDirService.getImplicitGroup() != null;
+        if (isInternalAccount(userInfo, gsuiteDirService.getDomainName()) && implicitGroup) {
+            toBe.add(AccountUtil.getLdapGroupName(gsuiteDirService.getImplicitGroup()));
         }
 
         Set<String> toRemove = new HashSet<>(asIs);
@@ -83,14 +72,14 @@ public class AccountSyncServiceImpl implements AccountSyncService, EventHandler 
 
 
     @Override
-    public void synchronizeAllGroups() throws LDAPException {
+    public void synchronizeAllGroups() throws LdapSystemException {
         Map<GSuiteGroup, GroupMembership> gsuiteGroups = gsuiteDirService.getAllGroupMembership(false);
         Set<String> ldapGroups = ldapService.getAllGroupNames();
         GSuiteUsers allGsuiteUsers = gsuiteDirService.getAllUsers();
 
         Map<String, AccountInfo> emailAccountMap = new HashMap<>();
-        for (AccountInfo info : ldapService.getAllAccounts()) {
-            info.getEmails().forEach(email -> emailAccountMap.put(email, info));
+        for (LdapAccount info : ldapService.getAllAccounts()) {
+            info.getEmails().forEach(email -> emailAccountMap.put(email, AccountUtil.fromLdap(info)));
         }
 
         Set<String> syncedGroups = new HashSet<>();
@@ -99,7 +88,7 @@ public class AccountSyncServiceImpl implements AccountSyncService, EventHandler 
             GroupMembership gsuiteMembership = entry.getValue();
 
             // Workaround for implicit group mapping
-            if (gsuiteGroup.getEmail().equals(config.getGSuiteImplicitGroup())) {
+            if (gsuiteGroup.getEmail().equals(gsuiteDirService.getImplicitGroup())) {
                 List<GroupMember> allMembers = allGsuiteUsers.getUsers().stream().map(u -> u.toMember()).collect(Collectors.toList());
                 gsuiteMembership.getMembers().addAll(allMembers);
             }
@@ -119,20 +108,20 @@ public class AccountSyncServiceImpl implements AccountSyncService, EventHandler 
 
 
     private LdapGroup synchronizeGroup(GSuiteGroup gsuiteGroup, GroupMembership gsuiteMembership,
-            Map<String, AccountInfo> emailAccountMap) throws LDAPException {
+        Map<String, AccountInfo> emailAccountMap) throws LdapSystemException {
         log.info("Starting to synchronize group {}", gsuiteGroup.getEmail());
         LdapGroup ldapGroup = new LdapGroup();
         ldapGroup.setName(AccountUtil.getLdapGroupName(gsuiteGroup.getEmail()));
         ldapGroup.setDescription(gsuiteGroup.getName());
         Set<String> members = gsuiteMembership.getMembers().stream().
-                filter(m -> m.getStatus() == Status.ACTIVE).filter(m -> emailAccountMap.containsKey(m.getEmail())).
-                map(m -> AccountUtil.getAccountDN(emailAccountMap.get(m.getEmail()).getUsername(), config)).
-                collect(Collectors.toSet());
+            filter(m -> m.getStatus() == Status.ACTIVE).filter(m -> emailAccountMap.containsKey(m.getEmail())).
+            map(m -> ldapService.getAccountDNFromEmail(emailAccountMap.get(m.getEmail()).getUsername())).
+            collect(Collectors.toSet());
         LdapGroup result = ldapGroup;
         if (!members.isEmpty()) {
             ldapGroup.setMembersDn(members);
             log.info("Synchronizing GSuite group {} as LDAP group {} with {} members",
-                    gsuiteGroup.getEmail(), ldapGroup.getName(), ldapGroup.getMembersDn().size());
+                gsuiteGroup.getEmail(), ldapGroup.getName(), ldapGroup.getMembersDn().size());
             result = ldapService.createOrUpdateGroup(ldapGroup);
         } else {
             log.info("Removing group {} from LDAP. No active members!", ldapGroup.getName());
@@ -143,23 +132,15 @@ public class AccountSyncServiceImpl implements AccountSyncService, EventHandler 
 
 
     @Override
-    public void synchronizeGSuiteUsers() throws LDAPException {
+    public void synchronizeGSuiteUsers() throws LdapSystemException {
         GSuiteUsers users = gsuiteDirService.getAllUsers();
         for (GSuiteUser user : users.getUsers()) {
             if (ldapService.accountExists(user.getId())) {
-                ldapService.updateAccount(LdapAccount.from(user));
+                ldapService.updateAccount(AccountUtil.toLdapAccount(user));
                 log.info("User {} successfully updated.", user.getPrimaryEmail());
             } else {
                 log.info("User {} does not exists in LDAP.", user.getPrimaryEmail());
             }
-        }
-    }
-
-
-    @Override
-    public void handleEvent(Event event) {
-        if (Configuration.TOPIC_CHANGE.equals(event.getTopic())) {
-            configure();
         }
     }
 }

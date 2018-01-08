@@ -20,6 +20,7 @@
     <feature name="g-suite-identity-services" version="${project.version}">
         <feature>aries-blueprint</feature>
         <feature>eventadmin</feature>
+        <feature>pax-cdi</feature>
         <feature version="${cxf.version}">cxf-jaxrs</feature>
         <feature version="${cxf.version}">cxf-rs-security-oauth2</feature>
         <feature version="${cxf.version}">cxf-bean-validation-core</feature>
@@ -28,7 +29,11 @@
         <bundle>mvn:com.google.guava/guava/${guava.version}</bundle>
         <bundle>mvn:com.unboundid/unboundid-ldapsdk/${unboundid.version}</bundle>
         <configfile finalname="${karaf.etc}/eu.hlavki.identity.cfg">mvn:eu.hlavki.identity/g-suite-identity-sync-services/${project.version}/cfg/configuration</configfile>
+        <configfile finalname="${karaf.etc}/eu.hlavki.identity.ldap.cfg">mvn:eu.hlavki.identity/g-suite-identity-sync-services-ldap/${project.version}/cfg/configuration</configfile>
+        <configfile finalname="${karaf.etc}/eu.hlavki.identity.google.cfg">mvn:eu.hlavki.identity/g-suite-identity-sync-services-gsuite/${project.version}/cfg/configuration</configfile>
         <bundle>mvn:org.apache.cxf/cxf-rt-rs-security-sso-oidc/${cxf.version}</bundle> <!-- Missing in features!!! Maybe bug -->
+        <bundle>mvn:eu.hlavki.identity/g-suite-identity-sync-services-ldap/${project.version}</bundle>
+        <bundle>mvn:eu.hlavki.identity/g-suite-identity-sync-services-google/${project.version}</bundle>
         <bundle>mvn:eu.hlavki.identity/g-suite-identity-sync-services/${project.version}</bundle>
     </feature>
 </features>

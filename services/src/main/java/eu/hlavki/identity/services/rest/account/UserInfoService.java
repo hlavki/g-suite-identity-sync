@@ -1,7 +1,6 @@
 package eu.hlavki.identity.services.rest.account;
 
-import eu.hlavki.identity.services.config.AppConfiguration;
-import eu.hlavki.identity.services.config.Configuration;
+import eu.hlavki.identity.services.config.ConfigurationImpl;
 import eu.hlavki.identity.services.model.UserInfo;
 import eu.hlavki.identity.services.util.AccountUtil;
 import java.net.URI;
@@ -14,6 +13,7 @@ import org.osgi.service.event.Event;
 import org.osgi.service.event.EventHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import eu.hlavki.identity.services.config.Configuration;
 
 @Path("user")
 public class UserInfoService implements EventHandler {
@@ -21,10 +21,10 @@ public class UserInfoService implements EventHandler {
     private static final Logger log = LoggerFactory.getLogger(UserInfoService.class);
     @Context
     private OidcClientTokenContext oidcContext;
-    private final AppConfiguration config;
+    private final Configuration config;
 
 
-    public UserInfoService(AppConfiguration config) {
+    public UserInfoService(Configuration config) {
         this.config = config;
         configure();
     }
@@ -51,7 +51,7 @@ public class UserInfoService implements EventHandler {
 
     @Override
     public void handleEvent(Event event) {
-        if (Configuration.TOPIC_CHANGE.equals(event.getTopic())) {
+        if (ConfigurationImpl.TOPIC_CHANGE.equals(event.getTopic())) {
             configure();
         }
     }
