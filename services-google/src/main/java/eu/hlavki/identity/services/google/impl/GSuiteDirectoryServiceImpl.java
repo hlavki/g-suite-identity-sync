@@ -31,7 +31,6 @@ import org.apache.cxf.rs.security.oauth2.common.ClientAccessToken;
 import org.apache.cxf.rs.security.oauth2.grants.jwt.JwtBearerGrant;
 import org.apache.cxf.rs.security.oauth2.provider.OAuthJSONProvider;
 import org.apache.cxf.rs.security.oauth2.utils.OAuthUtils;
-import org.apache.cxf.rs.security.oidc.common.UserInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
