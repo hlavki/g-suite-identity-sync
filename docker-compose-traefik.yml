@@ -1,11 +1,8 @@
-version: "3"
+version: "3.3"
 
 services:
   identity:
     image: hlavki/g-suite-identity-sync
-    ports:
-      - 8443:8443
-      - 8101:8101
     environment:
       - SLAPD_BIND_DN=cn=admin,dc=example,dc=org
       - SLAPD_BASE_DN=dc=example,dc=org
@@ -15,10 +12,15 @@ services:
       - GSUITE_SERVICE_ACCOUNT_SUBJECT=some-admin@example.org
       - GSUITE_CLIENT_ID=*******.apps.googleusercontent.com
       - GSUITE_CLIENT_SECRET=******
+    volumes:
+      - identity-data:/opt/karaf/etc
     depends_on:
       - ldap
-    volumes:
-      - account-config:/opt/karaf/etc
+    labels:
+      - "traefik.port=8181"
+      - "traefik.enable=true"
+      - "traefik.backend=identity"
+      - "traefik.frontend.rule=Host:identity.example.com"
 
   ldap:
     image: osixia/openldap
@@ -34,7 +36,16 @@ services:
       - ldap-data:/var/lib/ldap
       - ldap-config:/etc/ldap/slapd.d
 
+  traefik:
+    image: traefik
+    command: -c /dev/null --api --docker --docker.domain=example.com --logLevel=DEBUG
+    restart: always
+    ports:
+      - 80:80
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+
 volumes:
-  account-config:
+  identity-data:
   ldap-config:
   ldap-data:
