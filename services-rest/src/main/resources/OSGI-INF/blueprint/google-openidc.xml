@@ -65,7 +65,7 @@
         <property name="consumer" ref="consumer"/>
         <property name="authorizationServiceUri" value="https://accounts.google.com/o/oauth2/auth"/>
         <property name="startUri" value="rp"/>
-        <property name="completeUri" value="https://${hostname}/cxf/oidc/rp/complete"/> <!-- Have to use absolute URI -->
+        <property name="completeUri" value="rp/complete"/>
     </bean>
     <!-- This state manager creates an OAuth2 'state' parameter and saves it in the HTTP session -->
     <bean id="rpClientCodeStateManager" class="org.apache.cxf.rs.security.oauth2.client.MemoryClientCodeStateManager"/>
