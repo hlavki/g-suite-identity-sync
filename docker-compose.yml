@@ -4,7 +4,7 @@ services:
   identity:
     image: hlavki/g-suite-identity-sync
     ports:
-      - 8443:8443
+      - 8181:8181
       - 8101:8101
     environment:
       - SLAPD_BIND_DN=cn=admin,dc=example,dc=org
