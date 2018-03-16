@@ -9,14 +9,14 @@ ENV KARAF_EXEC exec
 RUN addgroup -S -g $KARAF_UID $KARAF_USER; \
     adduser -S -u $KARAF_UID -g $KARAF_USER $KARAF_USER
 
-ADD maven/karaf/ /opt/karaf
+COPY --chown=karaf:karaf maven/karaf/ /opt/karaf
 
 # Install karaf distribution
 RUN sed -i 's/log4j\.rootLogger=INFO,\ out,\ osgi\:\*/log4j\.rootLogger=INFO,\ out,\ stdout,\ osgi\:\*/' /opt/karaf/etc/org.ops4j.pax.logging.cfg \
     && sed -i '/felix.fileinstall.log.default/a felix.fileinstall.subdir.mode\ =\ recurse' /opt/karaf/etc/config.properties \
     && sed -i -e '$a log4j.logger.org.apache.cxf=ERROR' /opt/karaf/etc/org.ops4j.pax.logging.cfg \
     && mkdir -p /opt/karaf/data /opt/karaf/data/log /opt/karaf/etc/identity \
-    && chown -R $KARAF_USER.$KARAF_USER /opt/karaf
+    && chown -R $KARAF_USER.$KARAF_USER /opt/karaf/data /opt/karaf/data/log /opt/karaf/etc/identity
 
 EXPOSE 8101 8181
 
