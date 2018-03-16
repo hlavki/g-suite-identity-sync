@@ -2,7 +2,6 @@ package eu.hlavki.identity.services.google;
 
 import eu.hlavki.identity.services.google.model.*;
 import java.util.Map;
-import org.apache.cxf.rs.security.oidc.common.UserInfo;
 
 public interface GSuiteDirectoryService {
 
