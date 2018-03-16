@@ -13,7 +13,7 @@ ADD maven/karaf/ /opt/karaf
 
 # Install karaf distribution
 RUN sed -i 's/log4j\.rootLogger=INFO,\ out,\ osgi\:\*/log4j\.rootLogger=INFO,\ out,\ stdout,\ osgi\:\*/' /opt/karaf/etc/org.ops4j.pax.logging.cfg \
-#    && sed -i -e '$a log4j.logger.org.apache.cxf=ERROR' /opt/karaf/etc/org.ops4j.pax.logging.cfg \
+    && sed -i -e '$a log4j.logger.org.apache.cxf=ERROR' /opt/karaf/etc/org.ops4j.pax.logging.cfg \
     && mkdir -p /opt/karaf/data /opt/karaf/data/log \
     && chown -R $KARAF_USER.$KARAF_USER /opt/karaf \
     && mkdir /opt/karaf/etc/keystore
