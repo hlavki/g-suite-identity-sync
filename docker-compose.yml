@@ -18,7 +18,7 @@ services:
     depends_on:
       - ldap
     volumes:
-      - account-config:/opt/karaf/etc
+      - identity-config:/opt/karaf/etc/identity
 
   ldap:
     image: osixia/openldap
@@ -35,6 +35,6 @@ services:
       - ldap-config:/etc/ldap/slapd.d
 
 volumes:
-  account-config:
+  identity-config:
   ldap-config:
   ldap-data:

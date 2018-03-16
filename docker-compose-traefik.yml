@@ -13,7 +13,7 @@ services:
       - GSUITE_CLIENT_ID=*******.apps.googleusercontent.com
       - GSUITE_CLIENT_SECRET=******
     volumes:
-      - identity-data:/opt/karaf/etc
+      - identity-config:/opt/karaf/etc/identity
     depends_on:
       - ldap
     labels:
@@ -46,6 +46,6 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
 
 volumes:
-  identity-data:
+  identity-config:
   ldap-config:
   ldap-data:
