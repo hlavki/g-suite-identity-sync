@@ -2,6 +2,8 @@ package eu.hlavki.identity.services.rest.util;
 
 import static java.util.Collections.singletonList;
 import javax.validation.ValidationProviderResolver;
+import javax.validation.spi.ValidationProvider;
+
 import java.util.List;
 
 /**
@@ -11,16 +13,16 @@ import java.util.List;
  */
 public class SingleValidationProviderResolver implements ValidationProviderResolver {
 
-    private final Object provider;
+    private final ValidationProvider<?> provider;
 
 
-    public SingleValidationProviderResolver(Object provider) {
+    public SingleValidationProviderResolver(ValidationProvider<?> provider) {
         this.provider = provider;
     }
 
 
     @Override
-    public List getValidationProviders() {
+    public List<ValidationProvider<?>> getValidationProviders() {
         return singletonList(provider);
     }
 }
