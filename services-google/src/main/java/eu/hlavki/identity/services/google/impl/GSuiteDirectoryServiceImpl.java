@@ -1,21 +1,20 @@
 package eu.hlavki.identity.services.google.impl;
 
-import eu.hlavki.identity.services.google.GSuiteDirectoryService;
-import eu.hlavki.identity.services.google.model.GroupMembership;
-import eu.hlavki.identity.services.google.NoPrivateKeyException;
-import eu.hlavki.identity.services.google.model.GSuiteGroup;
-import eu.hlavki.identity.services.google.model.GroupList;
-import eu.hlavki.identity.services.google.InvalidPasswordException;
-import eu.hlavki.identity.services.google.ResourceNotFoundException;
 import com.google.common.base.Supplier;
-import com.google.common.base.Suppliers;
+import static com.google.common.base.Suppliers.memoizeWithExpiration;
+import eu.hlavki.identity.services.google.GSuiteDirectoryService;
+import eu.hlavki.identity.services.google.InvalidPasswordException;
+import eu.hlavki.identity.services.google.NoPrivateKeyException;
+import eu.hlavki.identity.services.google.ResourceNotFoundException;
 import eu.hlavki.identity.services.google.config.Configurable;
 import eu.hlavki.identity.services.google.config.Configuration;
 import eu.hlavki.identity.services.google.model.*;
-import java.security.*;
+import java.security.PrivateKey;
 import java.text.MessageFormat;
-import java.util.*;
-import java.util.concurrent.TimeUnit;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
+import static java.util.concurrent.TimeUnit.*;
 import javax.ws.rs.NotFoundException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -56,8 +55,8 @@ public class GSuiteDirectoryServiceImpl implements GSuiteDirectoryService, Confi
         log.info("Configuring GSuiteDirectoryService ...");
         long tokenLifetime = config.getServiceAccountTokenLifetime();
         log.info("Token lifetime set to {}", tokenLifetime);
-        this.tokenCache = Suppliers.memoizeWithExpiration(() -> getAccessToken(), tokenLifetime - 3, TimeUnit.SECONDS);
-        this.membershipCache = Suppliers.memoizeWithExpiration(() -> getAllGroupMembershipInternal(), 3, TimeUnit.MINUTES);
+        this.tokenCache = memoizeWithExpiration(() -> getAccessToken(), tokenLifetime - 3, SECONDS);
+        this.membershipCache = memoizeWithExpiration(() -> getAllGroupMembershipInternal(), 3, MINUTES);
         try {
             privateKey = config.getServiceAccountKey();
             log.info("Service account private key {} loaded from {}",
@@ -106,9 +105,7 @@ public class GSuiteDirectoryServiceImpl implements GSuiteDirectoryService, Confi
         String path = MessageFormat.format("groups/{0}", new Object[]{groupKey});
 
         WebClient webClient = WebClient.fromClient(directoryApiClient, true);
-
-        ClientAccessToken accessToken = tokenCache.get();
-        webClient.authorization(accessToken);
+        webClient.authorization(tokenCache.get());
         GSuiteGroup group = webClient.path(path).get(GSuiteGroup.class);
         return group;
     }
@@ -117,7 +114,6 @@ public class GSuiteDirectoryServiceImpl implements GSuiteDirectoryService, Confi
     @Override
     public GroupList getUserGroups(String userKey) {
         WebClient webClient = WebClient.fromClient(directoryApiClient, true).path("groups");
-
         webClient.authorization(tokenCache.get());
         if (userKey != null) {
             webClient.query("userKey", userKey);
