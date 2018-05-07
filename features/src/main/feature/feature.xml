@@ -16,6 +16,7 @@
         <feature>aries-blueprint</feature>
         <feature>eventadmin</feature>
         <feature>pax-cdi</feature>
+        <feature>scheduler</feature>
         <feature version="${cxf.version}">cxf-jaxrs</feature>
         <feature version="${cxf.version}">cxf-rs-security-oauth2</feature>
         <feature version="${cxf.version}">cxf-bean-validation-core</feature>
@@ -29,6 +30,7 @@
         <bundle>mvn:eu.hlavki.identity/g-suite-identity-sync-services-ldap/${project.version}</bundle>
         <bundle>mvn:eu.hlavki.identity/g-suite-identity-sync-services-google/${project.version}</bundle>
         <bundle>mvn:eu.hlavki.identity/g-suite-identity-sync-services/${project.version}</bundle>
+        <bundle>mvn:eu.hlavki.identity/g-suite-identity-sync-services-scheduler/${project.version}</bundle>
     </feature>
 
     <feature name="g-suite-identity-web" version="${project.version}">
