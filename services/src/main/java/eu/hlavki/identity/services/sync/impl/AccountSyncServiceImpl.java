@@ -31,7 +31,7 @@ public class AccountSyncServiceImpl implements AccountSyncService {
     @Override
     public void synchronizeUserGroups(UserInfo userInfo) throws LdapSystemException {
         String accountDN = ldapService.getAccountDN(userInfo.getSubject());
-        GroupList gsuiteGroups = gsuiteDirService.getGroups(userInfo.getSubject());
+        GroupList gsuiteGroups = gsuiteDirService.getUserGroups(userInfo.getSubject());
         Map<String, LdapGroup> ldapGroups = ldapService.getAccountGroups(accountDN);
 
         Set<String> asIs = ldapGroups.values().stream()

@@ -60,7 +60,8 @@ public class GSuiteDirectoryServiceImpl implements GSuiteDirectoryService, Confi
         this.membershipCache = Suppliers.memoizeWithExpiration(() -> getAllGroupMembershipInternal(), 3, TimeUnit.MINUTES);
         try {
             privateKey = config.getServiceAccountKey();
-            log.info("Service account private key {}loaded from {}", privateKey != null ? "" : "was not ", config.getPrivateKeyLocation());
+            log.info("Service account private key {} loaded from {}",
+                    privateKey != null ? "" : "was not ", config.getPrivateKeyLocation());
         } catch (NoPrivateKeyException e) {
             log.error(e.getMessage(), e.getCause());
         }
@@ -114,7 +115,7 @@ public class GSuiteDirectoryServiceImpl implements GSuiteDirectoryService, Confi
 
 
     @Override
-    public GroupList getGroups(String userKey) {
+    public GroupList getUserGroups(String userKey) {
         WebClient webClient = WebClient.fromClient(directoryApiClient, true).path("groups");
 
         webClient.authorization(tokenCache.get());
@@ -128,7 +129,7 @@ public class GSuiteDirectoryServiceImpl implements GSuiteDirectoryService, Confi
 
     @Override
     public GroupList getAllGroups() {
-        return getGroups(null);
+        return getUserGroups(null);
     }
 
 
@@ -140,7 +141,7 @@ public class GSuiteDirectoryServiceImpl implements GSuiteDirectoryService, Confi
 
     @Override
     public GSuiteUsers getAllUsers() {
-        return readAllUsers(null);
+        return readAllUsers();
     }
 
 
@@ -183,6 +184,9 @@ public class GSuiteDirectoryServiceImpl implements GSuiteDirectoryService, Confi
         return config.getGSuiteImplicitGroup();
     }
 
+    private GSuiteUsers readAllUsers() {
+        return readAllUsers(null);
+    }
 
     private GSuiteUsers readAllUsers(GSuiteUsers parent) {
         WebClient webClient = WebClient.fromClient(directoryApiClient, true).path("users");

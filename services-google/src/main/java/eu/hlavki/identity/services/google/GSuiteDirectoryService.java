@@ -12,7 +12,7 @@ public interface GSuiteDirectoryService {
      * group's primary email address, a group's email alias, or the user's unique id.
      * @return all groups for a member
      */
-    GroupList getGroups(String userKey);
+    GroupList getUserGroups(String userKey);
 
 
     /**

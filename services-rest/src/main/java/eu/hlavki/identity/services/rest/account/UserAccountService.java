@@ -75,7 +75,7 @@ public class UserAccountService {
         detail.setEmailVerified(userInfo.getEmailVerified());
         detail.setRole(AccountUtil.getAccountRole(userInfo, gsuiteDomain));
         detail.setSaveGSuitePassword(detail.getRole() == Role.INTERNAL && config.isGsuiteSyncPassword());
-        GroupList userGroups = gsuiteDirService.getGroups(userInfo.getSubject());
+        GroupList userGroups = gsuiteDirService.getUserGroups(userInfo.getSubject());
         if (userGroups.getGroups() != null) {
             detail.setGroups(userGroups.getGroups().stream().map(PrepareAccountData.Group::map).collect(Collectors.toList()));
         }
