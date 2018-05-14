@@ -1,6 +1,8 @@
 package eu.hlavki.identity.services.ldap.impl;
 
 import com.unboundid.ldap.sdk.*;
+import static com.unboundid.ldap.sdk.ModificationType.*;
+import static com.unboundid.ldap.sdk.SearchScope.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import eu.hlavki.identity.services.ldap.LdapAccountService;
@@ -50,7 +52,7 @@ public class LdapAccountServiceImpl implements LdapAccountService, Configurable 
     public String getAccountDN(String subject) throws LdapSystemException {
         try (LDAPConnection conn = ldapPool.getConnection()) {
             String baseDn = config.getLdapUserBaseDN();
-            SearchResultEntry entry = conn.searchForEntry(baseDn, SearchScope.ONE, "(employeeNumber=" + subject + ")", "uid");
+            SearchResultEntry entry = conn.searchForEntry(baseDn, ONE, "(employeeNumber=" + subject + ")", "uid");
             return entry != null ? entry.getDN() : null;
         } catch (LDAPException e) {
             throw new LdapSystemException(e);
@@ -69,7 +71,7 @@ public class LdapAccountServiceImpl implements LdapAccountService, Configurable 
         LdapAccount result = null;
         try (LDAPConnection conn = ldapPool.getConnection()) {
             String baseDn = config.getLdapUserBaseDN();
-            SearchResultEntry entry = conn.searchForEntry(baseDn, SearchScope.ONE, "(employeeNumber=" + subject + ")");
+            SearchResultEntry entry = conn.searchForEntry(baseDn, ONE, "(employeeNumber=" + subject + ")");
             if (entry != null) {
                 result = accountFromEntry(entry);
 //                result.setSyncGsuitePassword(config.isGsuiteSyncPassword());
@@ -85,7 +87,7 @@ public class LdapAccountServiceImpl implements LdapAccountService, Configurable 
     public List<LdapAccount> getAllAccounts() throws LdapSystemException {
         try (LDAPConnection conn = ldapPool.getConnection()) {
             String baseDn = config.getLdapUserBaseDN();
-            SearchResult searchResult = conn.search(baseDn, SearchScope.ONE, "(objectClass=inetOrgPerson)");
+            SearchResult searchResult = conn.search(baseDn, ONE, "(objectClass=inetOrgPerson)");
             return searchResult.getSearchEntries().stream().map(entry -> accountFromEntry(entry)).collect(Collectors.toList());
         } catch (LDAPException e) {
             throw new LdapSystemException(e);
@@ -122,12 +124,12 @@ public class LdapAccountServiceImpl implements LdapAccountService, Configurable 
             String entryDN = getAccountDN(account.getSubject());
             List<Modification> mods = new ArrayList<>();
             if (account.getPassword() != null) {
-                mods.add(new Modification(ModificationType.REPLACE, "userPassword", account.getPassword()));
+                mods.add(new Modification(REPLACE, "userPassword", account.getPassword()));
             }
-            mods.add(new Modification(ModificationType.REPLACE, "givenName", account.getGivenName()));
-            mods.add(new Modification(ModificationType.REPLACE, "sn", account.getFamilyName()));
-            mods.add(new Modification(ModificationType.REPLACE, "cn", account.getName()));
-            mods.add(new Modification(ModificationType.REPLACE, "mail", account.getEmails().toArray(new String[0])));
+            mods.add(new Modification(REPLACE, "givenName", account.getGivenName()));
+            mods.add(new Modification(REPLACE, "sn", account.getFamilyName()));
+            mods.add(new Modification(REPLACE, "cn", account.getName()));
+            mods.add(new Modification(REPLACE, "mail", account.getEmails().toArray(new String[0])));
             conn.modify(new ModifyRequest(entryDN, mods));
         } catch (LDAPException e) {
             throw new LdapSystemException(e);
@@ -152,7 +154,7 @@ public class LdapAccountServiceImpl implements LdapAccountService, Configurable 
             String baseDN = config.getLdapGroupsBaseDN();
             log.info("Group base DN: " + baseDN);
             String filter = "(objectClass=" + config.getLdapGroupsObjectClass() + ")";
-            SearchResult searchResult = conn.search(baseDN, SearchScope.SUB, filter, GROUP_NAME_ATTR);
+            SearchResult searchResult = conn.search(baseDN, SUB, filter, GROUP_NAME_ATTR);
             for (SearchResultEntry entry : searchResult.getSearchEntries()) {
                 String name = entry.getAttributeValue(GROUP_NAME_ATTR);
                 result.add(name);
@@ -170,8 +172,8 @@ public class LdapAccountServiceImpl implements LdapAccountService, Configurable 
             LdapGroup current = getGroup(group.getName(), conn);
             if (current != null) {
                 Modification[] mods = new Modification[]{
-                    new Modification(ModificationType.REPLACE, GROUP_DESC_ATTR, group.getDescription()),
-                    new Modification(ModificationType.REPLACE, config.getLdapGroupsMemberAttr(), group.getMembersDn().toArray(new String[0]))
+                    new Modification(REPLACE, GROUP_DESC_ATTR, group.getDescription()),
+                    new Modification(REPLACE, config.getLdapGroupsMemberAttr(), group.getMembersDn().toArray(new String[0]))
                 };
                 conn.modify(current.getDn(), mods);
                 current.setDescription(group.getDescription());
@@ -200,10 +202,10 @@ public class LdapAccountServiceImpl implements LdapAccountService, Configurable 
             String baseDN = config.getLdapGroupsBaseDN();
             log.info("Group base DN: " + baseDN);
             Filter filter = Filter.createANDFilter(
-                Filter.createEqualityFilter("objectClass", config.getLdapGroupsObjectClass()),
-                Filter.createEqualityFilter(config.getLdapGroupsMemberAttr(), accountDN));
-            SearchResult searchResult = conn.search(baseDN, SearchScope.SUB, filter,
-                GROUP_NAME_ATTR, config.getLdapGroupsMemberAttr(), GROUP_DESC_ATTR);
+                    Filter.createEqualityFilter("objectClass", config.getLdapGroupsObjectClass()),
+                    Filter.createEqualityFilter(config.getLdapGroupsMemberAttr(), accountDN));
+            SearchResult searchResult = conn.search(baseDN, SUB, filter,
+                    GROUP_NAME_ATTR, config.getLdapGroupsMemberAttr(), GROUP_DESC_ATTR);
             for (SearchResultEntry entry : searchResult.getSearchEntries()) {
                 String dn = entry.getDN();
                 String name = entry.getAttributeValue(GROUP_NAME_ATTR);
@@ -234,7 +236,7 @@ public class LdapAccountServiceImpl implements LdapAccountService, Configurable 
                     conn.add(groupEntry);
                     log.info("Group {} added", groupDN);
                 } else {
-                    Modification mod = new Modification(ModificationType.ADD, config.getLdapGroupsMemberAttr(), accountDN);
+                    Modification mod = new Modification(ADD, config.getLdapGroupsMemberAttr(), accountDN);
                     conn.modify(new ModifyRequest(group.getDn(), mod));
                     log.info("Added membership {} to {}", accountDN, group.getName());
                 }
@@ -252,7 +254,7 @@ public class LdapAccountServiceImpl implements LdapAccountService, Configurable 
             if (group == null || !group.getMembersDn().contains(accountDN)) {
                 log.info("Nothing to do. Account {} is not member of group {}", accountDN, groupName);
             } else {
-                Modification mod = new Modification(ModificationType.DELETE, config.getLdapGroupsMemberAttr(), accountDN);
+                Modification mod = new Modification(DELETE, config.getLdapGroupsMemberAttr(), accountDN);
                 conn.modify(new ModifyRequest(group.getDn(), mod));
                 log.info("Remove membership {} from {}", accountDN, group.getName());
                 if (group.getMembersDn().size() == 1) {
@@ -293,8 +295,8 @@ public class LdapAccountServiceImpl implements LdapAccountService, Configurable 
             LdapGroup result = null;
             String baseDN = config.getLdapGroupsBaseDN();
             Filter groupFilter = Filter.createEqualityFilter(GROUP_NAME_ATTR, groupName);
-            SearchResultEntry entry = conn.searchForEntry(baseDN, SearchScope.ONE, groupFilter,
-                GROUP_NAME_ATTR, config.getLdapGroupsMemberAttr(), GROUP_DESC_ATTR);
+            SearchResultEntry entry = conn.searchForEntry(baseDN, ONE, groupFilter,
+                    GROUP_NAME_ATTR, config.getLdapGroupsMemberAttr(), GROUP_DESC_ATTR);
             if (entry != null) {
                 String dn = entry.getDN();
                 String name = entry.getAttributeValue(GROUP_NAME_ATTR);
