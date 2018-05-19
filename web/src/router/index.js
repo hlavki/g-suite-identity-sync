@@ -1,14 +1,14 @@
-import Vue from 'vue'
-import Router from 'vue-router'
-import SignIn from '@/components/SignIn'
-import About from '@/components/About'
-import CreateAccount from '@/components/CreateAccount'
-import Home from '@/components/Home'
-import NotFound from '@/components/NotFound'
-import AuthProgress from '@/components/AuthProgress'
-import Settings from '@/components/Settings'
+import Vue from 'vue';
+import Router from 'vue-router';
+import SignIn from '@/components/SignIn';
+import About from '@/components/About';
+import CreateAccount from '@/components/CreateAccount';
+import Home from '@/components/Home';
+import NotFound from '@/components/NotFound';
+import AuthProgress from '@/components/AuthProgress';
+import Settings from '@/components/Settings';
 
-Vue.use(Router)
+Vue.use(Router);
 
 export default new Router({
   // mode: 'history',
@@ -57,4 +57,4 @@ export default new Router({
       component: NotFound
     }
   ]
-})
+});

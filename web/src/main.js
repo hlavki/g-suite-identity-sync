@@ -4,7 +4,8 @@ import Vue from 'vue'
 import App from './App'
 import router from './router'
 import VueMaterial from 'vue-material'
-import 'vue-material/dist/vue-material.css'
+import 'vue-material/dist/vue-material.min.css'
+import 'vue-material/dist/theme/default.css'
 import AuthPlugin from './plugins/auth'
 import axios from 'axios'
 import VeeValidate from 'vee-validate'
@@ -103,9 +104,6 @@ Vue.use(AuthPlugin, {
   isProduction: isProduction,
   apiPrefix: apiPrefix
 })
-Vue.material.registerTheme('default', {
-  primary: 'green'
-})
 Vue.prototype.$http = axios
 Vue.prototype.$apiPrefix = apiPrefix
 Vue.prototype.$isProduction = isProduction
@@ -117,4 +115,3 @@ new Vue({
   template: '<App/>',
   components: { App }
 })
-

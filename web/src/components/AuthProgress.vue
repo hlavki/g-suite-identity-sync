@@ -1,11 +1,13 @@
 <template>
   <div>
-    <md-whiteframe md-elevation="6" class="global-frame">
-      <md-subheader>Authentication & authorizing your user profile</md-subheader>
-      <div class="progress">
-        <md-spinner :md-size="70" :md-stroke="2" md-indeterminate v-if="showProgress"></md-spinner>
-      </div>
-    </md-whiteframe>
+    <md-card class="md-layout-item md-size-40 md-small-size-100">
+      <md-card-header>
+        <div class="md-title">Authentication & authorizing your user profile</div>
+      </md-card-header>
+      <md-card-content class="progress">
+        <md-progress-spinner md-mode="indeterminate" v-if="showProgress" />
+      </md-card-content>
+    </md-card>
   </div>
 </template>
 
@@ -15,15 +17,15 @@ export default {
   data() {
     return {
       showProgress: false
-    }
+    };
   },
-  created: function () {
-    this.showProgress = true
+  created: function() {
+    this.showProgress = true;
   },
-  destroyed: function () {
-    this.showProgress = false
+  destroyed: function() {
+    this.showProgress = false;
   }
-}
+};
 </script>
 
 <style>
