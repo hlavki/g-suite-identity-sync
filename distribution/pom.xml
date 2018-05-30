@@ -60,7 +60,6 @@
                         <feature>g-suite-identity-web</feature>
                     </bootFeatures>
                     <archiveZip>false</archiveZip>
-                    <javase>1.8</javase>
                 </configuration>
             </plugin>
             <plugin>
