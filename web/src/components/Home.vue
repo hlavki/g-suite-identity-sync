@@ -171,13 +171,6 @@ export default {
   padding-right: 5px;
 }
 
-.group-frame {
-  margin-right: 5px;
-  padding-left: 0px;
-  padding-right: 5px;
-  margin-bottom: 20px;
-}
-
 .error-label {
   background-color: hotpink;
   color: black;
