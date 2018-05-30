@@ -28,4 +28,4 @@ Groups are synchronized on user creation, scheduler on manually.
 
 ## Screenshots
 
-![](https://i.imgur.com/1raqCVF.png)
+![](https://i.imgur.com/NetCiwR.png)
