@@ -26,8 +26,8 @@
             <md-input v-model="userData.role" disabled></md-input>
           </md-field>
 
-          <md-list class="md-double-line" v-if="showGroups()">
-            <md-subheader>Emails</md-subheader>
+          <md-list class="md-double-line md-dense" v-if="showGroups()">
+            <md-subheader>Groups</md-subheader>
             <md-list-item v-for="group in userData.groups" :key="group.email" disabled>
               <md-icon class="md-primary">group</md-icon>
 
@@ -97,14 +97,13 @@ export default {
           if (_this.$isProduction) _this.$auth.logout();
           else {
             _this.userData = {
-              email: 'user@example.com',
-              emails: ['user@example.com', 'user2@example.com'],
-              name: 'George Sorosa',
+              email: 'jara@cimrman.cz',
+              emails: ['jara@cimrman.cz', 'jaroslav.cimrman@cimrman.cz'],
+              name: 'Jaroslav Cimrman',
               role: 'INTERNAL',
               saveGSuitePassword: true,
               groups: [
-                { name: 'Group1', email: 'group1@example.com' },
-                { name: 'Group2', email: 'group2@example.com' }
+                { name: 'Lezici', email: 'lezici@cimrman.cz' }
               ]
             };
             _this.processFormData(_this.userData);
@@ -195,20 +194,6 @@ export default {
 </script>
 
 <style>
-.global-frame {
-  max-width: 600px;
-  margin: 5px;
-  padding-left: 10px;
-  padding-right: 5px;
-}
-
-.group-frame {
-  margin-right: 5px;
-  padding-left: 0px;
-  padding-right: 5px;
-  margin-bottom: 20px;
-}
-
 .error-label {
   background-color: hotpink;
   color: black;

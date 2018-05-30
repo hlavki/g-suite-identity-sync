@@ -1,7 +1,7 @@
 <template>
   <div class="page-container">
     <md-app md-mode="reveal">
-      <md-app-toolbar class="md-primary md-dense">
+      <md-app-toolbar class="md-primary">
         <md-button class="md-icon-button" @click="menuVisible = !menuVisible">
           <md-icon>menu</md-icon>
         </md-button>
@@ -23,7 +23,7 @@
             </md-list-item>
           </md-list>
         </md-toolbar>
-        <md-list class="md-dense">
+        <md-list>
           <md-list-item v-if="!$auth.loggedIn" @click="routeTo('/sign-in')">
             <md-icon>
               <svg style="width:24px;height:24px" viewBox="0 0 24 24">
