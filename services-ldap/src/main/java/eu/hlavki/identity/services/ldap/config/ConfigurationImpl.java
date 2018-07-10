@@ -17,7 +17,7 @@ public class ConfigurationImpl implements Configuration {
     private static final String LDAP_GROUPS_MEMBER_ATTR_PROP = "ldap.groups.memberAttr";
     private static final String LDAP_GROUPS_MEMBER_ATTR_DEFAULT = "uniqueMember";
     private static final String LDAP_USER_ATTR_PROP = "ldap.users.attr";
-    private static final String LDAP_USER_ATTR_DEFAULT = "uid";
+    private static final String LDAP_USER_ATTR_DEFAULT = "cn";
 
     private static final Logger log = LoggerFactory.getLogger(ConfigurationImpl.class);
     private static final String PID = "eu.hlavki.identity.ldap";
