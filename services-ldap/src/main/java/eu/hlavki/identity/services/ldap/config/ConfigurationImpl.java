@@ -21,15 +21,14 @@ public class ConfigurationImpl implements Configuration {
     private static final String PID = "eu.hlavki.identity.ldap";
     public static final String CONFIG_PROP = "config";
     private static final String COLLECTIONS_VALUE_SEPARATOR = "|";
-    private Dictionary<String, ?> properties;
+    private org.osgi.service.cm.Configuration osgiConfig;
     private final ConfigurationAdmin cfgAdmin;
 
 
     public ConfigurationImpl(ConfigurationAdmin cfgAdmin) {
         this.cfgAdmin = cfgAdmin;
         try {
-            org.osgi.service.cm.Configuration cfg = this.cfgAdmin.getConfiguration(PID);
-            this.properties = cfg.getProperties();
+            this.osgiConfig = this.cfgAdmin.getConfiguration(PID);
         } catch (IOException e) {
             log.warn("Can't load configuration", e);
         }
@@ -37,7 +36,7 @@ public class ConfigurationImpl implements Configuration {
 
 
     public String get(String name) {
-        Object value = properties.get(name);
+        Object value = osgiConfig.getProperties().get(name);
         return value != null ? String.valueOf(value) : null;
     }
 
