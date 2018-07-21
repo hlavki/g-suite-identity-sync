@@ -16,20 +16,21 @@ public class ConfigurationImpl implements Configuration {
     private static final String LDAP_GROUPS_OBJECT_CLASS_DEFAULT = "groupOfUniqueNames";
     private static final String LDAP_GROUPS_MEMBER_ATTR_PROP = "ldap.groups.memberAttr";
     private static final String LDAP_GROUPS_MEMBER_ATTR_DEFAULT = "uniqueMember";
+    private static final String LDAP_USER_ATTR_PROP = "ldap.users.attr";
+    private static final String LDAP_USER_ATTR_DEFAULT = "cn";
 
     private static final Logger log = LoggerFactory.getLogger(ConfigurationImpl.class);
     private static final String PID = "eu.hlavki.identity.ldap";
     public static final String CONFIG_PROP = "config";
     private static final String COLLECTIONS_VALUE_SEPARATOR = "|";
-    private Dictionary<String, ?> properties;
+    private org.osgi.service.cm.Configuration osgiConfig;
     private final ConfigurationAdmin cfgAdmin;
 
 
     public ConfigurationImpl(ConfigurationAdmin cfgAdmin) {
         this.cfgAdmin = cfgAdmin;
         try {
-            org.osgi.service.cm.Configuration cfg = this.cfgAdmin.getConfiguration(PID);
-            this.properties = cfg.getProperties();
+            this.osgiConfig = this.cfgAdmin.getConfiguration(PID);
         } catch (IOException e) {
             log.warn("Can't load configuration", e);
         }
@@ -37,7 +38,7 @@ public class ConfigurationImpl implements Configuration {
 
 
     public String get(String name) {
-        Object value = properties.get(name);
+        Object value = osgiConfig.getProperties().get(name);
         return value != null ? String.valueOf(value) : null;
     }
 
@@ -227,5 +228,10 @@ public class ConfigurationImpl implements Configuration {
     @Override
     public String getLdapGroupsMemberAttr() {
         return get(LDAP_GROUPS_MEMBER_ATTR_PROP, LDAP_GROUPS_MEMBER_ATTR_DEFAULT);
+    }
+
+    @Override
+    public String getUserAttr() {
+        return get(LDAP_USER_ATTR_PROP, LDAP_USER_ATTR_DEFAULT);
     }
 }

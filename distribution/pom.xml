@@ -70,7 +70,7 @@
                 <configuration>
                     <images>
                         <image>
-                            <name>hlavki/g-suite-identity-sync:${project.version}</name>
+                            <name>hlavki/g-suite-identity-sync:issue-10</name>
                             <build>
                                 <dockerFileDir>.</dockerFileDir>
                                 <tags>
