@@ -11,14 +11,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @Component(immediate = true, property = {
-    Scheduler.PROPERTY_SCHEDULER_EXPRESSION + "=0 0 * * * ?"})
+    Scheduler.PROPERTY_SCHEDULER_EXPRESSION + "=0 0 * * * ?",
+    Scheduler.PROPERTY_SCHEDULER_NAME + "=SyncGroups",
+    Scheduler.PROPERTY_SCHEDULER_CONCURRENT + ":Boolean=false"})
 public class SyncGroupsJob implements Job {
 
     private static final Logger LOG = LoggerFactory.getLogger(SyncGroupsJob.class);
 
     @Reference
     private AccountSyncService syncService;
-
 
     @Override
     public void execute(JobContext context) {
