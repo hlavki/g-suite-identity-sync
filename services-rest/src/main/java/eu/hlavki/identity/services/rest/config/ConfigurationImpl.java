@@ -9,32 +9,33 @@ import org.slf4j.LoggerFactory;
 
 public class ConfigurationImpl implements Configuration {
 
+    private static final Logger LOG = LoggerFactory.getLogger(ConfigurationImpl.class);
+    
+    private static final String PID = "eu.hlavki.identity";
     private static final String ADMINS_PROP = "admins";
     private static final String GSUITE_SYNC_PASSWORD_PROP = "gsuite.sync.password";
     private static final boolean GSUITE_SYNC_PASSWORD_DEFAULT = false;
     private static final String EXTERNAL_USER_GROUP_PROP = "gsuite.external.accounts.group";
 
-    private static final Logger log = LoggerFactory.getLogger(ConfigurationImpl.class);
     public static final String TOPIC_CHANGE = "eu/hlavki/identity/Configuration/CHANGED";
     public static final String CONFIG_PROP = "config";
     private static final String COLLECTIONS_VALUE_SEPARATOR = "|";
-    private Dictionary<String, ?> properties;
+    private org.osgi.service.cm.Configuration osgiConfig;
     private final ConfigurationAdmin cfgAdmin;
 
 
     public ConfigurationImpl(ConfigurationAdmin cfgAdmin) {
         this.cfgAdmin = cfgAdmin;
         try {
-            org.osgi.service.cm.Configuration cfg = this.cfgAdmin.getConfiguration("eu.hlavki.identity");
-            this.properties = cfg.getProperties();
+            this.osgiConfig = this.cfgAdmin.getConfiguration(PID);
         } catch (IOException e) {
-            log.warn("Can't load configuration", e);
+            LOG.warn("Can't load configuration", e);
         }
     }
 
 
     public String get(String name) {
-        Object value = properties.get(name);
+        Object value = osgiConfig.getProperties().get(name);
         return value != null ? String.valueOf(value) : null;
     }
 
@@ -58,7 +59,7 @@ public class ConfigurationImpl implements Configuration {
                 result = Long.parseLong(strValue);
             }
         } catch (NumberFormatException e) {
-            log.warn(e.getMessage(), e);
+            LOG.warn(e.getMessage(), e);
         }
         return result;
     }
@@ -82,7 +83,7 @@ public class ConfigurationImpl implements Configuration {
                 result = Integer.parseInt(strValue);
             }
         } catch (NumberFormatException e) {
-            log.warn(e.getMessage(), e);
+            LOG.warn(e.getMessage(), e);
         }
         return result;
     }
@@ -112,7 +113,7 @@ public class ConfigurationImpl implements Configuration {
                 result = Double.parseDouble(strValue);
             }
         } catch (NumberFormatException e) {
-            log.warn(e.getMessage(), e);
+            LOG.warn(e.getMessage(), e);
         }
         return result;
     }
@@ -126,7 +127,7 @@ public class ConfigurationImpl implements Configuration {
                 result = new BigDecimal(strValue);
             }
         } catch (NumberFormatException e) {
-            log.warn(e.getMessage(), e);
+            LOG.warn(e.getMessage(), e);
         }
         return result;
     }
