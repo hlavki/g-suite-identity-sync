@@ -35,5 +35,5 @@ Groups are synchronized on user creation, scheduler on manually.
 ### Making release
 
 ```bash
-mvn clean release:prepare release:perform -Darguments='-Dmaven.javadoc.failOnError=false'
+mvn clean release:prepare release:perform -Darguments='-Dmaven.javadoc.failOnError=false -Dmaven.deploy.skip=true -Ddocker.skip.push=true'
 ```

@@ -8,14 +8,15 @@ cache:
 
 install: true
 
-script: mvn install
+script: mvn install -B
 
 before_deploy:
   - docker login -u="$DOCKER_USER" -p="$DOCKER_PWD"
 
 deploy:
   provider: script
-  script: "cp .travis.settings.xml $HOME/.m2/settings.xml && mvn deploy"
+  script: "cp .travis.settings.xml $HOME/.m2/settings.xml && mvn deploy -B"
   on:
-    all_branches: true
+    branch: master
+    if: tag IS present
   skip_cleanup: true
