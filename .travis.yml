@@ -22,4 +22,4 @@ jobs:
       script: |
         docker login -u="$DOCKER_USER" -p="$DOCKER_PWD"
         cp .travis.settings.xml $HOME/.m2/settings.xml
-        mvn deploy -B
+        mvn deploy -B -Pdocker-release
