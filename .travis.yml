@@ -1,22 +1,25 @@
-sudo: false
 language: java
+
 services:
   - docker
+
 cache:
   directories:
     - $HOME/.m2
 
-install: true
-
-script: mvn install -B
-
-before_deploy:
-  - docker login -u="$DOCKER_USER" -p="$DOCKER_PWD"
-
-deploy:
-  provider: script
-  script: "cp .travis.settings.xml $HOME/.m2/settings.xml && mvn deploy -B"
-  on:
-    branch: master
+stages:
+  - build
+  - name: release
     if: tag IS present
-  skip_cleanup: true
+
+jobs:
+  include:
+    - stage: build
+      script: |
+        mvn install -B
+
+    - stage: release
+      script: |
+        docker login -u="$DOCKER_USER" -p="$DOCKER_PWD"
+        cp .travis.settings.xml $HOME/.m2/settings.xml
+        mvn deploy -B
