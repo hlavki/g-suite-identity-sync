@@ -4,7 +4,7 @@ services:
   - docker
 cache:
   directories:
-  - "$HOME/.cache"
+    - $HOME/.m2
 
 install: true
 
