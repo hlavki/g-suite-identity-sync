@@ -29,3 +29,11 @@ Groups are synchronized on user creation, scheduler on manually.
 ## Screenshots
 
 ![](https://i.imgur.com/NetCiwR.png)
+
+## Developer Notes
+
+### Making release
+
+```bash
+mvn clean release:prepare release:perform -Darguments='-Dmaven.javadoc.failOnError=false -Dmaven.deploy.skip=true -Ddocker.skip.push=true'
+```

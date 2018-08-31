@@ -35,6 +35,9 @@ public interface LdapAccountService {
     String getAccountDN(String subject) throws LdapSystemException;
 
 
+    String getAccountDN(LdapAccount account);
+
+
     void addGroupMember(String accountDN, String groupName) throws LdapSystemException;
 
 
@@ -45,7 +48,4 @@ public interface LdapAccountService {
 
 
     LdapGroup createOrUpdateGroup(LdapGroup group) throws LdapSystemException;
-
-
-    String getAccountDNFromEmail(String email);
 }

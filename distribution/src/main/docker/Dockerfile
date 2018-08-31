@@ -13,7 +13,8 @@ COPY --chown=karaf:karaf maven/karaf/ /opt/karaf
 # Install karaf distribution
 RUN sed -i 's/log4j\.rootLogger=INFO,\ out,\ osgi\:\*/log4j\.rootLogger=INFO,\ out,\ stdout,\ osgi\:\*/' /opt/karaf/etc/org.ops4j.pax.logging.cfg \
     && sed -i '/felix.fileinstall.log.default/a felix.fileinstall.subdir.mode\ =\ recurse' /opt/karaf/etc/config.properties \
-    && sed -i -e '$a log4j.logger.org.apache.cxf=ERROR' /opt/karaf/etc/org.ops4j.pax.logging.cfg \
+    && sed -i -e '$a log4j2.logger.cxf.name\ =\ org.apache.cxf' /opt/karaf/etc/org.ops4j.pax.logging.cfg \
+    && sed -i -e '$a log4j2.logger.cxf.level\ =\ WARN' /opt/karaf/etc/org.ops4j.pax.logging.cfg \
     && mkdir -p /opt/karaf/data /opt/karaf/data/log /opt/karaf/etc/identity \
     && chown -R $KARAF_USER.$KARAF_USER /opt/karaf/data /opt/karaf/data/log /opt/karaf/etc/identity
 

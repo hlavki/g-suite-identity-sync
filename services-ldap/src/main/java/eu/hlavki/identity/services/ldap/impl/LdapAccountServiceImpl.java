@@ -61,8 +61,8 @@ public class LdapAccountServiceImpl implements LdapAccountService, Configurable 
 
 
     @Override
-    public String getAccountDNFromEmail(String email) {
-        return getDnFromEmail(email);
+    public String getAccountDN(LdapAccount account) {
+        return config.getUserAttr() + "=" + account.getUsername() + "," + config.getLdapUserBaseDN();
     }
 
 
@@ -98,7 +98,7 @@ public class LdapAccountServiceImpl implements LdapAccountService, Configurable 
     @Override
     public void createAccount(LdapAccount account) throws LdapSystemException {
         try (LDAPConnection conn = ldapPool.getConnection()) {
-            String entryDN = getDnFromEmail(account.getUsername());
+            String entryDN = getAccountDN(account);
             log.info("Creating user with DN {}", entryDN);
             Entry entry = new Entry(entryDN);
             entry.addAttribute("objectClass", "inetOrgPerson");
@@ -326,11 +326,6 @@ public class LdapAccountServiceImpl implements LdapAccountService, Configurable 
             entry.addAttribute("objectClass", "organizationalUnit");
             conn.add(entry);
         }
-    }
-
-
-    private String getDnFromEmail(String email) {
-        return "uid=" + email + "," + config.getLdapUserBaseDN();
     }
 
 

@@ -21,7 +21,7 @@ public class ConfigManagerService implements ManagedService {
     @Override
     public void updated(Dictionary<String, ?> properties) throws ConfigurationException {
         if (properties != null) {
-            LOG.info("LDAP Configuration changed");
+            LOG.info("Google Configuration changed");
             configurables.stream().forEach(c -> c.reconfigure());
         }
     }
