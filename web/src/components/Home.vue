@@ -41,7 +41,7 @@
 
           <md-switch class="md-primary" v-if="showSaveGSuitePasswordCheckbox()" v-model="formData.saveGSuitePassword">Synchronize GSuite Password</md-switch>
           <br/>
-          <md-button class="md-raised md-primary" @click.native="sendData">Update LDAP Password</md-button>
+          <md-button type="submit" class="md-raised md-primary">Update LDAP Password</md-button>
         </md-card-content>
       </md-card>
     </form>
@@ -77,7 +77,7 @@ export default {
           if (error.response.status === 404) {
             if (_this.$isProduction) _this.$router.push('/create-account');
             else {
-              _this.$router.push('/create-account');
+              _this.$router.push('/');
               _this.accountData = {
                 username: 'george@xit.camp',
                 name: 'George Soros',
