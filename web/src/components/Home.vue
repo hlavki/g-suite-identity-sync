@@ -1,6 +1,6 @@
 <template>
-  <div class="md-layout">
-    <md-card class="md-layout-item md-size-40">
+  <div>
+    <md-card class="md-layout-item md-size-40 md-small-size-100">
       <md-progress-bar md-mode="indeterminate" v-if="showProgress"/>
       <md-card-header>
         <div class="md-title">LDAP Account info <span class="md-gray">[created]</span></div>
@@ -73,7 +73,7 @@ export default {
           if (error.response.status === 404) {
             if (_this.$isProduction) _this.$router.push('/create-account');
             else {
-              _this.$router.push('/create-account');
+              _this.$router.push('/');
               _this.accountData = {
                 username: 'george@xit.camp',
                 name: 'George Soros',
