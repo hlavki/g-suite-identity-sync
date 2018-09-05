@@ -1,46 +1,50 @@
 <template>
   <div>
-    <md-card class="md-layout-item md-size-40 md-small-size-100">
-      <md-progress-bar md-mode="indeterminate" v-if="showProgress"/>
-      <md-card-header>
-        <div class="md-title">LDAP Account info <span class="md-gray">[created]</span></div>
-      </md-card-header>
-      <md-card-content>
-        <md-field>
-          <label>Username</label>
-          <md-input v-model="accountData.username" disabled></md-input>
-        </md-field>
+    <form novalidate class="md-layout md-gutter" @submit.prevent="validateForm">
+      <md-card class="md-layout-item md-size-40 md-small-size-100">
+        <md-progress-bar md-mode="indeterminate" v-if="showProgress" />
+        <md-card-header>
+          <div class="md-title">LDAP Account info
+            <span class="md-gray">[created]</span>
+          </div>
+        </md-card-header>
+        <md-card-content>
+          <md-field>
+            <label>Username</label>
+            <md-input v-model="accountData.username" disabled></md-input>
+          </md-field>
 
-        <md-field>
-          <label>Name</label>
-          <md-input v-model="accountData.name" disabled></md-input>
-        </md-field>
+          <md-field>
+            <label>Name</label>
+            <md-input v-model="accountData.name" disabled></md-input>
+          </md-field>
 
           <md-list class="md-dense">
             <md-subheader>Emails</md-subheader>
             <md-list-item v-for="email in accountData.emails" :key="email" disabled>
               <md-icon>email</md-icon>
-                <span class="md-list-item-text">{{ email }}</span>
+              <span class="md-list-item-text">{{ email }}</span>
             </md-list-item>
           </md-list>
 
-        <md-field :class="{'md-invalid': errors.has('password')}" md-has-password>
-          <label for="password">Type LDAP Password</label>
-          <md-input v-model="formData.password" name="password" type="password" v-validate="'required|min:8|password'" required/>
-          <span class="md-error">{{errors.first('password')}}</span>
-        </md-field>
+          <md-field :class="{'md-invalid': errors.has('password')}" md-has-password>
+            <label for="password">Type LDAP Password</label>
+            <md-input v-model="formData.password" name="password" type="password" v-validate="'required|min:8|password'" required/>
+            <span class="md-error">{{errors.first('password')}}</span>
+          </md-field>
 
-        <md-field :class="{'md-invalid': errors.has('password-confirm')}">
-          <label>Confirm LDAP Password</label>
-          <md-input v-model="formData.confirmPassword" name="password-confirm" type="password" v-validate="'required|confirmed:password'" required/>
-          <span class="md-error">{{errors.first('password-confirm')}}</span>
-        </md-field>
+          <md-field :class="{'md-invalid': errors.has('password-confirm')}">
+            <label>Confirm LDAP Password</label>
+            <md-input v-model="formData.confirmPassword" name="password-confirm" type="password" v-validate="'required|confirmed:password'" required/>
+            <span class="md-error">{{errors.first('password-confirm')}}</span>
+          </md-field>
 
-        <md-switch class="md-primary" v-if="showSaveGSuitePasswordCheckbox()" v-model="formData.saveGSuitePassword">Synchronize GSuite Password</md-switch>
-        <br/>
-        <md-button class="md-raised md-primary" @click.native="sendData">Update LDAP Password</md-button>
-      </md-card-content>
-    </md-card>
+          <md-switch class="md-primary" v-if="showSaveGSuitePasswordCheckbox()" v-model="formData.saveGSuitePassword">Synchronize GSuite Password</md-switch>
+          <br/>
+          <md-button class="md-raised md-primary" @click.native="sendData">Update LDAP Password</md-button>
+        </md-card-content>
+      </md-card>
+    </form>
   </div>
 </template>
 
@@ -73,7 +77,7 @@ export default {
           if (error.response.status === 404) {
             if (_this.$isProduction) _this.$router.push('/create-account');
             else {
-              _this.$router.push('/');
+              _this.$router.push('/create-account');
               _this.accountData = {
                 username: 'george@xit.camp',
                 name: 'George Soros',
@@ -95,11 +99,16 @@ export default {
     processFormData(accountData) {
       this.formData.saveGSuitePassword = accountData.saveGSuitePassword;
     },
-    sendData: function(event) {
+    validateForm() {
       var _this = this;
       this.$validator
         .validateAll()
-        .then(function(response) {
+        .then(res => {
+          if (!res) {
+            // Catch errors
+            console.warn('Form Invalid: ' + _this.errors);
+            return;
+          }
           _this.showProgress = true;
           console.info('Valid. Creating account');
           _this.$http
