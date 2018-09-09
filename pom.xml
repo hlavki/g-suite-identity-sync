@@ -130,7 +130,7 @@
                 <version>${javax.validation.version}</version>
                 <scope>provided</scope>
             </dependency>
-            
+
             <!-- JAXB Module for JDK &gt; 9 -->
             <dependency>
                 <groupId>javax.xml.bind</groupId>
@@ -168,7 +168,7 @@
                 <plugin>
                     <groupId>org.apache.felix</groupId>
                     <artifactId>maven-bundle-plugin</artifactId>
-                    <version>3.3.0</version>
+                    <version>3.5.1</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.karaf.tooling</groupId>
@@ -177,7 +177,7 @@
                 </plugin>
                 <plugin>
                     <artifactId>maven-resources-plugin</artifactId>
-                    <version>3.0.2</version>
+                    <version>3.1.0</version>
                 </plugin>
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
