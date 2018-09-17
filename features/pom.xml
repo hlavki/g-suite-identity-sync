@@ -59,7 +59,6 @@
                     </framework>
                     <features>
                         <feature>g-suite-identity-*</feature>
-                        <feature>cache2k</feature>
                     </features>
                 </configuration>
             </plugin>
