@@ -66,7 +66,7 @@ export default {
   name: 'app',
   data: () => ({
     menuVisible: false,
-    titleMsg: 'Accout Manager'
+    titleMsg: 'Account Manager'
   }),
   methods: {
     open() {
