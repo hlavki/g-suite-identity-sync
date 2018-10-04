@@ -3,7 +3,7 @@
 
     <groupId>eu.hlavki.identity</groupId>
     <artifactId>g-suite-identity-sync</artifactId>
-    <version>0.3.5</version>
+    <version>0.3.6-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <properties>
@@ -21,7 +21,7 @@
 
     <scm>
         <connection>scm:git:ssh://git@github.com:hlavki/g-suite-identity-sync.git</connection>
-        <tag>v0.3.5</tag>
+        <tag>HEAD</tag>
     </scm>
 
     <modules>
