@@ -4,7 +4,7 @@
     <parent>
         <groupId>eu.hlavki.identity</groupId>
         <artifactId>g-suite-identity-sync-plugins</artifactId>
-        <version>0.3.6-SNAPSHOT</version>
+        <version>0.3.6</version>
     </parent>
 
     <artifactId>g-suite-identity-sync-plugin-api</artifactId>
