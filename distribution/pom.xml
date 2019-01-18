@@ -35,12 +35,6 @@
             <version>${cxf.version}</version>
             <type>xml</type>
             <scope>runtime</scope>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.apache.karaf.shell</groupId>
-                    <artifactId>org.apache.karaf.shell.core</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
         <dependency>
             <groupId>eu.hlavki.identity</groupId>
