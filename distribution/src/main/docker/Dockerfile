@@ -1,4 +1,4 @@
-FROM openjdk:10-slim
+FROM openjdk:11-slim
 MAINTAINER Michal Hlavac <miso@hlavki.eu>
 
 ENV KARAF_USER karaf

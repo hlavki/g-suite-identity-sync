@@ -112,7 +112,7 @@ public class AccountSyncServiceImpl implements AccountSyncService {
         ldapGroup.setName(AccountUtil.getLdapGroupName(gsuiteGroup.getEmail()));
         ldapGroup.setDescription(gsuiteGroup.getName());
         Set<String> members = gsuiteMembership.getMembers().stream().
-            filter(m -> m.getStatus() == Status.ACTIVE).filter(m -> emailAccountMap.containsKey(m.getEmail())).
+            filter(m -> emailAccountMap.containsKey(m.getEmail())).
             map(m -> ldapService.getAccountDN(emailAccountMap.get(m.getEmail()))).
             collect(Collectors.toSet());
         LdapGroup result = ldapGroup;

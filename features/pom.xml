@@ -4,13 +4,10 @@
     <parent>
         <groupId>eu.hlavki.identity</groupId>
         <artifactId>g-suite-identity-sync</artifactId>
-        <version>0.3.4-SNAPSHOT</version>
+        <version>0.3.7-SNAPSHOT</version>
     </parent>
     <artifactId>g-suite-identity-sync-features</artifactId>
     <packaging>feature</packaging>
-    <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    </properties>
 
     <dependencies>
         <!-- Framework distribution -->
@@ -19,23 +16,6 @@
             <artifactId>framework</artifactId>
             <version>${karaf.version}</version>
             <type>kar</type>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.karaf.features</groupId>
-            <artifactId>standard</artifactId>
-            <version>${karaf.version}</version>
-            <classifier>features</classifier>
-            <type>xml</type>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.cxf.karaf</groupId>
-            <artifactId>apache-cxf</artifactId>
-            <version>${cxf.version}</version>
-            <classifier>features</classifier>
-            <type>xml</type>
-            <scope>provided</scope>
         </dependency>
     </dependencies>
 
@@ -52,13 +32,13 @@
                         <descriptor>mvn:org.apache.cxf.karaf/apache-cxf/${cxf.version}/xml/features</descriptor>
                         <descriptor>file:${project.build.directory}/feature/feature.xml</descriptor>
                     </descriptors>
+                    <javase>11</javase>
                     <distribution>org.apache.karaf.features:framework</distribution>
                     <framework>
                         <feature>framework</feature>
                     </framework>
                     <features>
                         <feature>g-suite-identity-*</feature>
-                        <feature>cache2k</feature>
                     </features>
                 </configuration>
             </plugin>

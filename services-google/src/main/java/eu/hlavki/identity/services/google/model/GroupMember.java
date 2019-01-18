@@ -5,7 +5,7 @@ import java.util.Objects;
 public class GroupMember {
 
     public enum Status {
-        ACTIVE, SUSPENDED, UNKNOWN
+        ACTIVE, ARCHIVED, SUSPENDED, UNKNOWN
     }
 
     public enum Type {
