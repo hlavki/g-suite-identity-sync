@@ -56,9 +56,9 @@
                     <finalName>${project.artifactId}</finalName>
                     <bootFeatures>
                         <feature>standard</feature>
+                        <feature>eventadmin</feature>
                     </bootFeatures>
                     <startupFeatures>
-                        <feature>eventadmin</feature>
                         <feature>g-suite-identity-services</feature>
                         <feature>g-suite-identity-web</feature>
                     </startupFeatures>
