@@ -11,7 +11,7 @@
 
     <feature name="cxf-rt-security-oidc" version="${cxf.version}">
         <bundle>mvn:org.apache.cxf/cxf-rt-rs-security-sso-oidc/${cxf.version}</bundle> <!-- Missing in features!!! Maybe bug -->
-        <bundle>mvn:javax.persistence/javax.persistence-api/2.2</bundle>
+        <!--<bundle>mvn:javax.persistence/javax.persistence-api/2.2</bundle>-->
     </feature>
 
     <feature name="g-suite-identity-services" version="${project.version}">
