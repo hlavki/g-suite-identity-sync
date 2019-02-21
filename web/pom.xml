@@ -49,7 +49,7 @@
             </plugin>
             <plugin>
                 <artifactId>maven-war-plugin</artifactId>
-                <version>3.1.0</version>
+                <version>3.2.2</version>
                 <configuration>
                     <packagingExcludes>WEB-INF/lib/*.jar</packagingExcludes>
                     <archive>
@@ -60,7 +60,7 @@
             </plugin>
             <plugin>
                 <artifactId>maven-clean-plugin</artifactId>
-                <version>3.0.0</version>
+                <version>3.1.0</version>
                 <configuration>
                     <filesets>
                         <fileset>
@@ -72,7 +72,7 @@
             <plugin>
                 <groupId>com.github.eirslett</groupId>
                 <artifactId>frontend-maven-plugin</artifactId>
-                <version>1.5</version>
+                <version>1.6</version>
                 <executions>
                     <execution>
                         <id>install-npm</id>
@@ -80,8 +80,8 @@
                             <goal>install-node-and-npm</goal>
                         </goals>
                         <configuration>
-                            <nodeVersion>v8.9.3</nodeVersion>
-                            <npmVersion>5.6.0</npmVersion>
+                            <nodeVersion>v10.15.1</nodeVersion>
+                            <npmVersion>6.4.1</npmVersion>
                         </configuration>
                     </execution>
                     <execution>
