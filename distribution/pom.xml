@@ -29,12 +29,6 @@
             <classifier>features</classifier>
             <version>${cxf.version}</version>
             <type>xml</type>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.apache.karaf.shell</groupId>
-                    <artifactId>org.apache.karaf.shell.core</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
         <dependency>
             <groupId>eu.hlavki.identity</groupId>
@@ -62,7 +56,7 @@
                         <feature>g-suite-identity-services</feature>
                         <feature>g-suite-identity-web</feature>
                     </startupFeatures>
-                    <javase>11</javase>
+                    <!--<javase>11</javase>-->
                     <archiveZip>false</archiveZip>
                 </configuration>
             </plugin>
