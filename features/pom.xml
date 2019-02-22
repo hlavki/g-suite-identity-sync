@@ -8,9 +8,6 @@
     </parent>
     <artifactId>g-suite-identity-sync-features</artifactId>
     <packaging>feature</packaging>
-    <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    </properties>
 
     <dependencies>
         <!-- Framework distribution -->
@@ -19,23 +16,6 @@
             <artifactId>framework</artifactId>
             <version>${karaf.version}</version>
             <type>kar</type>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.karaf.features</groupId>
-            <artifactId>standard</artifactId>
-            <version>${karaf.version}</version>
-            <classifier>features</classifier>
-            <type>xml</type>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.cxf.karaf</groupId>
-            <artifactId>apache-cxf</artifactId>
-            <version>${cxf.version}</version>
-            <classifier>features</classifier>
-            <type>xml</type>
-            <scope>provided</scope>
         </dependency>
     </dependencies>
 
@@ -52,8 +32,8 @@
                         <descriptor>mvn:org.apache.cxf.karaf/apache-cxf/${cxf.version}/xml/features</descriptor>
                         <descriptor>file:${project.build.directory}/feature/feature.xml</descriptor>
                     </descriptors>
+                    <javase>11</javase>
                     <distribution>org.apache.karaf.features:framework</distribution>
-                    <javase>1.8</javase>
                     <framework>
                         <feature>framework</feature>
                     </framework>

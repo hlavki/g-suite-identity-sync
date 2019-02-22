@@ -9,10 +9,6 @@
     <artifactId>g-suite-identity-sync-dist</artifactId>
     <packaging>karaf-assembly</packaging>
 
-    <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    </properties>
-
     <dependencies>
         <dependency>
             <groupId>org.apache.karaf.features</groupId>
@@ -40,6 +36,7 @@
             <classifier>features</classifier>
             <version>${project.version}</version>
             <type>xml</type>
+            <scope>runtime</scope>
         </dependency>
     </dependencies>
 
@@ -51,22 +48,22 @@
                 <extensions>true</extensions>
                 <configuration>
                     <finalName>${project.artifactId}</finalName>
-                    <startupFeatures>
-                        <feature>eventadmin</feature>
-                    </startupFeatures>
                     <bootFeatures>
                         <feature>standard</feature>
+                    </bootFeatures>
+                    <startupFeatures>
+                        <feature>eventadmin</feature>
                         <feature>g-suite-identity-services</feature>
                         <feature>g-suite-identity-web</feature>
-                    </bootFeatures>
+                    </startupFeatures>
+                    <!--<javase>11</javase>-->
                     <archiveZip>false</archiveZip>
-                    <javase>1.8</javase>
                 </configuration>
             </plugin>
             <plugin>
                 <groupId>io.fabric8</groupId>
                 <artifactId>docker-maven-plugin</artifactId>
-                <version>0.25.2</version>
+                <version>0.28.0</version>
                 <configuration>
                     <images>
                         <image>
