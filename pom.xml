@@ -31,6 +31,7 @@
         <module>services-ldap</module>
         <module>services-rest</module>
         <module>services-scheduler</module>
+        <module>services-push</module>
         <module>features</module>
         <module>distribution</module>
         <module>plugins</module>
