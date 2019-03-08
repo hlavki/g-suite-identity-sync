@@ -194,5 +194,11 @@
                 <docker.release.tag>latest</docker.release.tag>
             </properties>
         </profile>
+        <profile>
+            <id>build-fast</id>
+            <properties>
+                <skip.npm>true</skip.npm>
+            </properties>
+        </profile>
     </profiles>
 </project>
