@@ -15,6 +15,9 @@
         <cxf:features>
             <cxf:logging />
         </cxf:features>
+        <cxf:properties>
+            <entry key="skip.default.json.provider.registration" value="true" />
+        </cxf:properties>
     </cxf:bus>
 
     <!-- JSON Provider -->

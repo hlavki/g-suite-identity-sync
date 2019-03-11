@@ -12,16 +12,12 @@
 
     <dependencies>
         <dependency>
-            <groupId>org.apache.karaf.scheduler</groupId>
-            <artifactId>org.apache.karaf.scheduler.core</artifactId>
-            <version>${karaf.version}</version>
-            <scope>provided</scope>
+            <groupId>org.osgi</groupId>
+            <artifactId>osgi.cmpn</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.osgi</groupId>
-            <artifactId>org.osgi.service.component.annotations</artifactId>
-            <version>1.4.0</version>
-            <scope>provided</scope>
+            <groupId>org.apache.cxf</groupId>
+            <artifactId>cxf-rt-frontend-jaxrs</artifactId>
         </dependency>
         <dependency>
             <groupId>eu.hlavki.identity</groupId>
@@ -38,14 +34,12 @@
             <plugin>
                 <groupId>org.apache.felix</groupId>
                 <artifactId>maven-bundle-plugin</artifactId>
-                <extensions>true</extensions>
                 <configuration>
                     <instructions>
                         <Implementation-Title>${project.name}</Implementation-Title>
                         <Implementation-Version>${project.version}</Implementation-Version>
                         <Bundle-Name>${project.artifactId}</Bundle-Name>
                         <Bundle-SymbolicName>${project.groupId}.${project.artifactId}</Bundle-SymbolicName>
-                        <_dsannotations>*</_dsannotations>
                     </instructions>
                 </configuration>
             </plugin>

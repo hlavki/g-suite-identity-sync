@@ -16,7 +16,7 @@
 
     <!-- GSuiteDirService -->
     <jaxrsclient:client id="directoryApiClient" threadSafe="true"
-                        address="https://www.googleapis.com/admin/directory/v1"
+                        address="https://www.googleapis.com"
                         serviceClass="org.apache.cxf.jaxrs.client.WebClient">
         <jaxrsclient:headers>
             <entry key="Accept" value="application/json"/>
@@ -27,17 +27,29 @@
         </jaxrsclient:providers>
     </jaxrsclient:client>
 
+    <bean id="tokenCache" class="eu.hlavki.identity.services.google.impl.TokenCache">
+        <argument ref="configuration"/>
+    </bean>
+
+    <bean id="watchingService" class="eu.hlavki.identity.services.google.impl.WatchingServiceImpl">
+        <argument ref="configuration"/>
+    </bean>
+
     <bean id="gSuiteDirService" class="eu.hlavki.identity.services.google.impl.GSuiteDirectoryServiceImpl">
         <argument ref="configuration"/>
         <argument ref="directoryApiClient"/>
+        <argument ref="tokenCache"/>
+        <argument ref="watchingService"/>
     </bean>
 
     <service ref="gSuiteDirService" interface="eu.hlavki.identity.services.google.GSuiteDirectoryService" />
 
+    <service ref="watchingService" interface="eu.hlavki.identity.services.google.WatchingService" />
+
     <bean id="cfgManagedService" class="eu.hlavki.identity.services.google.config.ConfigManagerService">
         <argument>
             <list>
-                <ref component-id="gSuiteDirService"/>
+                <ref component-id="tokenCache"/>
             </list>
         </argument>
     </bean>

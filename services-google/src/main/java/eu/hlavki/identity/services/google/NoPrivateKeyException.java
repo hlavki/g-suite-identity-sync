@@ -1,6 +1,6 @@
 package eu.hlavki.identity.services.google;
 
-public class NoPrivateKeyException extends Exception {
+public class NoPrivateKeyException extends RuntimeException {
 
     private static final long serialVersionUID = 2712920621905135028L;
 

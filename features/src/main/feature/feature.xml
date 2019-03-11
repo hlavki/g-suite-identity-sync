@@ -31,8 +31,10 @@
         <configfile finalname="${karaf.etc}/identity/eu.hlavki.identity.google.cfg">mvn:eu.hlavki.identity/g-suite-identity-sync-services-google/${project.version}/cfg/configuration</configfile>
         <bundle>mvn:eu.hlavki.identity/g-suite-identity-sync-services-ldap/${project.version}</bundle>
         <bundle>mvn:eu.hlavki.identity/g-suite-identity-sync-services-google/${project.version}</bundle>
+        <bundle>mvn:eu.hlavki.identity/g-suite-identity-sync-services-google-client/${project.version}</bundle>
         <bundle>mvn:eu.hlavki.identity/g-suite-identity-sync-services/${project.version}</bundle>
         <bundle>mvn:eu.hlavki.identity/g-suite-identity-sync-services-scheduler/${project.version}</bundle>
+        <bundle>mvn:eu.hlavki.identity/g-suite-identity-sync-services-push/${project.version}</bundle>
     </feature>
 
     <feature name="g-suite-identity-web" version="${project.version}">
