@@ -1,10 +1,9 @@
 package eu.hlavki.identity.services.rest.util;
 
 import static java.util.Collections.singletonList;
+import java.util.List;
 import javax.validation.ValidationProviderResolver;
 import javax.validation.spi.ValidationProvider;
-
-import java.util.List;
 
 /**
  * OSGi-friendly implementation of {@code javax.validation.SingleValidationProviderResolver} returning

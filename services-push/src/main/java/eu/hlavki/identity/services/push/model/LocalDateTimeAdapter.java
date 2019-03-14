@@ -1,7 +1,6 @@
 package eu.hlavki.identity.services.push.model;
 
 import java.time.LocalDateTime;
-
 import javax.xml.bind.annotation.adapters.XmlAdapter;
 
 public class LocalDateTimeAdapter extends XmlAdapter<String, LocalDateTime> {

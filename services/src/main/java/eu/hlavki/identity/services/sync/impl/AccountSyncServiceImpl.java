@@ -1,7 +1,6 @@
 package eu.hlavki.identity.services.sync.impl;
 
 import eu.hlavki.identity.services.google.GSuiteDirectoryService;
-import eu.hlavki.identity.services.google.model.GroupMember.Status;
 import eu.hlavki.identity.services.ldap.LdapAccountService;
 import eu.hlavki.identity.services.ldap.model.LdapAccount;
 import eu.hlavki.identity.services.ldap.model.LdapGroup;

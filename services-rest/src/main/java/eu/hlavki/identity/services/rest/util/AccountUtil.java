@@ -1,14 +1,14 @@
 package eu.hlavki.identity.services.rest.util;
 
 import eu.hlavki.identity.plugin.api.model.CreatedUser;
-import eu.hlavki.identity.services.rest.model.AccountInfo;
-import eu.hlavki.identity.services.rest.model.Role;
 import eu.hlavki.identity.services.ldap.model.LdapAccount;
+import eu.hlavki.identity.services.rest.config.Configuration;
+import eu.hlavki.identity.services.rest.model.AccountInfo;
 import eu.hlavki.identity.services.rest.model.CreateAccountData;
+import eu.hlavki.identity.services.rest.model.Role;
 import eu.hlavki.identity.services.rest.model.UpdateAccountData;
 import java.util.Set;
 import org.apache.cxf.rs.security.oidc.common.UserInfo;
-import eu.hlavki.identity.services.rest.config.Configuration;
 
 public final class AccountUtil {
 

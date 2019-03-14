@@ -1,7 +1,6 @@
 package eu.hlavki.identity.services.ldap.model;
 
 import java.util.Set;
-import org.osgi.service.cm.Configuration;
 
 public class LdapAccount {
 

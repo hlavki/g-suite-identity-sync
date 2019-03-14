@@ -1,28 +1,28 @@
 package eu.hlavki.identity.services.google.impl;
 
+import eu.hlavki.identity.services.google.PushNotificationService;
 import eu.hlavki.identity.services.google.config.Configuration;
 import eu.hlavki.identity.services.google.model.PushChannel;
+import eu.hlavki.identity.services.google.model.StartPushChannel;
+import eu.hlavki.identity.services.google.model.StopPushChannel;
+import java.io.File;
 import java.time.Duration;
+import java.util.Optional;
+import static java.util.Optional.empty;
+import javax.ws.rs.ClientErrorException;
+import javax.ws.rs.core.Response;
+import static javax.ws.rs.core.Response.Status.*;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import eu.hlavki.identity.services.google.model.StartPushChannel;
-import eu.hlavki.identity.services.google.model.StopPushChannel;
-import javax.ws.rs.ClientErrorException;
-import javax.ws.rs.core.Response;
-import static javax.ws.rs.core.Response.Status.*;
 import org.apache.cxf.jaxrs.client.WebClient;
 import org.apache.cxf.rs.security.oauth2.common.ClientAccessToken;
-import org.apache.karaf.scheduler.Scheduler;
-import eu.hlavki.identity.services.google.PushNotificationService;
-import java.io.File;
-import java.util.Optional;
-import static java.util.Optional.empty;
 import org.apache.karaf.scheduler.ScheduleOptions;
+import org.apache.karaf.scheduler.Scheduler;
 import org.apache.karaf.scheduler.SchedulerError;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class PushNotificationServiceImpl implements PushNotificationService {
 

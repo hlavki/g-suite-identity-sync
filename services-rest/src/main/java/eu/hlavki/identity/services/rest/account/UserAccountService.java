@@ -1,10 +1,5 @@
 package eu.hlavki.identity.services.rest.account;
 
-import eu.hlavki.identity.services.rest.model.UpdateAccountData;
-import eu.hlavki.identity.services.rest.model.CreateAccountData;
-import eu.hlavki.identity.services.rest.model.ServerError;
-import eu.hlavki.identity.services.rest.model.PrepareAccountData;
-import eu.hlavki.identity.services.rest.model.AccountInfo;
 import eu.hlavki.identity.plugin.api.ProcessException;
 import eu.hlavki.identity.plugin.api.UserInterceptor;
 import eu.hlavki.identity.services.google.GSuiteDirectoryService;
@@ -12,11 +7,19 @@ import eu.hlavki.identity.services.google.InvalidPasswordException;
 import eu.hlavki.identity.services.google.model.GSuiteUser;
 import eu.hlavki.identity.services.google.model.GroupList;
 import eu.hlavki.identity.services.ldap.LdapAccountService;
+import eu.hlavki.identity.services.ldap.LdapSystemException;
 import eu.hlavki.identity.services.ldap.model.LdapAccount;
+import eu.hlavki.identity.services.rest.config.Configuration;
+import eu.hlavki.identity.services.rest.model.AccountInfo;
+import eu.hlavki.identity.services.rest.model.CreateAccountData;
+import eu.hlavki.identity.services.rest.model.PrepareAccountData;
 import eu.hlavki.identity.services.rest.model.Role;
-import eu.hlavki.identity.services.sync.AccountSyncService;
+import eu.hlavki.identity.services.rest.model.ServerError;
+import eu.hlavki.identity.services.rest.model.UpdateAccountData;
 import eu.hlavki.identity.services.rest.util.AccountUtil;
 import static eu.hlavki.identity.services.rest.util.AccountUtil.isInternalAccount;
+import eu.hlavki.identity.services.sync.AccountSyncService;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -33,9 +36,6 @@ import org.apache.cxf.rs.security.oidc.common.UserInfo;
 import org.apache.cxf.rs.security.oidc.rp.OidcClientTokenContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import eu.hlavki.identity.services.rest.config.Configuration;
-import eu.hlavki.identity.services.ldap.LdapSystemException;
-import java.util.Collections;
 
 @Path("account")
 public class UserAccountService {

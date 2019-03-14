@@ -1,5 +1,6 @@
 package eu.hlavki.identity.services.rest.account;
 
+import eu.hlavki.identity.services.rest.config.Configuration;
 import eu.hlavki.identity.services.rest.config.ConfigurationImpl;
 import eu.hlavki.identity.services.rest.model.UserInfo;
 import eu.hlavki.identity.services.rest.util.AccountUtil;
@@ -13,7 +14,6 @@ import org.osgi.service.event.Event;
 import org.osgi.service.event.EventHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import eu.hlavki.identity.services.rest.config.Configuration;
 
 @Path("user")
 public class UserInfoService implements EventHandler {

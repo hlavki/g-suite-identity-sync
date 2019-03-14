@@ -3,8 +3,6 @@ package eu.hlavki.identity.services.ldap.impl;
 import com.unboundid.ldap.sdk.*;
 import static com.unboundid.ldap.sdk.ModificationType.*;
 import static com.unboundid.ldap.sdk.SearchScope.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import eu.hlavki.identity.services.ldap.LdapAccountService;
 import eu.hlavki.identity.services.ldap.LdapSystemException;
 import eu.hlavki.identity.services.ldap.config.Configurable;
@@ -13,6 +11,8 @@ import eu.hlavki.identity.services.ldap.model.LdapAccount;
 import eu.hlavki.identity.services.ldap.model.LdapGroup;
 import java.util.*;
 import java.util.stream.Collectors;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class LdapAccountServiceImpl implements LdapAccountService, Configurable {
 
