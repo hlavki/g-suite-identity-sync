@@ -3,7 +3,6 @@ package eu.hlavki.identity.services.google.impl;
 import com.google.common.base.Supplier;
 import static com.google.common.base.Suppliers.memoizeWithExpiration;
 import eu.hlavki.identity.services.google.NoPrivateKeyException;
-import eu.hlavki.identity.services.google.config.Configurable;
 import eu.hlavki.identity.services.google.config.Configuration;
 import java.util.Arrays;
 import static java.util.concurrent.TimeUnit.SECONDS;
@@ -23,31 +22,24 @@ import org.apache.cxf.rs.security.oauth2.utils.OAuthUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class TokenCache implements Configurable {
+public class TokenCache {
 
     private static final Logger log = LoggerFactory.getLogger(TokenCache.class);
 
     private final Configuration config;
-    private Supplier<ClientAccessToken> tokenCache;
+    private final Supplier<ClientAccessToken> tokenCache;
 
 
     public TokenCache(Configuration config) {
         this.config = config;
-        reconfigure();
+        long tokenLifetime = config.getServiceAccountTokenLifetime();
+        log.info("Token lifetime set to {}", tokenLifetime);
+        this.tokenCache = memoizeWithExpiration(() -> getAccessToken(), tokenLifetime - 3, SECONDS);
     }
 
 
     ClientAccessToken getToken() {
         return tokenCache.get();
-    }
-
-
-    @Override
-    public void reconfigure() {
-        log.info("Configuring token cache ...");
-        long tokenLifetime = config.getServiceAccountTokenLifetime();
-        log.info("Token lifetime set to {}", tokenLifetime);
-        this.tokenCache = memoizeWithExpiration(() -> getAccessToken(), tokenLifetime - 3, SECONDS);
     }
 
 

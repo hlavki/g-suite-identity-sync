@@ -10,7 +10,7 @@
 
     <reference id="configurationAdmin" interface="org.osgi.service.cm.ConfigurationAdmin"/>
 
-    <bean id="configuration" class="eu.hlavki.identity.services.google.config.ConfigurationImpl">
+    <bean id="configuration" class="eu.hlavki.identity.services.google.config.impl.ConfigurationImpl">
         <argument ref="configurationAdmin"/>
     </bean>
 
@@ -47,20 +47,7 @@
     </bean>
 
     <service ref="gSuiteDirService" interface="eu.hlavki.identity.services.google.GSuiteDirectoryService" />
-
     <service ref="pushService" interface="eu.hlavki.identity.services.google.PushNotificationService" />
+    <service ref="configuration" interface="eu.hlavki.identity.services.google.config.Configuration" />
 
-    <bean id="cfgManagedService" class="eu.hlavki.identity.services.google.config.ConfigManagerService">
-        <argument>
-            <list>
-                <ref component-id="tokenCache"/>
-            </list>
-        </argument>
-    </bean>
-
-    <service ref="cfgManagedService" interface="org.osgi.service.cm.ManagedService">
-        <service-properties>
-            <entry key="service.pid" value="eu.hlavki.identity.google"/>
-        </service-properties>
-    </service>
 </blueprint>

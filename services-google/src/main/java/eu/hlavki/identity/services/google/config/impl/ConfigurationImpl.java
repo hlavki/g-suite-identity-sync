@@ -1,6 +1,7 @@
-package eu.hlavki.identity.services.google.config;
+package eu.hlavki.identity.services.google.config.impl;
 
 import eu.hlavki.identity.services.google.NoPrivateKeyException;
+import eu.hlavki.identity.services.google.config.Configuration;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -283,6 +284,14 @@ public class ConfigurationImpl implements Configuration {
             throw new NoPrivateKeyException("Could not load private key", e);
         }
         return result;
+    }
+
+
+    @Override
+    public void setServiceAccountKey(String keyFileLocation, String passphrase) {
+        set(PRIVATE_KEY_PROP, keyFileLocation);
+        set(PRIVATE_KEY_PASS_PROP, passphrase);
+        LOG.info("Service account key is configured");
     }
 
 

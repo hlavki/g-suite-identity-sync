@@ -63,7 +63,8 @@
                     <instructions>
                         <Export-Package>
                             eu.hlavki.identity.services.google,
-                            eu.hlavki.identity.services.google.model
+                            eu.hlavki.identity.services.google.model,
+                            eu.hlavki.identity.services.google.config
                         </Export-Package>
                     </instructions>
                 </configuration>

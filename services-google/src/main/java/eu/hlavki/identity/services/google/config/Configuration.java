@@ -32,6 +32,9 @@ public interface Configuration {
     PrivateKey readServiceAccountKey() throws NoPrivateKeyException;
 
 
+    void setServiceAccountKey(String keyFileLocation, String passphrase);
+
+
     long getServiceAccountTokenLifetime();
 
 
