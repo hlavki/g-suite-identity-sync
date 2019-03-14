@@ -49,10 +49,9 @@ public interface GSuiteDirectoryService {
      * Cache expires in 15 minutes. To use cache set useCache parameter to true.
      *
      *
-     * @param useCache use cached values, if exists.
      * @return members for all GSuite groups. Key is group info object and value is membership
      */
-    Map<GSuiteGroup, GroupMembership> getAllGroupMembership(boolean useCache);
+    Map<GSuiteGroup, GroupMembership> getAllGroupMembership();
 
 
     /**

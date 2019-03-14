@@ -1,6 +1,7 @@
 package eu.hlavki.identity.services.sync.impl;
 
 import eu.hlavki.identity.services.google.GSuiteDirectoryService;
+import eu.hlavki.identity.services.google.ResourceNotFoundException;
 import eu.hlavki.identity.services.ldap.LdapAccountService;
 import eu.hlavki.identity.services.ldap.model.LdapAccount;
 import eu.hlavki.identity.services.ldap.model.LdapGroup;
@@ -34,15 +35,14 @@ public class AccountSyncServiceImpl implements AccountSyncService {
         Map<String, LdapGroup> ldapGroups = ldapService.getAccountGroups(accountDN);
 
         Set<String> asIs = ldapGroups.values().stream()
-            .filter(g -> g.getMembersDn().contains(accountDN))
-            .map(g -> g.getDn())
-            .collect(Collectors.toSet());
+                .filter(g -> g.getMembersDn().contains(accountDN))
+                .map(g -> g.getDn())
+                .collect(Collectors.toSet());
 
         List<GSuiteGroup> gg = gsuiteGroups.getGroups() != null ? gsuiteGroups.getGroups() : Collections.emptyList();
         Set<String> toBe = gg.stream()
-            .map(group -> group.getEmail())
-            .map(email -> AccountUtil.getLdapGroupName(email))
-            .collect(Collectors.toSet());
+                .map(group -> AccountUtil.getLdapGroupName(group))
+                .collect(Collectors.toSet());
 
         // Workaround for implicit group mapping
         boolean implicitGroup = gsuiteDirService.getImplicitGroup() != null;
@@ -70,7 +70,7 @@ public class AccountSyncServiceImpl implements AccountSyncService {
 
     @Override
     public void synchronizeAllGroups() throws LdapSystemException {
-        Map<GSuiteGroup, GroupMembership> gsuiteGroups = gsuiteDirService.getAllGroupMembership(false);
+        Map<GSuiteGroup, GroupMembership> gsuiteGroups = gsuiteDirService.getAllGroupMembership();
         Set<String> ldapGroups = ldapService.getAllGroupNames();
         GSuiteUsers allGsuiteUsers = gsuiteDirService.getAllUsers();
 
@@ -104,21 +104,34 @@ public class AccountSyncServiceImpl implements AccountSyncService {
     }
 
 
+    @Override
+    public void synchronizeGroup(String groupEmail) throws LdapSystemException, ResourceNotFoundException {
+        GroupMembership gsuiteMembership = gsuiteDirService.getGroupMembers(groupEmail);
+        GSuiteGroup gsuiteGroup = gsuiteDirService.getGroup(groupEmail);
+
+        Map<String, LdapAccount> emailAccountMap = new HashMap<>();
+        for (LdapAccount info : ldapService.getAllAccounts()) {
+            info.getEmails().forEach(email -> emailAccountMap.put(email, info));
+        }
+        synchronizeGroup(gsuiteGroup, gsuiteMembership, emailAccountMap);
+    }
+
+
     private LdapGroup synchronizeGroup(GSuiteGroup gsuiteGroup, GroupMembership gsuiteMembership,
-        Map<String, LdapAccount> emailAccountMap) throws LdapSystemException {
+            Map<String, LdapAccount> emailAccountMap) throws LdapSystemException {
         log.info("Starting to synchronize group {}", gsuiteGroup.getEmail());
         LdapGroup ldapGroup = new LdapGroup();
-        ldapGroup.setName(AccountUtil.getLdapGroupName(gsuiteGroup.getEmail()));
+        ldapGroup.setName(AccountUtil.getLdapGroupName(gsuiteGroup));
         ldapGroup.setDescription(gsuiteGroup.getName());
         Set<String> members = gsuiteMembership.getMembers().stream().
-            filter(m -> emailAccountMap.containsKey(m.getEmail())).
-            map(m -> ldapService.getAccountDN(emailAccountMap.get(m.getEmail()))).
-            collect(Collectors.toSet());
+                filter(m -> emailAccountMap.containsKey(m.getEmail())).
+                map(m -> ldapService.getAccountDN(emailAccountMap.get(m.getEmail()))).
+                collect(Collectors.toSet());
         LdapGroup result = ldapGroup;
         if (!members.isEmpty()) {
             ldapGroup.setMembersDn(members);
             log.info("Synchronizing GSuite group {} as LDAP group {} with {} members",
-                gsuiteGroup.getEmail(), ldapGroup.getName(), ldapGroup.getMembersDn().size());
+                    gsuiteGroup.getEmail(), ldapGroup.getName(), ldapGroup.getMembersDn().size());
             result = ldapService.createOrUpdateGroup(ldapGroup);
         } else {
             log.info("Removing group {} from LDAP. No active members!", ldapGroup.getName());

@@ -1,16 +1,16 @@
 package eu.hlavki.identity.services.push;
 
-import eu.hlavki.identity.services.push.config.Config;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import eu.hlavki.identity.services.push.config.Configuration;
 
 public class PushNotificationService {
 
     private static final Logger log = LoggerFactory.getLogger(PushNotificationService.class);
 
-    private final Config config;
+    private final Configuration config;
 
-    public PushNotificationService(Config config) {
+    public PushNotificationService(Configuration config) {
         this.config = config;
     }
 

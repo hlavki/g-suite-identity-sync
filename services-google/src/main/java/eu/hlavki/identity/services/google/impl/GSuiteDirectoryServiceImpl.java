@@ -1,7 +1,5 @@
 package eu.hlavki.identity.services.google.impl;
 
-import com.google.common.base.Supplier;
-import static com.google.common.base.Suppliers.memoizeWithExpiration;
 import eu.hlavki.identity.services.google.GSuiteDirectoryService;
 import eu.hlavki.identity.services.google.InvalidPasswordException;
 import eu.hlavki.identity.services.google.ResourceNotFoundException;
@@ -10,7 +8,6 @@ import eu.hlavki.identity.services.google.model.*;
 import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.Map;
-import static java.util.concurrent.TimeUnit.*;
 import javax.ws.rs.NotFoundException;
 import javax.ws.rs.core.Response;
 import org.apache.cxf.jaxrs.client.WebClient;
@@ -25,14 +22,12 @@ public class GSuiteDirectoryServiceImpl implements GSuiteDirectoryService {
     private final TokenCache tokenCache;
     private final WebClient directoryApiClient;
     private final Configuration config;
-    private final Supplier<Map<GSuiteGroup, GroupMembership>> membershipCache;
 
 
     public GSuiteDirectoryServiceImpl(Configuration config, WebClient directoryApiClient, TokenCache tokenCache) {
         this.config = config;
         this.directoryApiClient = directoryApiClient;
         this.tokenCache = tokenCache;
-        this.membershipCache = memoizeWithExpiration(() -> getAllGroupMembershipInternal(), 3, MINUTES);
     }
 
 
@@ -93,8 +88,8 @@ public class GSuiteDirectoryServiceImpl implements GSuiteDirectoryService {
 
 
     @Override
-    public Map<GSuiteGroup, GroupMembership> getAllGroupMembership(boolean useCache) {
-        return useCache ? membershipCache.get() : getAllGroupMembershipInternal();
+    public Map<GSuiteGroup, GroupMembership> getAllGroupMembership() {
+        return getAllGroupMembershipInternal();
     }
 
 

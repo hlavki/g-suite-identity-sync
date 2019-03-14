@@ -1,16 +1,16 @@
 package eu.hlavki.identity.services.push.config.impl;
 
-import eu.hlavki.identity.services.push.config.Config;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.*;
 import org.osgi.service.cm.ConfigurationAdmin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import eu.hlavki.identity.services.push.config.Configuration;
 
-public class ConfigImpl implements Config {
+public class ConfigurationImpl implements Configuration {
 
-    private static final Logger LOG = LoggerFactory.getLogger(ConfigImpl.class);
+    private static final Logger LOG = LoggerFactory.getLogger(ConfigurationImpl.class);
 
     private static final String PID = "eu.hlavki.identity";
     private static final String ENABLED_PROP = "enabled";
@@ -20,7 +20,7 @@ public class ConfigImpl implements Config {
     private org.osgi.service.cm.Configuration osgiConfig;
     private final ConfigurationAdmin cfgAdmin;
 
-    public ConfigImpl(ConfigurationAdmin cfgAdmin) {
+    public ConfigurationImpl(ConfigurationAdmin cfgAdmin) {
         this.cfgAdmin = cfgAdmin;
         try {
             this.osgiConfig = this.cfgAdmin.getConfiguration(PID);

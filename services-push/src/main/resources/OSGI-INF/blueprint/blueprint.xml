@@ -32,15 +32,22 @@
     <!-- Configuration -->
     <reference id="configurationAdmin" interface="org.osgi.service.cm.ConfigurationAdmin"/>
 
-    <bean id="configuration" class="eu.hlavki.identity.services.push.config.impl.ConfigImpl">
+    <bean id="configuration" class="eu.hlavki.identity.services.push.config.impl.ConfigurationImpl">
         <argument ref="configurationAdmin"/>
     </bean>
 
-    <service ref="configuration" interface="eu.hlavki.identity.services.push.config.Config" />
+    <service ref="configuration" interface="eu.hlavki.identity.services.push.config.Configuration" />
+
+
+    <!-- Rest service -->
+
+    <reference id="syncService" interface="eu.hlavki.identity.services.sync.AccountSyncService"/>
 
     <bean id="pushRest" class="eu.hlavki.identity.services.push.rest.PushNotificationRest">
         <argument ref="configuration"/>
+        <argument ref="syncService"/>
     </bean>
+
 
     <jaxrs:server id="pushRestServer" address="/push">
         <jaxrs:serviceBeans>

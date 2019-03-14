@@ -1,6 +1,7 @@
 package eu.hlavki.identity.services.push.model;
 
-import java.time.LocalDateTime;
+import eu.hlavki.identity.services.push.config.impl.ZonedDateTimeAdapter;
+import java.time.ZonedDateTime;
 import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -27,10 +28,10 @@ public class AuditRecord {
     @Setter
     @NoArgsConstructor
     @XmlAccessorType(XmlAccessType.FIELD)
-    private static class Id {
+    public static class Id {
 
-        @XmlJavaTypeAdapter(LocalDateTimeAdapter.class)
-        private LocalDateTime time;
+        @XmlJavaTypeAdapter(ZonedDateTimeAdapter.class)
+        private ZonedDateTime time;
         private Long uniqueQualifier;
         private String applicationName;
         private String customerId;
@@ -40,7 +41,7 @@ public class AuditRecord {
     @Setter
     @NoArgsConstructor
     @XmlAccessorType(XmlAccessType.FIELD)
-    private static class Actor {
+    public static class Actor {
 
         private String callerType;
         private String email;
@@ -51,19 +52,19 @@ public class AuditRecord {
     @Setter
     @NoArgsConstructor
     @XmlAccessorType(XmlAccessType.FIELD)
-    private static class Event {
+    public static class Event {
 
         private String type;
         private String name;
         private Long profileId;
-        private List<Param> parameters;
+        private List<Parameter> parameters;
     }
 
     @Getter
     @Setter
     @NoArgsConstructor
     @XmlAccessorType(XmlAccessType.FIELD)
-    private static class Param {
+    public static class Parameter {
 
         private String name;
         private String value;
