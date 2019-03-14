@@ -80,10 +80,4 @@ public interface GSuiteDirectoryService {
 
 
     String getImplicitGroup();
-
-
-    void enablePushNotifications();
-
-
-    void disablePushNotifications();
 }

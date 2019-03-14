@@ -11,13 +11,13 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 @XmlRootElement
-public class StopWatching {
+public class StopPushChannel {
 
     private String id;
     private String resourceId;
 
 
-    public StopWatching(Watching watching) {
+    public StopPushChannel(PushChannel watching) {
         this.id = watching.getId();
         this.resourceId = watching.getResourceId();
     }

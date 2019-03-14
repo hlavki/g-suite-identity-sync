@@ -30,14 +30,17 @@ public class TokenCache implements Configurable {
     private final Configuration config;
     private Supplier<ClientAccessToken> tokenCache;
 
+
     public TokenCache(Configuration config) {
         this.config = config;
         reconfigure();
     }
 
+
     ClientAccessToken getToken() {
         return tokenCache.get();
     }
+
 
     @Override
     public void reconfigure() {
@@ -46,6 +49,7 @@ public class TokenCache implements Configurable {
         log.info("Token lifetime set to {}", tokenLifetime);
         this.tokenCache = memoizeWithExpiration(() -> getAccessToken(), tokenLifetime - 3, SECONDS);
     }
+
 
     private ClientAccessToken getAccessToken() throws NoPrivateKeyException {
         JwsHeaders headers = new JwsHeaders(JoseType.JWT, SignatureAlgorithm.RS256);
@@ -58,7 +62,8 @@ public class TokenCache implements Configurable {
         long tokenTimeout = config.getServiceAccountTokenLifetime();
         claims.setIssuedAt(issuedAt);
         claims.setExpiryTime(issuedAt + tokenTimeout);
-        claims.setProperty("scope", "https://www.googleapis.com/auth/admin.directory.group.readonly https://www.googleapis.com/auth/admin.directory.user");
+        String scopes = String.join(" ", config.getServiceAccountScopes());
+        claims.setProperty("scope", scopes);
 
         JwtToken token = new JwtToken(headers, claims);
         JwsJwtCompactProducer p = new JwsJwtCompactProducer(token);

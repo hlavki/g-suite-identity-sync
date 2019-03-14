@@ -14,8 +14,6 @@
         <dependency>
             <groupId>org.apache.karaf.scheduler</groupId>
             <artifactId>org.apache.karaf.scheduler.core</artifactId>
-            <version>${karaf.version}</version>
-            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.osgi</groupId>

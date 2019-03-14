@@ -4,6 +4,7 @@ import eu.hlavki.identity.services.google.NoPrivateKeyException;
 import java.io.File;
 import java.security.PrivateKey;
 import java.time.Duration;
+import java.util.Set;
 
 public interface Configuration {
 
@@ -22,6 +23,9 @@ public interface Configuration {
     String getServiceAccountSubject();
 
 
+    Set<String> getServiceAccountScopes();
+
+
     String getPrivateKeyLocation();
 
 
@@ -31,7 +35,19 @@ public interface Configuration {
     long getServiceAccountTokenLifetime();
 
 
-    File getPushWatchingsFile();
+    String getPushServiceHostname();
+
+
+    void setPushServiceHostname(String hostname);
+
+
+    File getPushChannelFile();
+
+
+    boolean isPushEnabled();
+
+
+    void setPushEnabled(boolean value);
 
 
     Duration getPushRefreshInterval();

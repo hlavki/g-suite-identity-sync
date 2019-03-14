@@ -1,6 +1,6 @@
 package eu.hlavki.identity.services.google.client;
 
-import eu.hlavki.identity.services.google.GSuiteDirectoryService;
+import eu.hlavki.identity.services.google.PushNotificationService;
 import org.apache.karaf.shell.api.action.Action;
 import org.apache.karaf.shell.api.action.Command;
 import org.apache.karaf.shell.api.action.lifecycle.Reference;
@@ -11,11 +11,11 @@ import org.apache.karaf.shell.api.action.lifecycle.Service;
 public class StopWatchingDomainCommand implements Action {
 
     @Reference
-    GSuiteDirectoryService gsuiteService;
+    PushNotificationService pushService;
 
     @Override
     public Object execute() throws Exception {
-        gsuiteService.disablePushNotifications();
+        pushService.disablePushNotifications();
         return null;
     }
 }

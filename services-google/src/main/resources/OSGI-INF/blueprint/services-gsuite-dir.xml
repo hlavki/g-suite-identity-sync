@@ -14,6 +14,8 @@
         <argument ref="configurationAdmin"/>
     </bean>
 
+    <reference id="scheduler" interface="org.apache.karaf.scheduler.Scheduler"/>
+
     <!-- GSuiteDirService -->
     <jaxrsclient:client id="directoryApiClient" threadSafe="true"
                         address="https://www.googleapis.com"
@@ -31,20 +33,22 @@
         <argument ref="configuration"/>
     </bean>
 
-    <bean id="watchingService" class="eu.hlavki.identity.services.google.impl.WatchingServiceImpl">
+    <bean id="pushService" class="eu.hlavki.identity.services.google.impl.PushNotificationServiceImpl">
         <argument ref="configuration"/>
+        <argument ref="directoryApiClient"/>
+        <argument ref="tokenCache"/>
+        <argument ref="scheduler"/>
     </bean>
 
     <bean id="gSuiteDirService" class="eu.hlavki.identity.services.google.impl.GSuiteDirectoryServiceImpl">
         <argument ref="configuration"/>
         <argument ref="directoryApiClient"/>
         <argument ref="tokenCache"/>
-        <argument ref="watchingService"/>
     </bean>
 
     <service ref="gSuiteDirService" interface="eu.hlavki.identity.services.google.GSuiteDirectoryService" />
 
-    <service ref="watchingService" interface="eu.hlavki.identity.services.google.WatchingService" />
+    <service ref="pushService" interface="eu.hlavki.identity.services.google.PushNotificationService" />
 
     <bean id="cfgManagedService" class="eu.hlavki.identity.services.google.config.ConfigManagerService">
         <argument>

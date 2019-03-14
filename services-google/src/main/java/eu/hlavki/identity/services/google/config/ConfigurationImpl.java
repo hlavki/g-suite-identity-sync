@@ -18,20 +18,23 @@ public class ConfigurationImpl implements Configuration {
 
     static final String CLIENT_ID_PROP = "oauth2.serviceAccount.clientId";
     static final String SUBJECT_PROP = "oauth2.serviceAccount.subject";
+    static final String SCOPES_PROP = "oauth2.serviceAccount.scopes";
     static final String PRIVATE_KEY_PROP = "oauth2.serviceAccount.privateKey.file";
     static final String PRIVATE_KEY_PASS_PROP = "oauth2.serviceAccount.privateKey.passphrase";
     static final String GSUITE_DOMAIN_PROP = "gsuite.domain";
     static final String GSUITE_IMPLICIT_GROUP = "gsuite.implicit.group";
     static final String TOKEN_LIFETIME_PROP = "gsuite.serviceAccount.tokenLifetime";
     static final long TOKEN_LIFETIME_DEFAULT = 3600;
-    static final String PUSH_WATCHINGS_FILE_PROP = "gsuite.push.watchings.file";
+    static final String PUSH_CHANNEL_FILE_PROP = "gsuite.push.channel.file";
+    static final String PUSH_SERVICE_HOSTNAME_PROP = "gsuite.push.service.hostname";
     static final String PUSH_REFRESH_INTERVAL_PROP = "gsuite.push.refresh.interval";
+    static final String PUSH_ENABLED_PROP = "gsuite.push.enabled";
     static final long PUSH_REFRESH_INTERVAL_DEFAULT = 3600;
 
     private static final Logger LOG = LoggerFactory.getLogger(ConfigurationImpl.class);
     private static final String PID = "eu.hlavki.identity.google";
     public static final String CONFIG_PROP = "config";
-    private static final String COLLECTIONS_VALUE_SEPARATOR = "|";
+    private static final String COLLECTIONS_VALUE_SEPARATOR = ",";
     private org.osgi.service.cm.Configuration osgiConfig;
     private final ConfigurationAdmin cfgAdmin;
 
@@ -52,10 +55,14 @@ public class ConfigurationImpl implements Configuration {
     }
 
 
-    public void set(String name, Object value) throws IOException {
-        Dictionary<String, Object> props = osgiConfig.getProperties();
-        props.put(name, value);
-        osgiConfig.update(props);
+    public void set(String name, Object value) {
+        try {
+            Dictionary<String, Object> props = osgiConfig.getProperties();
+            props.put(name, value);
+            osgiConfig.update(props);
+        } catch (IOException e) {
+            LOG.warn("Cannot set property " + name, e);
+        }
     }
 
 
@@ -248,6 +255,12 @@ public class ConfigurationImpl implements Configuration {
 
 
     @Override
+    public Set<String> getServiceAccountScopes() {
+        return getSet(SCOPES_PROP);
+    }
+
+
+    @Override
     public String getPrivateKeyLocation() {
         return get(PRIVATE_KEY_PROP);
     }
@@ -280,13 +293,37 @@ public class ConfigurationImpl implements Configuration {
 
 
     @Override
-    public File getPushWatchingsFile() {
-        return new File(get(PUSH_WATCHINGS_FILE_PROP, "etc/identity/push-notifications.xml"));
+    public File getPushChannelFile() {
+        return new File(get(PUSH_CHANNEL_FILE_PROP, "etc/identity/push-channel.xml"));
+    }
+
+
+    @Override
+    public String getPushServiceHostname() {
+        return get(PUSH_SERVICE_HOSTNAME_PROP);
+    }
+
+
+    @Override
+    public void setPushServiceHostname(String hostname) {
+        set(PUSH_SERVICE_HOSTNAME_PROP, hostname);
     }
 
 
     @Override
     public Duration getPushRefreshInterval() {
         return Duration.ofSeconds(getLong(PUSH_REFRESH_INTERVAL_PROP, PUSH_REFRESH_INTERVAL_DEFAULT));
+    }
+
+
+    @Override
+    public boolean isPushEnabled() {
+        return getBoolean(PUSH_ENABLED_PROP, Boolean.FALSE);
+    }
+
+
+    @Override
+    public void setPushEnabled(boolean value) {
+        set(PUSH_ENABLED_PROP, Boolean.valueOf(value));
     }
 }
