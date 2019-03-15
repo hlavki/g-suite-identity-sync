@@ -45,45 +45,23 @@ public class PushNotificationServiceImpl implements PushNotificationService {
         this.directoryApiClient = directoryApiClient;
         this.scheduler = scheduler;
         this.channel = read();
+    }
+
+
+    public void init() {
         startPushNotifications();
     }
 
 
-    private Optional<PushChannel> read() {
-        Optional<PushChannel> result = empty();
-        File channelFile = config.getPushChannelFile();
-        if (channelFile.exists()) {
-            try {
-                JAXBContext jaxbContext = JAXBContext.newInstance(PushChannel.class);
-                Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
-
-                //We had written this file in marshalling example
-                PushChannel channel = (PushChannel) jaxbUnmarshaller.unmarshal(channelFile);
-                result = Optional.of(channel);
-            } catch (JAXBException e) {
-                log.error("Cannot read watchings!", e);
-            }
-        }
-        return result;
-    }
-
-
-    private void store(PushChannel channel) {
-        try {
-            JAXBContext jaxbContext = JAXBContext.newInstance(PushChannel.class);
-            Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
-
-            jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
-            //Marshal the employees list in file
-            jaxbMarshaller.marshal(channel, config.getPushChannelFile());
-        } catch (JAXBException e) {
-            log.error("Cannot store watchings", e);
+    public void destroy() {
+        if (isEnabled()) {
+            channel.ifPresent(this::stopPushChannel);
         }
     }
 
 
     @Override
-    public void enablePushNotifications(String hostname) {
+    public synchronized void enablePushNotifications(String hostname) {
         if (!config.isPushEnabled()) {
             try {
                 config.setPushServiceHostname(hostname);
@@ -104,7 +82,7 @@ public class PushNotificationServiceImpl implements PushNotificationService {
 
 
     @Override
-    public void disablePushNotifications() {
+    public synchronized void disablePushNotifications() {
         channel.ifPresent(this::stopPushChannel);
         channel = empty();
         scheduler.unschedule(PUSH_SCHEDULER_JOB);
@@ -114,19 +92,46 @@ public class PushNotificationServiceImpl implements PushNotificationService {
 
 
     @Override
+    public synchronized void refreshPushNotifications() {
+        if (isEnabled()) {
+            if (channel.isEmpty()) {
+                startPushChannel(config.getPushServiceHostname());
+            } else if (isExpired()) {
+                String expiredId = channel.get().getId();
+                String resourceId = channel.get().getResourceId();
+                startPushChannel(config.getPushServiceHostname());
+                stopPushChannel(expiredId, resourceId);
+            }
+            log.info("Push notification channel sucessfnully refreshed");
+        }
+    }
+
+
+    @Override
     public void stopPushChannel(String id, String resourceId) {
         stopPushChannel(new StopPushChannel(id, resourceId));
     }
 
 
+    @Override
+    public boolean isEnabled() {
+        return config.isPushEnabled();
+    }
+
+
     private void startPushNotifications() {
+        if (isEnabled()) {
+            refreshPushNotifications();
+            startRefreshScheduler();
+        }
+    }
+
+
+    private void startRefreshScheduler() {
         try {
-            if (config.isPushEnabled()) {
-                refreshPushNotifications();
-                if (!scheduler.getJobs().containsKey(PUSH_SCHEDULER_JOB)) {
-                    ScheduleOptions opts = scheduler.EXPR("0 0 * * * ?").name(PUSH_SCHEDULER_JOB);
-                    scheduler.schedule(new RefreshPushNotificationJob(this), opts);
-                }
+            if (!scheduler.getJobs().containsKey(PUSH_SCHEDULER_JOB)) {
+                ScheduleOptions opts = scheduler.EXPR("0 0 * * * ?").name(PUSH_SCHEDULER_JOB);
+                scheduler.schedule(new RefreshPushNotificationJob(this), opts);
             }
         } catch (SchedulerError e) {
             log.error("Cannot enable push notifications", e);
@@ -173,23 +178,41 @@ public class PushNotificationServiceImpl implements PushNotificationService {
     }
 
 
-    @Override
-    public void refreshPushNotifications() {
-        channel.ifPresent(this::refreshPushNotifications);
+    private boolean isExpired() {
+        return channel.map(ch -> ch.expiresIn(Duration.ofHours(1))).orElse(Boolean.FALSE);
     }
 
 
-    private void refreshPushNotifications(PushChannel channel) {
-        if (channel.expiresIn(Duration.ofHours(1))) {
-            startPushChannel(config.getPushServiceHostname());
-            stopPushChannel(channel);
-            log.info("Push notification channel sucessfully refreshed");
+    private Optional<PushChannel> read() {
+        Optional<PushChannel> result = empty();
+        File channelFile = config.getPushChannelFile();
+        if (channelFile.exists()) {
+            try {
+                JAXBContext jaxbContext = JAXBContext.newInstance(PushChannel.class);
+                Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
+
+                //We had written this file in marshalling example
+                PushChannel channel = (PushChannel) jaxbUnmarshaller.unmarshal(channelFile);
+                result = Optional.of(channel);
+            } catch (JAXBException e) {
+                log.error("Cannot read watchings!", e);
+            }
+        }
+        return result;
+    }
+
+
+    private void store(PushChannel channel) {
+        try {
+            JAXBContext jaxbContext = JAXBContext.newInstance(PushChannel.class);
+            Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
+
+            jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+            //Marshal the employees list in file
+            jaxbMarshaller.marshal(channel, config.getPushChannelFile());
+        } catch (JAXBException e) {
+            log.error("Cannot store watchings", e);
         }
     }
 
-
-    @Override
-    public boolean isEnabled() {
-        return config.isPushEnabled();
-    }
 }

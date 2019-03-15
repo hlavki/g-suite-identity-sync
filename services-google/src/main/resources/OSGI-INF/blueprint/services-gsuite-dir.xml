@@ -33,7 +33,8 @@
         <argument ref="configuration"/>
     </bean>
 
-    <bean id="pushService" class="eu.hlavki.identity.services.google.impl.PushNotificationServiceImpl">
+    <bean id="pushService" class="eu.hlavki.identity.services.google.impl.PushNotificationServiceImpl"
+          init-method="init" destroy-method="destroy">
         <argument ref="configuration"/>
         <argument ref="directoryApiClient"/>
         <argument ref="tokenCache"/>
