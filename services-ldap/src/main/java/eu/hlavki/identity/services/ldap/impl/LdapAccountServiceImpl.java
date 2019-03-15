@@ -10,6 +10,7 @@ import eu.hlavki.identity.services.ldap.config.Configuration;
 import eu.hlavki.identity.services.ldap.model.LdapAccount;
 import eu.hlavki.identity.services.ldap.model.LdapGroup;
 import java.util.*;
+import static java.util.Optional.empty;
 import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -67,14 +68,29 @@ public class LdapAccountServiceImpl implements LdapAccountService, Configurable 
 
 
     @Override
-    public LdapAccount getAccountInfo(String subject) throws LdapSystemException {
-        LdapAccount result = null;
+    public Optional<LdapAccount> searchBySubject(String subject) throws LdapSystemException {
+        Optional<LdapAccount> result = empty();
         try (LDAPConnection conn = ldapPool.getConnection()) {
             String baseDn = config.getLdapUserBaseDN();
             SearchResultEntry entry = conn.searchForEntry(baseDn, ONE, "(employeeNumber=" + subject + ")");
             if (entry != null) {
-                result = accountFromEntry(entry);
-//                result.setSyncGsuitePassword(config.isGsuiteSyncPassword());
+                result = Optional.of(accountFromEntry(entry));
+            }
+        } catch (LDAPException e) {
+            throw new LdapSystemException(e);
+        }
+        return result;
+    }
+
+
+    @Override
+    public Optional<LdapAccount> searchByEmail(String email) throws LdapSystemException {
+        Optional<LdapAccount> result = empty();
+        try (LDAPConnection conn = ldapPool.getConnection()) {
+            String baseDn = config.getLdapUserBaseDN();
+            SearchResultEntry entry = conn.searchForEntry(baseDn, ONE, "(mail=" + email + ")");
+            if (entry != null) {
+                result = Optional.of(accountFromEntry(entry));
             }
         } catch (LDAPException e) {
             throw new LdapSystemException(e);

@@ -22,6 +22,7 @@ import eu.hlavki.identity.services.sync.AccountSyncService;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 import javax.validation.Valid;
@@ -32,6 +33,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
+import static javax.ws.rs.core.Response.Status.NOT_FOUND;
 import org.apache.cxf.rs.security.oidc.common.UserInfo;
 import org.apache.cxf.rs.security.oidc.rp.OidcClientTokenContext;
 import org.slf4j.Logger;
@@ -172,13 +174,9 @@ public class UserAccountService {
         ResponseBuilder response;
         String subject = oidcContext.getUserInfo().getSubject();
         try {
-            LdapAccount ldapAcc = ldapService.getAccountInfo(subject);
-            AccountInfo info = AccountUtil.fromLdap(ldapAcc);
-            if (info != null) {
-                response = Response.ok(info);
-            } else {
-                response = Response.ok().status(Response.Status.NOT_FOUND);
-            }
+            Optional<LdapAccount> ldapAcc = ldapService.searchBySubject(subject);
+            Optional<AccountInfo> info = ldapAcc.map(AccountInfo::new);
+            response = info.map(Response::ok).orElse(Response.ok().status(NOT_FOUND));
         } catch (LdapSystemException e) {
             log.error("Can't obtain account info", e);
             response = ServerError.toResponse("LDAP_ERR", e);

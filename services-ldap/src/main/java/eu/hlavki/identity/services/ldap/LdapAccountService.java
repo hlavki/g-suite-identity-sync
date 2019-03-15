@@ -4,6 +4,7 @@ import eu.hlavki.identity.services.ldap.model.LdapAccount;
 import eu.hlavki.identity.services.ldap.model.LdapGroup;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
 public interface LdapAccountService {
@@ -11,7 +12,10 @@ public interface LdapAccountService {
     boolean accountExists(String subject) throws LdapSystemException;
 
 
-    LdapAccount getAccountInfo(String subject) throws LdapSystemException;
+    Optional<LdapAccount> searchBySubject(String subject) throws LdapSystemException;
+
+
+    Optional<LdapAccount> searchByEmail(String email) throws LdapSystemException;
 
 
     List<LdapAccount> getAllAccounts() throws LdapSystemException;

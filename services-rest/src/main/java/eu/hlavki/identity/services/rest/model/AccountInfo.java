@@ -1,5 +1,6 @@
 package eu.hlavki.identity.services.rest.model;
 
+import eu.hlavki.identity.services.ldap.model.LdapAccount;
 import java.util.Set;
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -17,6 +18,17 @@ public class AccountInfo {
 
 
     public AccountInfo() {
+    }
+
+
+    public AccountInfo(LdapAccount ldapAccount) {
+        this.setUsername(ldapAccount.getUsername());
+        this.setEmails(ldapAccount.getEmails());
+        this.setGivenName(ldapAccount.getGivenName());
+        this.setFamilyName(ldapAccount.getFamilyName());
+        this.setSubject(ldapAccount.getSubject());
+        this.setName(ldapAccount.getName());
+        this.setRole(Role.valueOf(ldapAccount.getRole().toString()));
     }
 
 
