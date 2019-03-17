@@ -3,10 +3,10 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>eu.hlavki.identity</groupId>
-        <artifactId>g-suite-identity-sync</artifactId>
+        <artifactId>gsync</artifactId>
         <version>0.4.0-SNAPSHOT</version>
     </parent>
-    <artifactId>g-suite-identity-sync-web</artifactId>
+    <artifactId>gsync-web</artifactId>
     <packaging>war</packaging>
 
     <properties>

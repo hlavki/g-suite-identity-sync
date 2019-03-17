@@ -40,13 +40,13 @@
 
           <md-field :class="{'md-invalid': errors.has('password')}" md-has-password>
             <label for="password">Type LDAP Password</label>
-            <md-input v-model="formData.password" name="password" type="password" v-validate="'required|min:8|password'" required/>
+            <md-input v-model="formData.password" name="password" type="password" v-validate="'required|min:8|password'" ref="password" required/>
             <span class="md-error">{{errors.first('password')}}</span>
           </md-field>
 
           <md-field :class="{'md-invalid': errors.has('password-confirm')}">
             <label>Confirm LDAP Password</label>
-            <md-input v-model="formData.confirmPassword" name="password-confirm" type="password" v-validate="'required|confirmed:password'" required/>
+            <md-input v-model="formData.confirmPassword" name="password-confirm" type="password" v-validate="'required|confirmed:password'" data-vv-as="password" required/>
             <span class="md-error">{{errors.first('password-confirm')}}</span>
           </md-field>
 

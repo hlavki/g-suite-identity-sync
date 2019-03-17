@@ -3,14 +3,30 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>eu.hlavki.identity</groupId>
-        <artifactId>g-suite-identity-sync</artifactId>
+        <artifactId>gsync-services</artifactId>
         <version>0.4.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>g-suite-identity-sync-services-ldap</artifactId>
+    <artifactId>gsync-services-facade</artifactId>
     <packaging>bundle</packaging>
 
     <dependencies>
+        <dependency>
+            <groupId>eu.hlavki.identity</groupId>
+            <artifactId>gsync-plugin-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>eu.hlavki.identity</groupId>
+            <artifactId>gsync-services-ldap-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>eu.hlavki.identity</groupId>
+            <artifactId>gsync-services-google-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>eu.hlavki.identity</groupId>
+            <artifactId>gsync-services-synchronize-api</artifactId>
+        </dependency>
         <dependency>
             <groupId>org.osgi</groupId>
             <artifactId>org.osgi.core</artifactId>
@@ -24,12 +40,24 @@
             <artifactId>slf4j-api</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.unboundid</groupId>
-            <artifactId>unboundid-ldapsdk</artifactId>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.projectlombok</groupId>
-            <artifactId>lombok</artifactId>
+            <groupId>org.apache.cxf</groupId>
+            <artifactId>cxf-rt-frontend-jaxrs</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.cxf</groupId>
+            <artifactId>cxf-rt-rs-security-sso-oidc</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>javax.validation</groupId>
+            <artifactId>validation-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>javax.xml.bind</groupId>
+            <artifactId>jaxb-api</artifactId>
         </dependency>
     </dependencies>
 
@@ -40,10 +68,10 @@
                 <artifactId>maven-bundle-plugin</artifactId>
                 <configuration>
                     <instructions>
-                        <Export-Package>
-                            eu.hlavki.identity.services.ldap,
-                            eu.hlavki.identity.services.ldap.model
-                        </Export-Package>
+                        <Import-Package>
+                            *,
+                            org.apache.cxf.jaxrs.client
+                        </Import-Package>
                     </instructions>
                 </configuration>
             </plugin>
@@ -60,7 +88,7 @@
                         <configuration>
                             <artifacts>
                                 <artifact>
-                                    <file>src/main/config/eu.hlavki.identity.ldap.properties</file>
+                                    <file>src/main/config/eu.hlavki.identity.properties</file>
                                     <type>cfg</type>
                                     <classifier>configuration</classifier>
                                 </artifact>
