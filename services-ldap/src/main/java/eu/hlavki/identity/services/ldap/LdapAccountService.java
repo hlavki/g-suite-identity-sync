@@ -33,7 +33,7 @@ public interface LdapAccountService {
     Set<String> getAllGroupNames() throws LdapSystemException;
 
 
-    Map<String, LdapGroup> getAccountGroups(String accountDN) throws LdapSystemException;
+    List<LdapGroup> getAccountGroups(String accountDN) throws LdapSystemException;
 
 
     String getAccountDN(String subject) throws LdapSystemException;
@@ -52,4 +52,7 @@ public interface LdapAccountService {
 
 
     LdapGroup createOrUpdateGroup(LdapGroup group) throws LdapSystemException;
+
+
+    void removeUserByEmail(String email) throws LdapSystemException;
 }

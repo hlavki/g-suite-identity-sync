@@ -32,9 +32,9 @@ public class AccountSyncServiceImpl implements AccountSyncService {
     public void synchronizeUserGroups(UserInfo userInfo) throws LdapSystemException {
         String accountDN = ldapService.getAccountDN(userInfo.getSubject());
         GroupList gsuiteGroups = gsuiteDirService.getUserGroups(userInfo.getSubject());
-        Map<String, LdapGroup> ldapGroups = ldapService.getAccountGroups(accountDN);
+        List<LdapGroup> ldapGroups = ldapService.getAccountGroups(accountDN);
 
-        Set<String> asIs = ldapGroups.values().stream()
+        Set<String> asIs = ldapGroups.stream()
                 .filter(g -> g.getMembersDn().contains(accountDN))
                 .map(g -> g.getDn())
                 .collect(Collectors.toSet());

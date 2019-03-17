@@ -137,7 +137,6 @@ public class LdapAccountServiceImpl implements LdapAccountService, Configurable 
     @Override
     public void updateAccount(LdapAccount account) throws LdapSystemException {
         try (LDAPConnection conn = ldapPool.getConnection()) {
-            String entryDN = getAccountDN(account.getSubject());
             List<Modification> mods = new ArrayList<>();
             if (account.getPassword() != null) {
                 mods.add(new Modification(REPLACE, "userPassword", account.getPassword()));
@@ -146,7 +145,7 @@ public class LdapAccountServiceImpl implements LdapAccountService, Configurable 
             mods.add(new Modification(REPLACE, "sn", account.getFamilyName()));
             mods.add(new Modification(REPLACE, "cn", account.getName()));
             mods.add(new Modification(REPLACE, "mail", account.getEmails().toArray(new String[0])));
-            conn.modify(new ModifyRequest(entryDN, mods));
+            conn.modify(new ModifyRequest(account.getDn(), mods));
         } catch (LDAPException e) {
             throw new LdapSystemException(e);
         }
@@ -212,8 +211,8 @@ public class LdapAccountServiceImpl implements LdapAccountService, Configurable 
 
 
     @Override
-    public Map<String, LdapGroup> getAccountGroups(String accountDN) throws LdapSystemException {
-        Map<String, LdapGroup> result = new HashMap<>();
+    public List<LdapGroup> getAccountGroups(String accountDN) throws LdapSystemException {
+        List<LdapGroup> result = new ArrayList<>();
         try (LDAPConnection conn = ldapPool.getConnection()) {
             String baseDN = config.getLdapGroupsBaseDN();
             log.info("Group base DN: " + baseDN);
@@ -227,7 +226,7 @@ public class LdapAccountServiceImpl implements LdapAccountService, Configurable 
                 String name = entry.getAttributeValue(GROUP_NAME_ATTR);
                 String description = entry.getAttributeValue(GROUP_DESC_ATTR);
                 Set<String> members = new HashSet<>(Arrays.asList(entry.getAttributeValues(config.getLdapGroupsMemberAttr())));
-                result.put(dn, new LdapGroup(name, dn, description, members));
+                result.add(new LdapGroup(name, dn, description, members));
             }
         } catch (LDAPException e) {
             throw new LdapSystemException(e);
@@ -298,6 +297,32 @@ public class LdapAccountServiceImpl implements LdapAccountService, Configurable 
     }
 
 
+    @Override
+    public void removeUserByEmail(String email) throws LdapSystemException {
+        Optional<LdapAccount> account = searchByEmail(email);
+        if (account.isPresent()) {
+            LdapAccount user = account.get();
+            String dn = getAccountDN(user);
+            List<LdapGroup> userGroups = getAccountGroups(dn);
+            for (LdapGroup group : userGroups) {
+                removeGroupMember(dn, group.getName());
+            }
+            removeUser(user);
+        }
+
+    }
+
+
+    private void removeUser(LdapAccount account) throws LdapSystemException {
+        try (LDAPConnection conn = ldapPool.getConnection()) {
+            conn.delete(account.getDn());
+            log.info("User {} successfully deleted");
+        } catch (LDAPException e) {
+            throw new LdapSystemException(e);
+        }
+    }
+
+
     /**
      * Read group from LDAP. If there is no group it returns NULL.
      *
@@ -351,7 +376,7 @@ public class LdapAccountServiceImpl implements LdapAccountService, Configurable 
 
 
     private LdapAccount accountFromEntry(SearchResultEntry entry) {
-        LdapAccount account = new LdapAccount();
+        LdapAccount account = new LdapAccount(entry.getDN());
         account.setUsername(entry.getAttributeValue("uid"));
         String[] emails = entry.getAttributeValues("mail");
         account.setEmails(emails != null ? new HashSet<>(Arrays.asList(emails)) : Collections.emptySet());
