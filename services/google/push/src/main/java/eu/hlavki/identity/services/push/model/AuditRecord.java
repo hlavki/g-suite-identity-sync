@@ -10,6 +10,7 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 
 @Getter
 @Setter
@@ -51,10 +52,11 @@ public class AuditRecord {
     @Getter
     @Setter
     @NoArgsConstructor
+    @ToString
     @XmlAccessorType(XmlAccessType.FIELD)
     public static class Event {
 
-        private String type;
+        private EventType type;
         private String name;
         private Long profileId;
         private List<Parameter> parameters;
@@ -63,6 +65,7 @@ public class AuditRecord {
     @Getter
     @Setter
     @NoArgsConstructor
+    @ToString
     @XmlAccessorType(XmlAccessType.FIELD)
     public static class Parameter {
 
@@ -71,5 +74,4 @@ public class AuditRecord {
         private Integer intValue;
         private Boolean boolValue;
     }
-
 }

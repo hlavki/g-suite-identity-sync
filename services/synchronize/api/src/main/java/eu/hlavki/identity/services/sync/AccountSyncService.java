@@ -12,8 +12,14 @@ public interface AccountSyncService {
     void synchronizeGroup(String groupEmail) throws LdapSystemException, ResourceNotFoundException;
 
 
+    void removeGroup(String groupEmail) throws LdapSystemException;
+
+
     void synchronizeAllGroups() throws LdapSystemException;
 
 
     void synchronizeGSuiteUsers() throws LdapSystemException;
+
+
+    void removeUserByEmail(String email) throws LdapSystemException;
 }

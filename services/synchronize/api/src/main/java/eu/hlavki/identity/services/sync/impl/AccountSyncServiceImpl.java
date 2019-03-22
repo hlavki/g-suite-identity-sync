@@ -117,6 +117,18 @@ public class AccountSyncServiceImpl implements AccountSyncService {
     }
 
 
+    @Override
+    public void removeGroup(String groupEmail) throws LdapSystemException {
+        ldapService.removeGroup(AccountUtil.getLdapGroupName(groupEmail));
+    }
+
+
+    @Override
+    public void removeUserByEmail(String email) throws LdapSystemException {
+        ldapService.removeUserByEmail(email);
+    }
+
+
     private LdapGroup synchronizeGroup(GSuiteGroup gsuiteGroup, GroupMembership gsuiteMembership,
             Map<String, LdapAccount> emailAccountMap) throws LdapSystemException {
         log.info("Starting to synchronize group {}", gsuiteGroup.getEmail());
