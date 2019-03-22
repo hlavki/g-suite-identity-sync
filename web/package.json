@@ -13,7 +13,7 @@
  "dependencies": {
   "axios": "^0.18.0",
   "mini-toastr": "^0.8.1",
-  "vee-validate": "^2.0.9",
+  "vee-validate": "^2.2.0",
   "vue": "^2.6.6",
   "vue-form-wizard": "^0.8.4",
   "vue-material": "^1.0.0-beta-10.2",

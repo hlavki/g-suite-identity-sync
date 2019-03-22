@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0"
+           xmlns:cxf="http://cxf.apache.org/blueprint/core"
+           xmlns:cm="http://aries.apache.org/blueprint/xmlns/blueprint-cm/v1.3.0"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://www.osgi.org/xmlns/blueprint/v1.0.0 https://osgi.org/xmlns/blueprint/v1.0.0/blueprint.xsd
+                http://cxf.apache.org/blueprint/core http://cxf.apache.org/schemas/blueprint/core.xsd
+                http://aries.apache.org/blueprint/xmlns/blueprint-cm/v1.3.0 http://aries.apache.org/schemas/blueprint-cm/blueprint-cm-1.3.0.xsd">
+
+    <cm:property-placeholder persistent-id="eu.hlavki.identity.facade"/>
+
+    <!-- RESTFul Web Services Configuration -->
+    <!-- 1 -->
+    <cxf:bus>
+        <cxf:features>
+            <cxf:logging />
+        </cxf:features>
+    </cxf:bus>
+
+    <!-- JSON Provider -->
+    <bean id="jsonProvider" class="org.apache.cxf.jaxrs.provider.json.JSONProvider">
+        <property name="dropRootElement" value="true"/> <!-- Serialization -->
+        <property name="supportUnwrapped" value="true"/> <!-- Deserialization -->
+        <property name="serializeAsArray" value="true"/> <!-- Workaround for single valued collections -->
+        <property name="arrayKeys">
+            <list>
+                <value>emails</value>
+            </list>
+        </property>
+    </bean>
+
+    <!-- Configuration -->
+    <reference id="configurationAdmin" interface="org.osgi.service.cm.ConfigurationAdmin"/>
+
+    <bean id="configuration" class="eu.hlavki.identity.services.rest.config.impl.ConfigurationImpl">
+        <argument ref="configurationAdmin"/>
+    </bean>
+
+    <bean id="exceptionMapper" class="eu.hlavki.identity.services.rest.util.ValidationExceptionMapper">
+        <property name="addMessageToResponse" value="true"/>
+    </bean>
+
+    <bean id="hibernateValidator" class="org.hibernate.validator.HibernateValidator"/>
+
+    <bean id="validationProviderResolver" class="eu.hlavki.identity.services.rest.util.SingleValidationProviderResolver">
+        <argument ref="hibernateValidator"/>
+    </bean>
+
+    <bean id="validationProvider" class="org.apache.cxf.validation.BeanValidationProvider">
+        <argument ref="validationProviderResolver"/>
+    </bean>
+
+    <bean id="validationInInterceptor" class="org.apache.cxf.jaxrs.validation.JAXRSBeanValidationInInterceptor">
+        <property name="provider" ref="validationProvider" />
+    </bean>
+
+    <bean id="validationOutInterceptor" class="org.apache.cxf.jaxrs.validation.JAXRSBeanValidationOutInterceptor">
+        <property name="provider" ref="validationProvider" />
+    </bean>
+</blueprint>

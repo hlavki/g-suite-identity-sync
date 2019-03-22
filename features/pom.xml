@@ -3,10 +3,10 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>eu.hlavki.identity</groupId>
-        <artifactId>g-suite-identity-sync</artifactId>
+        <artifactId>gsync</artifactId>
         <version>0.4.0-SNAPSHOT</version>
     </parent>
-    <artifactId>g-suite-identity-sync-features</artifactId>
+    <artifactId>gsync-features</artifactId>
     <packaging>feature</packaging>
 
     <dependencies>
@@ -38,7 +38,7 @@
                         <feature>framework</feature>
                     </framework>
                     <features>
-                        <feature>g-suite-identity-*</feature>
+                        <feature>gsync-*</feature>
                     </features>
                 </configuration>
             </plugin>

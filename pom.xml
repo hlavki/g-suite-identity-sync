@@ -2,7 +2,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>eu.hlavki.identity</groupId>
-    <artifactId>g-suite-identity-sync</artifactId>
+    <artifactId>gsync</artifactId>
     <version>0.4.0-SNAPSHOT</version>
     <packaging>pom</packaging>
 
@@ -11,12 +11,13 @@
         <maven.compiler.source>11</maven.compiler.source>
         <maven.compiler.target>11</maven.compiler.target>
         <cxf.version>3.3.1</cxf.version>
-        <karaf.version>4.2.3</karaf.version>
+        <karaf.version>4.2.4</karaf.version>
         <osgi.version>6.0.0</osgi.version>
         <unboundid.version>4.0.9</unboundid.version>
         <guava.version>24.1.1-jre</guava.version>
         <javax.validation.version>1.1.0.Final</javax.validation.version>
         <docker.release.tag>${project.version}</docker.release.tag>
+        <jackson.version>2.9.8</jackson.version>
     </properties>
 
     <scm>
@@ -27,10 +28,6 @@
     <modules>
         <module>web</module>
         <module>services</module>
-        <module>services-google</module>
-        <module>services-ldap</module>
-        <module>services-rest</module>
-        <module>services-scheduler</module>
         <module>features</module>
         <module>distribution</module>
         <module>plugins</module>
@@ -51,22 +48,22 @@
         <dependencies>
             <dependency>
                 <groupId>eu.hlavki.identity</groupId>
-                <artifactId>g-suite-identity-sync-plugin-api</artifactId>
+                <artifactId>gsync-plugin-api</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>eu.hlavki.identity</groupId>
-                <artifactId>g-suite-identity-sync-services-ldap</artifactId>
+                <artifactId>gsync-services-ldap-api</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>eu.hlavki.identity</groupId>
-                <artifactId>g-suite-identity-sync-services-google</artifactId>
+                <artifactId>gsync-services-google-api</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>eu.hlavki.identity</groupId>
-                <artifactId>g-suite-identity-sync-services</artifactId>
+                <artifactId>gsync-services-synchronize-api</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
@@ -83,8 +80,20 @@
             </dependency>
             <dependency>
                 <groupId>org.osgi</groupId>
-                <artifactId>org.osgi.compendium</artifactId>
-                <version>5.0.0</version>
+                <artifactId>osgi.cmpn</artifactId>
+                <version>${osgi.version}</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.karaf.shell</groupId>
+                <artifactId>org.apache.karaf.shell.core</artifactId>
+                <version>${karaf.version}</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.karaf.scheduler</groupId>
+                <artifactId>org.apache.karaf.scheduler.core</artifactId>
+                <version>${karaf.version}</version>
                 <scope>provided</scope>
             </dependency>
             <dependency>
@@ -102,7 +111,7 @@
             <dependency>
                 <groupId>org.slf4j</groupId>
                 <artifactId>slf4j-api</artifactId>
-                <version>1.7.25</version>
+                <version>1.7.26</version>
                 <scope>provided</scope>
             </dependency>
             <dependency>
@@ -121,6 +130,12 @@
                 <groupId>javax.validation</groupId>
                 <artifactId>validation-api</artifactId>
                 <version>${javax.validation.version}</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.projectlombok</groupId>
+                <artifactId>lombok</artifactId>
+                <version>1.18.6</version>
                 <scope>provided</scope>
             </dependency>
 
@@ -146,11 +161,27 @@
                     <groupId>org.apache.felix</groupId>
                     <artifactId>maven-bundle-plugin</artifactId>
                     <version>4.1.0</version>
+                    <inherited>true</inherited>
+                    <extensions>true</extensions>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.karaf.tooling</groupId>
                     <artifactId>karaf-maven-plugin</artifactId>
                     <version>${karaf.version}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.karaf.tooling</groupId>
+                    <artifactId>karaf-services-maven-plugin</artifactId>
+                    <version>${karaf.version}</version>
+                    <executions>
+                        <execution>
+                            <id>service-metadata-generate</id>
+                            <phase>process-classes</phase>
+                            <goals>
+                                <goal>service-metadata-generate</goal>
+                            </goals>
+                        </execution>
+                    </executions>
                 </plugin>
                 <plugin>
                     <artifactId>maven-resources-plugin</artifactId>
