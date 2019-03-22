@@ -1,5 +1,6 @@
-package eu.hlavki.identity.services.rest.config;
+package eu.hlavki.identity.services.rest.config.impl;
 
+import eu.hlavki.identity.services.rest.config.Configuration;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.*;
@@ -10,16 +11,14 @@ import org.slf4j.LoggerFactory;
 public class ConfigurationImpl implements Configuration {
 
     private static final Logger LOG = LoggerFactory.getLogger(ConfigurationImpl.class);
-    
-    private static final String PID = "eu.hlavki.identity";
+
+    private static final String PID = "eu.hlavki.identity.facade";
     private static final String ADMINS_PROP = "admins";
     private static final String GSUITE_SYNC_PASSWORD_PROP = "gsuite.sync.password";
     private static final boolean GSUITE_SYNC_PASSWORD_DEFAULT = false;
     private static final String EXTERNAL_USER_GROUP_PROP = "gsuite.external.accounts.group";
 
-    public static final String TOPIC_CHANGE = "eu/hlavki/identity/Configuration/CHANGED";
-    public static final String CONFIG_PROP = "config";
-    private static final String COLLECTIONS_VALUE_SEPARATOR = "|";
+    private static final String COLLECTIONS_VALUE_SEPARATOR = ",";
     private org.osgi.service.cm.Configuration osgiConfig;
     private final ConfigurationAdmin cfgAdmin;
 

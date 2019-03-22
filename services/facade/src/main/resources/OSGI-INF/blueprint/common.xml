@@ -7,7 +7,7 @@
                 http://cxf.apache.org/blueprint/core http://cxf.apache.org/schemas/blueprint/core.xsd
                 http://aries.apache.org/blueprint/xmlns/blueprint-cm/v1.3.0 http://aries.apache.org/schemas/blueprint-cm/blueprint-cm-1.3.0.xsd">
 
-    <cm:property-placeholder persistent-id="eu.hlavki.identity"/>
+    <cm:property-placeholder persistent-id="eu.hlavki.identity.facade"/>
 
     <!-- RESTFul Web Services Configuration -->
     <!-- 1 -->
@@ -32,7 +32,7 @@
     <!-- Configuration -->
     <reference id="configurationAdmin" interface="org.osgi.service.cm.ConfigurationAdmin"/>
 
-    <bean id="configuration" class="eu.hlavki.identity.services.rest.config.ConfigurationImpl">
+    <bean id="configuration" class="eu.hlavki.identity.services.rest.config.impl.ConfigurationImpl">
         <argument ref="configurationAdmin"/>
     </bean>
 
@@ -57,5 +57,4 @@
     <bean id="validationOutInterceptor" class="org.apache.cxf.jaxrs.validation.JAXRSBeanValidationOutInterceptor">
         <property name="provider" ref="validationProvider" />
     </bean>
-
 </blueprint>

@@ -88,7 +88,7 @@
                         <configuration>
                             <artifacts>
                                 <artifact>
-                                    <file>src/main/config/eu.hlavki.identity.properties</file>
+                                    <file>src/main/config/eu.hlavki.identity.facade.properties</file>
                                     <type>cfg</type>
                                     <classifier>configuration</classifier>
                                 </artifact>

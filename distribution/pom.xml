@@ -52,11 +52,10 @@
                         <feature>standard</feature>
                     </bootFeatures>
                     <startupFeatures>
-                        <feature>eventadmin</feature>
                         <feature>gsync-services</feature>
                         <feature>gsync-web</feature>
                     </startupFeatures>
-                    <!--<javase>11</javase>-->
+                    <javase>11</javase>
                     <archiveZip>false</archiveZip>
                 </configuration>
             </plugin>

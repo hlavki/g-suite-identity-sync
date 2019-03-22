@@ -21,7 +21,6 @@
     </bean>
 
     <bean id="adminService" class="eu.hlavki.identity.services.rest.account.AdminService">
-        <argument ref="configuration"/>
         <argument ref="accountSyncService"/>
     </bean>
 

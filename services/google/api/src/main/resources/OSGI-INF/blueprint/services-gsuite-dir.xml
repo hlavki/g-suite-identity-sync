@@ -50,5 +50,4 @@
     <service ref="gSuiteDirService" interface="eu.hlavki.identity.services.google.GSuiteDirectoryService" />
     <service ref="pushService" interface="eu.hlavki.identity.services.google.PushNotificationService" />
     <service ref="configuration" interface="eu.hlavki.identity.services.google.config.Configuration" />
-
 </blueprint>

@@ -14,34 +14,79 @@
         <bundle>mvn:javax.persistence/javax.persistence-api/2.2</bundle>
     </feature>
 
-    <feature name="gsync-services" version="${project.version}">
+    <feature name="gsync-services-ldap" version="${project.version}">
         <feature>aries-blueprint</feature>
-        <feature>eventadmin</feature>
+        <feature>pax-cdi</feature>
+        <bundle>mvn:com.unboundid/unboundid-ldapsdk/${unboundid.version}</bundle>
+        <bundle>mvn:eu.hlavki.identity/gsync-services-ldap-api/${project.version}</bundle>
+        <configfile finalname="${karaf.etc}/identity/eu.hlavki.identity.ldap.cfg">
+            mvn:eu.hlavki.identity/gsync-services-ldap-api/${project.version}/cfg/configuration
+        </configfile>
+    </feature>
+
+    <feature name="gsync-services-google" version="${project.version}">
+        <feature>aries-blueprint</feature>
         <feature>pax-cdi</feature>
         <feature>scheduler</feature>
+        <feature version="${cxf.version}">cxf-jaxrs</feature>
+        <feature version="${cxf.version}">cxf-rs-security-oauth2</feature>
+        <bundle>mvn:com.google.guava/guava/${guava.version}</bundle>
+        <bundle>mvn:eu.hlavki.identity/gsync-services-google-api/${project.version}</bundle>
+        <bundle>mvn:eu.hlavki.identity/gsync-services-google-client/${project.version}</bundle>
+        <configfile finalname="${karaf.etc}/identity/eu.hlavki.identity.google.cfg">
+            mvn:eu.hlavki.identity/gsync-services-google-api/${project.version}/cfg/configuration
+        </configfile>
+    </feature>
+
+    <feature name="gsync-services-google-push" version="${project.version}">
+        <feature version="${project.version}">gsync-services-ldap</feature>
+        <feature version="${project.version}">gsync-services-google</feature>
+        <feature version="${project.version}">gsync-services-synchronize</feature>
+        <bundle>mvn:eu.hlavki.identity/gsync-services-google-push/${project.version}</bundle>
+    </feature>
+
+    <feature name="gsync-services-synchronize" version="${project.version}">
+        <feature>aries-blueprint</feature>
+        <feature>pax-cdi</feature>
+        <feature>scheduler</feature>
+        <!--<bundle>mvn:javax.xml.bind/jaxb-api/2.3.1</bundle>-->
+        <feature version="${cxf.version}">cxf-rt-security-oidc</feature>
+        <feature version="${project.version}">gsync-services-ldap</feature>
+        <feature version="${project.version}">gsync-services-google</feature>
+        <bundle>mvn:eu.hlavki.identity/gsync-services-synchronize-api/${project.version}</bundle>
+        <bundle>mvn:eu.hlavki.identity/gsync-services-synchronize-scheduler/${project.version}</bundle>
+    </feature>
+
+    <feature name="gsync-services" version="${project.version}">
+        <feature version="${project.version}">gsync-services-ldap</feature>
+        <feature version="${project.version}">gsync-services-google</feature>
+        <feature version="${project.version}">gsync-services-google-push</feature>
+        <feature version="${project.version}">gsync-services-synchronize</feature>
+    </feature>
+
+    <feature name="gsync-services-facade" version="${project.version}">
+        <feature>aries-blueprint</feature>
+        <feature>pax-cdi</feature>
         <feature version="${cxf.version}">cxf-jaxrs</feature>
         <feature version="${cxf.version}">cxf-rs-security-oauth2</feature>
         <feature version="${cxf.version}">cxf-rt-security-oidc</feature>
         <feature version="${cxf.version}">cxf-bean-validation-core</feature>
         <feature version="${project.version}">gsync-plugins</feature>
-        <bundle>mvn:javax.xml.bind/jaxb-api/2.3.1</bundle>
+        <!--<feature>gsync-services-ldap</feature>-->
+        <feature version="${project.version}">gsync-services-ldap</feature>
+        <feature version="${project.version}">gsync-services-google</feature>
+        <feature version="${project.version}">gsync-services-synchronize</feature>
+        <configfile finalname="${karaf.etc}/identity/eu.hlavki.identity.facade.cfg">
+            mvn:eu.hlavki.identity/gsync-services-facade/${project.version}/cfg/configuration
+        </configfile>
         <bundle>mvn:com.google.guava/guava/${guava.version}</bundle>
-        <bundle>mvn:com.unboundid/unboundid-ldapsdk/${unboundid.version}</bundle>
-        <configfile finalname="${karaf.etc}/identity/eu.hlavki.identity.ldap.cfg">mvn:eu.hlavki.identity/gsync-services-ldap-api/${project.version}/cfg/configuration</configfile>
-        <configfile finalname="${karaf.etc}/identity/eu.hlavki.identity.google.cfg">mvn:eu.hlavki.identity/gsync-services-google-api/${project.version}/cfg/configuration</configfile>
-        <bundle>mvn:eu.hlavki.identity/gsync-services-ldap-api/${project.version}</bundle>
-        <bundle>mvn:eu.hlavki.identity/gsync-services-google-api/${project.version}</bundle>
-        <bundle>mvn:eu.hlavki.identity/gsync-services-google-client/${project.version}</bundle>
-        <bundle>mvn:eu.hlavki.identity/gsync-services-google-push/${project.version}</bundle>
-        <bundle>mvn:eu.hlavki.identity/gsync-services-synchronize-api/${project.version}</bundle>
-        <bundle>mvn:eu.hlavki.identity/gsync-services-synchronize-scheduler/${project.version}</bundle>
+        <bundle>mvn:eu.hlavki.identity/gsync-services-facade/${project.version}</bundle>
     </feature>
 
     <feature name="gsync-web" version="${project.version}">
         <feature>war</feature>
         <feature version="${project.version}">gsync-services</feature>
-        <configfile finalname="${karaf.etc}/identity/eu.hlavki.identity.cfg">mvn:eu.hlavki.identity/gsync-services-facade/${project.version}/cfg/configuration</configfile>
+        <feature version="${project.version}">gsync-services-facade</feature>
         <bundle>mvn:eu.hlavki.identity/gsync-web/${project.version}/war</bundle>
-        <bundle>mvn:eu.hlavki.identity/gsync-services-facade/${project.version}</bundle>
     </feature>
 </features>
