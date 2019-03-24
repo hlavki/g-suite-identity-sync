@@ -158,7 +158,7 @@ public class LdapAccountServiceImpl implements LdapAccountService, Configurable 
             mods.add(new Modification(REPLACE, "sn", account.getFamilyName()));
             mods.add(new Modification(REPLACE, "cn", account.getName()));
             mods.add(new Modification(REPLACE, "mail", account.getEmails().toArray(new String[0])));
-            conn.modify(new ModifyRequest(account.getDn(), mods));
+            conn.modify(new ModifyRequest(getAccountDN(account.getSubject()), mods));
         } catch (LDAPException e) {
             throw new LdapSystemException(e);
         }
