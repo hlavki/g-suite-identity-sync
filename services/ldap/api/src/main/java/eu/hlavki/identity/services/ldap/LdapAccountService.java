@@ -1,9 +1,9 @@
 package eu.hlavki.identity.services.ldap;
 
 import eu.hlavki.identity.services.ldap.model.LdapAccount;
+import eu.hlavki.identity.services.ldap.model.LdapAccount.Role;
 import eu.hlavki.identity.services.ldap.model.LdapGroup;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
@@ -16,6 +16,9 @@ public interface LdapAccountService {
 
 
     Optional<LdapAccount> searchByEmail(String email) throws LdapSystemException;
+
+
+    List<LdapAccount> searchByRole(Role role) throws LdapSystemException;
 
 
     List<LdapAccount> getAllAccounts() throws LdapSystemException;

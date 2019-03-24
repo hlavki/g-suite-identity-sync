@@ -100,6 +100,19 @@ public class LdapAccountServiceImpl implements LdapAccountService, Configurable 
 
 
     @Override
+    public List<LdapAccount> searchByRole(LdapAccount.Role role) throws LdapSystemException {
+        try (LDAPConnection conn = ldapPool.getConnection()) {
+            String baseDn = config.getLdapUserBaseDN();
+            String roleStr = String.valueOf(role);
+            SearchResult searchResult = conn.search(baseDn, ONE, "(&&(objectClass=inetOrgPerson)(employeeType=" + roleStr + "))");
+            return searchResult.getSearchEntries().stream().map(entry -> accountFromEntry(entry)).collect(Collectors.toList());
+        } catch (LDAPException e) {
+            throw new LdapSystemException(e);
+        }
+    }
+
+
+    @Override
     public List<LdapAccount> getAllAccounts() throws LdapSystemException {
         try (LDAPConnection conn = ldapPool.getConnection()) {
             String baseDn = config.getLdapUserBaseDN();
