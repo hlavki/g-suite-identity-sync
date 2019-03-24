@@ -13,6 +13,6 @@ public class ValidationExceptionMapper extends org.apache.cxf.jaxrs.validation.V
 
     @Override
     protected Response buildResponse(Response.Status errorStatus, String responseText) {
-        return AppError.toResponse("E002", responseText, errorStatus).build();
+        return AppError.toResponse("VALIDATION_ERR", responseText, errorStatus).build();
     }
 }

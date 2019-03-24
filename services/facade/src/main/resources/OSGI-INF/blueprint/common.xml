@@ -38,10 +38,6 @@
         <argument ref="configurationAdmin"/>
     </bean>
 
-    <bean id="exceptionMapper" class="eu.hlavki.identity.services.rest.util.ValidationExceptionMapper">
-        <property name="addMessageToResponse" value="true"/>
-    </bean>
-
     <bean id="hibernateValidator" class="org.hibernate.validator.HibernateValidator"/>
 
     <bean id="validationProviderResolver" class="eu.hlavki.identity.services.rest.util.SingleValidationProviderResolver">

@@ -1,6 +1,6 @@
 package eu.hlavki.identity.services.ldap;
 
-public class LdapSystemException extends Exception {
+public class LdapSystemException extends RuntimeException {
 
     private static final long serialVersionUID = 1L;
 

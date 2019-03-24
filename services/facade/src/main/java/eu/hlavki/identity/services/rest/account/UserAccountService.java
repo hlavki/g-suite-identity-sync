@@ -54,7 +54,7 @@ public class UserAccountService {
 
 
     public UserAccountService(Configuration config, GSuiteDirectoryService directoryService,
-        LdapAccountService ldapService, AccountSyncService syncService, List<UserInterceptor> userPlugins) {
+            LdapAccountService ldapService, AccountSyncService syncService, List<UserInterceptor> userPlugins) {
         this.config = config;
         this.gsuiteDirService = directoryService;
         this.ldapService = ldapService;
@@ -90,34 +90,29 @@ public class UserAccountService {
         ResponseBuilder response;
         UserInfo userInfo = oidcContext.getUserInfo();
         String subject = userInfo.getSubject();
-        try {
-            if (!ldapService.accountExists(subject)) {
-                Set<String> emails = Collections.singleton(userInfo.getEmail());
-                String gsuiteDomain = gsuiteDirService.getDomainName();
-                LdapAccount account = AccountUtil.toLdapAccount(gsuiteDomain, userInfo, emails, data);
-                ldapService.createAccount(account);
-                if (data.isSaveGSuitePassword() && isInternalAccount(userInfo, gsuiteDomain)) {
-                    try {
-                        gsuiteDirService.updateUserPassword(subject, data.getPassword());
-                    } catch (InvalidPasswordException e) {
-                        log.warn("Can't update gsuite password", e);
-                    }
+        if (!ldapService.accountExists(subject)) {
+            Set<String> emails = Collections.singleton(userInfo.getEmail());
+            String gsuiteDomain = gsuiteDirService.getDomainName();
+            LdapAccount account = AccountUtil.toLdapAccount(gsuiteDomain, userInfo, emails, data);
+            ldapService.createAccount(account);
+            if (data.isSaveGSuitePassword() && isInternalAccount(userInfo, gsuiteDomain)) {
+                try {
+                    gsuiteDirService.updateUserPassword(subject, data.getPassword());
+                } catch (InvalidPasswordException e) {
+                    log.warn("Can't update gsuite password", e);
                 }
-                for (UserInterceptor plugin : userPlugins) {
-                    try {
-                        plugin.userCreated(AccountUtil.toCreated(account));
-                    } catch (ProcessException e) {
-                        log.warn("User plugin execution failed!", e);
-                    }
-                }
-
-                response = Response.ok();
-            } else {
-                response = Response.ok().status(Response.Status.CONFLICT);
             }
-        } catch (LdapSystemException e) {
-            log.error("Can't create account", e);
-            response = ServerError.toResponse("LDAP_ERR", e);
+            for (UserInterceptor plugin : userPlugins) {
+                try {
+                    plugin.userCreated(AccountUtil.toCreated(account));
+                } catch (ProcessException e) {
+                    log.warn("User plugin execution failed!", e);
+                }
+            }
+
+            response = Response.ok();
+        } else {
+            response = Response.ok().status(Response.Status.CONFLICT);
         }
         return response.build();
     }
@@ -128,26 +123,21 @@ public class UserAccountService {
         ResponseBuilder response;
         UserInfo userInfo = oidcContext.getUserInfo();
         String subject = userInfo.getSubject();
-        try {
-            if (ldapService.accountExists(subject)) {
-                String gsuiteDomain = gsuiteDirService.getDomainName();
-                Set<String> emails = Collections.singleton(userInfo.getEmail());
-                LdapAccount account = AccountUtil.toLdapAccount(gsuiteDomain, userInfo, emails, data);
-                ldapService.updateAccount(account);
-                response = Response.ok();
-                if (data.isSaveGSuitePassword() && isInternalAccount(userInfo, gsuiteDomain)) {
-                    try {
-                        gsuiteDirService.updateUserPassword(subject, data.getPassword());
-                    } catch (InvalidPasswordException e) {
-                        log.warn("Can't update gsuite password", e);
-                    }
+        if (ldapService.accountExists(subject)) {
+            String gsuiteDomain = gsuiteDirService.getDomainName();
+            Set<String> emails = Collections.singleton(userInfo.getEmail());
+            LdapAccount account = AccountUtil.toLdapAccount(gsuiteDomain, userInfo, emails, data);
+            ldapService.updateAccount(account);
+            response = Response.ok();
+            if (data.isSaveGSuitePassword() && isInternalAccount(userInfo, gsuiteDomain)) {
+                try {
+                    gsuiteDirService.updateUserPassword(subject, data.getPassword());
+                } catch (InvalidPasswordException e) {
+                    log.warn("Can't update gsuite password", e);
                 }
-            } else {
-                response = Response.ok().status(Response.Status.CONFLICT);
             }
-        } catch (LdapSystemException e) {
-            log.error("Can't create account", e);
-            response = ServerError.toResponse("LDAP_ERR", e);
+        } else {
+            response = Response.ok().status(Response.Status.CONFLICT);
         }
         return response.build();
     }
@@ -155,17 +145,9 @@ public class UserAccountService {
 
     @PUT
     @Path("groups")
-    public Response syncGroups() {
-        ResponseBuilder response;
+    public void syncGroups() {
         UserInfo userInfo = oidcContext.getUserInfo();
-        try {
-            syncService.synchronizeUserGroups(userInfo);
-            response = Response.ok();
-        } catch (LdapSystemException e) {
-            log.error("Can't create account", e);
-            response = ServerError.toResponse("SYNC_ERR", e);
-        }
-        return response.build();
+        syncService.synchronizeUserGroups(userInfo);
     }
 
 
@@ -173,14 +155,9 @@ public class UserAccountService {
     public Response getAccountInfo() {
         ResponseBuilder response;
         String subject = oidcContext.getUserInfo().getSubject();
-        try {
-            Optional<LdapAccount> ldapAcc = ldapService.searchBySubject(subject);
-            Optional<AccountInfo> info = ldapAcc.map(AccountInfo::new);
-            response = info.map(Response::ok).orElse(Response.ok().status(NOT_FOUND));
-        } catch (LdapSystemException e) {
-            log.error("Can't obtain account info", e);
-            response = ServerError.toResponse("LDAP_ERR", e);
-        }
+        Optional<LdapAccount> ldapAcc = ldapService.searchBySubject(subject);
+        Optional<AccountInfo> info = ldapAcc.map(AccountInfo::new);
+        response = info.map(Response::ok).orElse(Response.ok().status(NOT_FOUND));
         return response.build();
     }
 

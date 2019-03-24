@@ -67,10 +67,17 @@
             <ref component-id="clientTokenContextProvider"/>
             <!-- GSuite Authorization filter -->
             <ref component-id="gsuiteAuthzFilter"/>
-            <!-- Bean validation exception mapper -->
-            <ref component-id="exceptionMapper"/>
+            <!-- Exception mappers -->
+            <ref component-id="validationExceptionMapper"/>
+            <ref component-id="ldapExceptionMapper"/>
         </jaxrs:providers>
     </jaxrs:server>
+
+    <bean id="validationExceptionMapper" class="eu.hlavki.identity.services.rest.util.ValidationExceptionMapper">
+        <property name="addMessageToResponse" value="true"/>
+    </bean>
+
+    <bean id="ldapExceptionMapper" class="eu.hlavki.identity.services.rest.util.LdapExceptionMapper"/>
 
     <bean id="gsuiteAuthzFilter" class="eu.hlavki.identity.services.rest.security.GSuiteGroupAuthorizationFilter">
         <argument ref="gSuiteDirService"/>

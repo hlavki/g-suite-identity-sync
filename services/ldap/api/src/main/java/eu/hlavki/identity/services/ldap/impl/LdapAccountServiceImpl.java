@@ -276,7 +276,7 @@ public class LdapAccountServiceImpl implements LdapAccountService, Configurable 
 
 
     @Override
-    public void removeGroupMember(String accountDN, String groupName) throws LdapSystemException {
+    public void deleteGroupMember(String accountDN, String groupName) throws LdapSystemException {
         try (LDAPConnection conn = ldapPool.getConnection()) {
             LdapGroup group = getGroup(groupName, conn);
             if (group == null || !group.getMembersDn().contains(accountDN)) {
@@ -297,7 +297,7 @@ public class LdapAccountServiceImpl implements LdapAccountService, Configurable 
 
 
     @Override
-    public void removeGroup(String groupName) throws LdapSystemException {
+    public void deleteGroup(String groupName) throws LdapSystemException {
         try (LDAPConnection conn = ldapPool.getConnection()) {
             String groupDN = getGroupDN(groupName);
             SearchResultEntry entry = conn.getEntry(groupDN, GROUP_NAME_ATTR);
@@ -311,28 +311,25 @@ public class LdapAccountServiceImpl implements LdapAccountService, Configurable 
 
 
     @Override
-    public void removeUserByEmail(String email) throws LdapSystemException {
-        Optional<LdapAccount> account = searchByEmail(email);
-        if (account.isPresent()) {
-            LdapAccount user = account.get();
-            String dn = getAccountDN(user);
-            List<LdapGroup> userGroups = getAccountGroups(dn);
-            for (LdapGroup group : userGroups) {
-                removeGroupMember(dn, group.getName());
-            }
-            removeUser(user);
+    public void deleteUser(LdapAccount account) throws LdapSystemException {
+        String dn = getAccountDN(account);
+        List<LdapGroup> userGroups = getAccountGroups(dn);
+        for (LdapGroup group : userGroups) {
+            deleteGroupMember(dn, group.getName());
         }
-
-    }
-
-
-    private void removeUser(LdapAccount account) throws LdapSystemException {
         try (LDAPConnection conn = ldapPool.getConnection()) {
             conn.delete(account.getDn());
             log.info("User {} successfully deleted");
         } catch (LDAPException e) {
             throw new LdapSystemException(e);
         }
+    }
+
+
+    @Override
+    public void deleteUserByEmail(String email) throws LdapSystemException {
+        Optional<LdapAccount> account = searchByEmail(email);
+        account.ifPresentOrElse(this::deleteUser, () -> log.warn("Account with email {} does not exists!", email));
     }
 
 

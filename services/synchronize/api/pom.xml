@@ -13,6 +13,10 @@
     <dependencies>
         <dependency>
             <groupId>eu.hlavki.identity</groupId>
+            <artifactId>gsync-services-config</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>eu.hlavki.identity</groupId>
             <artifactId>gsync-services-ldap-api</artifactId>
         </dependency>
         <dependency>

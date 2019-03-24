@@ -9,53 +9,56 @@ import java.util.Set;
 
 public interface LdapAccountService {
 
-    boolean accountExists(String subject) throws LdapSystemException;
+    boolean accountExists(String subject);
 
 
-    Optional<LdapAccount> searchBySubject(String subject) throws LdapSystemException;
+    Optional<LdapAccount> searchBySubject(String subject);
 
 
-    Optional<LdapAccount> searchByEmail(String email) throws LdapSystemException;
+    Optional<LdapAccount> searchByEmail(String email);
 
 
-    List<LdapAccount> searchByRole(Role role) throws LdapSystemException;
+    List<LdapAccount> searchByRole(Role role);
 
 
-    List<LdapAccount> getAllAccounts() throws LdapSystemException;
+    List<LdapAccount> getAllAccounts();
 
 
-    void createAccount(LdapAccount account) throws LdapSystemException;
+    void createAccount(LdapAccount account);
 
 
-    void updateAccount(LdapAccount account) throws LdapSystemException;
+    void updateAccount(LdapAccount account);
 
 
-    LdapGroup getGroup(String groupName) throws LdapSystemException;
+    LdapGroup getGroup(String groupName);
 
 
-    Set<String> getAllGroupNames() throws LdapSystemException;
+    Set<String> getAllGroupNames();
 
 
-    List<LdapGroup> getAccountGroups(String accountDN) throws LdapSystemException;
+    List<LdapGroup> getAccountGroups(String accountDN);
 
 
-    String getAccountDN(String subject) throws LdapSystemException;
+    String getAccountDN(String subject);
 
 
     String getAccountDN(LdapAccount account);
 
 
-    void addGroupMember(String accountDN, String groupName) throws LdapSystemException;
+    void addGroupMember(String accountDN, String groupName);
 
 
-    void removeGroupMember(String accountDN, String groupName) throws LdapSystemException;
+    void deleteGroupMember(String accountDN, String groupName);
 
 
-    void removeGroup(String name) throws LdapSystemException;
+    void deleteGroup(String name);
 
 
-    LdapGroup createOrUpdateGroup(LdapGroup group) throws LdapSystemException;
+    LdapGroup createOrUpdateGroup(LdapGroup group);
 
 
-    void removeUserByEmail(String email) throws LdapSystemException;
+    void deleteUser(LdapAccount account);
+
+
+    void deleteUserByEmail(String email);
 }

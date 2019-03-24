@@ -42,12 +42,12 @@ public class AppError {
 
 
     public final static ResponseBuilder toResponse(String code, Throwable t) {
-        return Response.ok(new AppError(code, t.getMessage())).status(Response.Status.BAD_REQUEST);
+        return Response.ok(new AppError(code, t.getMessage())).status(Response.Status.INTERNAL_SERVER_ERROR);
     }
 
 
     public final static ResponseBuilder toResponse(String code, String message) {
-        return Response.ok(new AppError(code, message)).status(Response.Status.BAD_REQUEST);
+        return Response.ok(new AppError(code, message)).status(Response.Status.INTERNAL_SERVER_ERROR);
     }
 
 

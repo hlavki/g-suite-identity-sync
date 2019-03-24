@@ -1,5 +1,6 @@
 package eu.hlavki.identity.services.sync.impl;
 
+import eu.hlavki.identity.services.config.AppConfiguration;
 import eu.hlavki.identity.services.google.GSuiteDirectoryService;
 import eu.hlavki.identity.services.google.ResourceNotFoundException;
 import eu.hlavki.identity.services.ldap.LdapAccountService;
@@ -8,9 +9,10 @@ import eu.hlavki.identity.services.ldap.model.LdapGroup;
 import eu.hlavki.identity.services.sync.AccountSyncService;
 import static eu.hlavki.identity.services.sync.impl.AccountUtil.isInternalAccount;
 import eu.hlavki.identity.services.google.model.*;
-import eu.hlavki.identity.services.ldap.LdapSystemException;
 import java.util.*;
+import static java.util.Collections.emptySet;
 import java.util.stream.Collectors;
+import static java.util.stream.Collectors.toSet;
 import org.apache.cxf.rs.security.oidc.common.UserInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,16 +22,19 @@ public class AccountSyncServiceImpl implements AccountSyncService {
     private static final Logger log = LoggerFactory.getLogger(AccountSyncServiceImpl.class);
     private final LdapAccountService ldapService;
     private final GSuiteDirectoryService gsuiteDirService;
+    private final AppConfiguration appConfig;
 
 
-    public AccountSyncServiceImpl(LdapAccountService ldapService, GSuiteDirectoryService gsuiteDirService) {
+    public AccountSyncServiceImpl(LdapAccountService ldapService, GSuiteDirectoryService gsuiteDirService,
+            AppConfiguration appConfig) {
         this.ldapService = ldapService;
         this.gsuiteDirService = gsuiteDirService;
+        this.appConfig = appConfig;
     }
 
 
     @Override
-    public void synchronizeUserGroups(UserInfo userInfo) throws LdapSystemException {
+    public void synchronizeUserGroups(UserInfo userInfo) {
         String accountDN = ldapService.getAccountDN(userInfo.getSubject());
         GroupList gsuiteGroups = gsuiteDirService.getUserGroups(userInfo.getSubject());
         List<LdapGroup> ldapGroups = ldapService.getAccountGroups(accountDN);
@@ -60,7 +65,7 @@ public class AccountSyncServiceImpl implements AccountSyncService {
         log.info("Add membership for user {} to groups {}", userInfo.getEmail(), toAdd);
 
         for (String group : toRemove) {
-            ldapService.removeGroupMember(accountDN, group);
+            ldapService.deleteGroupMember(accountDN, group);
         }
         for (String group : toAdd) {
             ldapService.addGroupMember(accountDN, group);
@@ -69,7 +74,7 @@ public class AccountSyncServiceImpl implements AccountSyncService {
 
 
     @Override
-    public void synchronizeAllGroups() throws LdapSystemException {
+    public void synchronizeAllGroups() {
         Map<GSuiteGroup, GroupMembership> gsuiteGroups = gsuiteDirService.getAllGroupMembership();
         Set<String> ldapGroups = ldapService.getAllGroupNames();
         GSuiteUsers allGsuiteUsers = gsuiteDirService.getAllUsers();
@@ -99,13 +104,13 @@ public class AccountSyncServiceImpl implements AccountSyncService {
         toRemove.removeAll(syncedGroups);
         log.info("Removing groups from LDAP {}", toRemove);
         for (String groupName : toRemove) {
-            ldapService.removeGroup(groupName);
+            ldapService.deleteGroup(groupName);
         }
     }
 
 
     @Override
-    public void synchronizeGroup(String groupEmail) throws LdapSystemException, ResourceNotFoundException {
+    public void synchronizeGroup(String groupEmail) throws ResourceNotFoundException {
         GroupMembership gsuiteMembership = gsuiteDirService.getGroupMembers(groupEmail);
         GSuiteGroup gsuiteGroup = gsuiteDirService.getGroup(groupEmail);
 
@@ -118,19 +123,19 @@ public class AccountSyncServiceImpl implements AccountSyncService {
 
 
     @Override
-    public void removeGroup(String groupEmail) throws LdapSystemException {
-        ldapService.removeGroup(AccountUtil.getLdapGroupName(groupEmail));
+    public void removeGroup(String groupEmail) {
+        ldapService.deleteGroup(AccountUtil.getLdapGroupName(groupEmail));
     }
 
 
     @Override
-    public void removeUserByEmail(String email) throws LdapSystemException {
-        ldapService.removeUserByEmail(email);
+    public void removeUserByEmail(String email) {
+        ldapService.deleteUserByEmail(email);
     }
 
 
     private LdapGroup synchronizeGroup(GSuiteGroup gsuiteGroup, GroupMembership gsuiteMembership,
-            Map<String, LdapAccount> emailAccountMap) throws LdapSystemException {
+            Map<String, LdapAccount> emailAccountMap) {
         log.info("Starting to synchronize group {}", gsuiteGroup.getEmail());
         LdapGroup ldapGroup = new LdapGroup();
         ldapGroup.setName(AccountUtil.getLdapGroupName(gsuiteGroup));
@@ -147,14 +152,14 @@ public class AccountSyncServiceImpl implements AccountSyncService {
             result = ldapService.createOrUpdateGroup(ldapGroup);
         } else {
             log.info("Removing group {} from LDAP. No active members!", ldapGroup.getName());
-            ldapService.removeGroup(ldapGroup.getName());
+            ldapService.deleteGroup(ldapGroup.getName());
         }
         return result;
     }
 
 
     @Override
-    public void synchronizeGSuiteUsers() throws LdapSystemException {
+    public void synchronizeGSuiteUsers() {
         GSuiteUsers users = gsuiteDirService.getAllUsers();
         for (GSuiteUser user : users.getUsers()) {
             if (ldapService.accountExists(user.getId())) {
@@ -163,6 +168,24 @@ public class AccountSyncServiceImpl implements AccountSyncService {
             } else {
                 log.info("User {} does not exists in LDAP.", user.getPrimaryEmail());
             }
+        }
+    }
+
+
+    @Override
+    public void cleanExternalUsers() {
+        Optional<String> externalGroup = appConfig.getExternalAccountsGroup();
+
+        Set<LdapAccount> toRemove = externalGroup.map(extGroup -> {
+            List<LdapAccount> ldapExt = ldapService.searchByRole(LdapAccount.Role.EXTERNAL);
+            GroupMembership gsuiteExt = gsuiteDirService.getGroupMembers(extGroup);
+            Set<String> gsuiteSubjects = gsuiteExt.getMembers().stream().map(u -> u.getId()).collect(toSet());
+            Set<String> ldapSubjects = ldapExt.stream().map(u -> u.getSubject()).collect(toSet());
+            return ldapExt.stream().filter(acc -> !gsuiteSubjects.contains(acc.getSubject())).collect(toSet());
+        }).orElse(emptySet());
+
+        for (LdapAccount account : toRemove) {
+            ldapService.deleteUser(account);
         }
     }
 }
