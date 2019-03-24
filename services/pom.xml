@@ -12,6 +12,7 @@
     <packaging>pom</packaging>
 
     <modules>
+        <module>config</module>
         <module>google</module>
         <module>ldap</module>
         <module>synchronize</module>

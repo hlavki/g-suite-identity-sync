@@ -13,7 +13,7 @@
     <dependencies>
         <dependency>
             <groupId>eu.hlavki.identity</groupId>
-            <artifactId>gsync-plugin-api</artifactId>
+            <artifactId>gsync-services-config</artifactId>
         </dependency>
         <dependency>
             <groupId>eu.hlavki.identity</groupId>
@@ -26,6 +26,10 @@
         <dependency>
             <groupId>eu.hlavki.identity</groupId>
             <artifactId>gsync-services-synchronize-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>eu.hlavki.identity</groupId>
+            <artifactId>gsync-plugin-api</artifactId>
         </dependency>
         <dependency>
             <groupId>org.osgi</groupId>

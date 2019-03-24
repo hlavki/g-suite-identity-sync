@@ -8,7 +8,4 @@ public interface Configuration {
 
 
     boolean isGsuiteSyncPassword();
-
-
-    String getExternalAccountsGroup();
 }

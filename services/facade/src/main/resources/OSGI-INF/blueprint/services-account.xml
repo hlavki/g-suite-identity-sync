@@ -32,7 +32,7 @@
         <argument ref="userPlugins"/>
     </bean>
 
-<!--    <jaxrsclient:client id="peopleServiceClient" threadSafe="true"
+    <!--    <jaxrsclient:client id="peopleServiceClient" threadSafe="true"
                         address="https://people.googleapis.com/v1/people/me"
                         serviceClass="org.apache.cxf.jaxrs.client.WebClient">
         <jaxrsclient:headers>
@@ -74,6 +74,6 @@
 
     <bean id="gsuiteAuthzFilter" class="eu.hlavki.identity.services.rest.security.GSuiteGroupAuthorizationFilter">
         <argument ref="gSuiteDirService"/>
-        <argument ref="configuration"/>
+        <argument ref="appConfiguration"/>
     </bean>
 </blueprint>

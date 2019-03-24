@@ -30,6 +30,8 @@
     </bean>
 
     <!-- Configuration -->
+    <reference id="appConfiguration" interface="eu.hlavki.identity.services.config.AppConfiguration"/>
+
     <reference id="configurationAdmin" interface="org.osgi.service.cm.ConfigurationAdmin"/>
 
     <bean id="configuration" class="eu.hlavki.identity.services.rest.config.impl.ConfigurationImpl">

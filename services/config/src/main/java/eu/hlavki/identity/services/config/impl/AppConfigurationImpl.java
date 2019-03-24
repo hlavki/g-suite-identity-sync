@@ -1,28 +1,27 @@
-package eu.hlavki.identity.services.rest.config.impl;
+package eu.hlavki.identity.services.config.impl;
 
-import eu.hlavki.identity.services.rest.config.Configuration;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.*;
 import org.osgi.service.cm.ConfigurationAdmin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import eu.hlavki.identity.services.config.AppConfiguration;
 
-public class ConfigurationImpl implements Configuration {
+public class AppConfigurationImpl implements AppConfiguration {
 
-    private static final Logger LOG = LoggerFactory.getLogger(ConfigurationImpl.class);
+    private static final Logger LOG = LoggerFactory.getLogger(AppConfigurationImpl.class);
 
-    private static final String PID = "eu.hlavki.identity.facade";
-    private static final String ADMINS_PROP = "admins";
-    private static final String GSUITE_SYNC_PASSWORD_PROP = "gsuite.sync.password";
-    private static final boolean GSUITE_SYNC_PASSWORD_DEFAULT = false;
+    private static final String PID = "eu.hlavki.identity";
+    private static final String EXTERNAL_USER_GROUP_PROP = "gsuite.external.accounts.group";
+
+    public static final String CONFIG_PROP = "config";
 
     private static final String COLLECTIONS_VALUE_SEPARATOR = ",";
     private org.osgi.service.cm.Configuration osgiConfig;
     private final ConfigurationAdmin cfgAdmin;
 
-
-    public ConfigurationImpl(ConfigurationAdmin cfgAdmin) {
+    public AppConfigurationImpl(ConfigurationAdmin cfgAdmin) {
         this.cfgAdmin = cfgAdmin;
         try {
             this.osgiConfig = this.cfgAdmin.getConfiguration(PID);
@@ -31,23 +30,23 @@ public class ConfigurationImpl implements Configuration {
         }
     }
 
-
     public String get(String name) {
         Object value = osgiConfig.getProperties().get(name);
         return value != null ? String.valueOf(value) : null;
     }
 
+    public Optional<String> getOpt(String name) {
+        return Optional.ofNullable(get(name));
+    }
 
     public String get(String name, String defaultValue) {
         String value = get(name);
         return value != null ? value : defaultValue;
     }
 
-
     public boolean isSet(String name) {
         return get(name) != null;
     }
-
 
     public Long getLong(String name, Long defaultValue) {
         Long result = defaultValue;
@@ -62,16 +61,13 @@ public class ConfigurationImpl implements Configuration {
         return result;
     }
 
-
     public Long getLong(String name) {
         return getLong(name, null);
     }
 
-
     public Integer getInt(String name) {
         return getInt(name, null);
     }
-
 
     public Integer getInt(String name, Integer defaultValue) {
         Integer result = defaultValue;
@@ -86,22 +82,18 @@ public class ConfigurationImpl implements Configuration {
         return result;
     }
 
-
     public Boolean getBoolean(String name, Boolean defaultValue) {
         String strValue = get(name);
         return (strValue != null) ? Boolean.valueOf(strValue) : defaultValue;
     }
 
-
     public Boolean getBoolean(String name) {
         return getBoolean(name, null);
     }
 
-
     public Double getDouble(String key) {
         return getDouble(key, null);
     }
-
 
     public Double getDouble(String key, Double defaultValue) {
         Double result = defaultValue;
@@ -116,7 +108,6 @@ public class ConfigurationImpl implements Configuration {
         return result;
     }
 
-
     public BigDecimal getDecimal(String name, BigDecimal defaultValue) {
         BigDecimal result = defaultValue;
         try {
@@ -130,16 +121,13 @@ public class ConfigurationImpl implements Configuration {
         return result;
     }
 
-
     public BigDecimal getDecimal(String name) {
         return getDecimal(name, null);
     }
 
-
     public Set<String> getSet(String name) {
         return getSet(name, COLLECTIONS_VALUE_SEPARATOR);
     }
-
 
     public Set<String> getSet(String name, String separator) {
         Set<String> result;
@@ -156,11 +144,9 @@ public class ConfigurationImpl implements Configuration {
         return result;
     }
 
-
     public List<List<String>> getListOfList(String name) {
         return getListOfList(name, COLLECTIONS_VALUE_SEPARATOR);
     }
-
 
     public List<List<String>> getListOfList(String name, String separator) {
         List<List<String>> result = new ArrayList<>();
@@ -174,11 +160,9 @@ public class ConfigurationImpl implements Configuration {
         return result;
     }
 
-
     public List<String> getList(String name) {
         return getList(name, COLLECTIONS_VALUE_SEPARATOR);
     }
-
 
     public List<String> getList(String name, String separator) {
         List<String> result;
@@ -195,15 +179,8 @@ public class ConfigurationImpl implements Configuration {
         return result;
     }
 
-
     @Override
-    public Set<String> getAdmins() {
-        return getSet(ADMINS_PROP);
-    }
-
-
-    @Override
-    public boolean isGsuiteSyncPassword() {
-        return getBoolean(GSUITE_SYNC_PASSWORD_PROP, GSUITE_SYNC_PASSWORD_DEFAULT);
+    public Optional<String> getExternalAccountsGroup() {
+        return getOpt(EXTERNAL_USER_GROUP_PROP);
     }
 }

@@ -48,7 +48,7 @@
         <dependencies>
             <dependency>
                 <groupId>eu.hlavki.identity</groupId>
-                <artifactId>gsync-plugin-api</artifactId>
+                <artifactId>gsync-services-config</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
@@ -64,6 +64,11 @@
             <dependency>
                 <groupId>eu.hlavki.identity</groupId>
                 <artifactId>gsync-services-synchronize-api</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>eu.hlavki.identity</groupId>
+                <artifactId>gsync-plugin-api</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
