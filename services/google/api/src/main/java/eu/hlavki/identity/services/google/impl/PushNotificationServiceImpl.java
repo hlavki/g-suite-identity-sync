@@ -101,8 +101,11 @@ public class PushNotificationServiceImpl implements PushNotificationService {
                 String resourceId = channel.get().getResourceId();
                 startPushChannel(config.getPushServiceHostname());
                 stopPushChannel(expiredId, resourceId);
+                log.info("Push notification channel sucessfully refreshed");
+            } else {
+                log.info("Push notification channel is fresh");
             }
-            log.info("Push notification channel sucessfnully refreshed");
+
         }
     }
 
