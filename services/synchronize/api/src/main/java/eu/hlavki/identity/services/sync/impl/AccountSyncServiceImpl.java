@@ -175,7 +175,6 @@ public class AccountSyncServiceImpl implements AccountSyncService {
     @Override
     public void cleanExternalUsers() {
         Optional<String> externalGroup = appConfig.getExternalAccountsGroup();
-
         Set<LdapAccount> toRemove = externalGroup.map(extGroup -> {
             List<LdapAccount> ldapExt = ldapService.searchByRole(LdapAccount.Role.EXTERNAL);
             GroupMembership gsuiteExt = gsuiteDirService.getGroupMembers(extGroup);
@@ -183,7 +182,7 @@ public class AccountSyncServiceImpl implements AccountSyncService {
             Set<String> ldapSubjects = ldapExt.stream().map(u -> u.getSubject()).collect(toSet());
             return ldapExt.stream().filter(acc -> !gsuiteSubjects.contains(acc.getSubject())).collect(toSet());
         }).orElse(emptySet());
-
+        log.info("Cleaning {} external users", toRemove.size());
         for (LdapAccount account : toRemove) {
             ldapService.deleteUser(account);
         }

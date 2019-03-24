@@ -12,7 +12,6 @@ import javax.ws.rs.core.MediaType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import eu.hlavki.identity.services.push.config.Configuration;
-import eu.hlavki.identity.services.push.model.EventType;
 
 @Path("/")
 public class PushNotificationRest {
@@ -69,6 +68,7 @@ public class PushNotificationRest {
     private void syncGroup(Event evt) {
         try {
             syncService.synchronizeGroup(getGroupEmail(evt));
+            syncService.cleanExternalUsers();
         } catch (LdapSystemException | ResourceNotFoundException e) {
             log.error("Cannot process event " + evt + " because of error!", e);
         }
