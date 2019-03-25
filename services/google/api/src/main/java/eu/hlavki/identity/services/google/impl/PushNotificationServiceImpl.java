@@ -56,6 +56,8 @@ public class PushNotificationServiceImpl implements PushNotificationService {
     public void destroy() {
         if (isEnabled()) {
             channel.ifPresent(this::stopPushChannel);
+            channel = empty();
+            scheduler.unschedule(PUSH_SCHEDULER_JOB);
         }
     }
 
@@ -172,7 +174,7 @@ public class PushNotificationServiceImpl implements PushNotificationService {
         Response resp = webClient.post(stopChannel);
         Response.StatusType status = resp.getStatusInfo();
         if (status.toEnum() == OK || status.toEnum() == NO_CONTENT || status.toEnum() == NOT_FOUND) {
-            log.info("Push notifications successfully stopeed");
+            log.info("Push notifications successfully stopped");
             this.channel = empty();
             config.getPushChannelFile().delete();
         } else {
