@@ -2,6 +2,7 @@ package eu.hlavki.identity.services.push.rest;
 
 import eu.hlavki.identity.services.google.ResourceNotFoundException;
 import eu.hlavki.identity.services.ldap.LdapSystemException;
+import eu.hlavki.identity.services.push.config.Configuration;
 import eu.hlavki.identity.services.push.model.AuditRecord;
 import eu.hlavki.identity.services.push.model.AuditRecord.Event;
 import eu.hlavki.identity.services.sync.AccountSyncService;
@@ -11,7 +12,6 @@ import javax.ws.rs.Path;
 import javax.ws.rs.core.MediaType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import eu.hlavki.identity.services.push.config.Configuration;
 
 @Path("/")
 public class PushNotificationRest {

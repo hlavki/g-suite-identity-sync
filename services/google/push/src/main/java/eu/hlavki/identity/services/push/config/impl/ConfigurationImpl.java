@@ -1,12 +1,12 @@
 package eu.hlavki.identity.services.push.config.impl;
 
+import eu.hlavki.identity.services.push.config.Configuration;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.*;
 import org.osgi.service.cm.ConfigurationAdmin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import eu.hlavki.identity.services.push.config.Configuration;
 
 public class ConfigurationImpl implements Configuration {
 
