@@ -279,16 +279,17 @@ public class LdapAccountServiceImpl implements LdapAccountService, Configurable 
     public void deleteGroupMember(String accountDN, String groupName) throws LdapSystemException {
         try (LDAPConnection conn = ldapPool.getConnection()) {
             LdapGroup group = getGroup(groupName, conn);
-            if (group == null || !group.getMembersDn().contains(accountDN)) {
-                log.info("Nothing to do. Account {} is not member of group {}", accountDN, groupName);
-            } else {
-                Modification mod = new Modification(DELETE, config.getLdapGroupsMemberAttr(), accountDN);
-                conn.modify(new ModifyRequest(group.getDn(), mod));
-                log.info("Remove membership {} from {}", accountDN, group.getName());
+            if (group != null && group.getMembersDn().contains(accountDN)) {
                 if (group.getMembersDn().size() == 1) {
                     log.info("Removing group {}", group.getName());
                     conn.delete(group.getDn());
+                } else {
+                    Modification mod = new Modification(DELETE, config.getLdapGroupsMemberAttr(), accountDN);
+                    log.info("Removing membership {} from {}", accountDN, group.getName());
+                    conn.modify(new ModifyRequest(group.getDn(), mod));
                 }
+            } else {
+                log.info("Nothing to do. Account {} is not member of group {}", accountDN, groupName);
             }
         } catch (LDAPException e) {
             throw new LdapSystemException(e);
@@ -317,9 +318,10 @@ public class LdapAccountServiceImpl implements LdapAccountService, Configurable 
         for (LdapGroup group : userGroups) {
             deleteGroupMember(dn, group.getName());
         }
+        log.info("Deleting LDAP accounts DN: {}", account.getDn());
         try (LDAPConnection conn = ldapPool.getConnection()) {
             conn.delete(account.getDn());
-            log.info("User {} successfully deleted");
+            log.info("User {} successfully deleted", account.getUsername());
         } catch (LDAPException e) {
             throw new LdapSystemException(e);
         }

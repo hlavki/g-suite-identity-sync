@@ -183,8 +183,6 @@ public class AccountSyncServiceImpl implements AccountSyncService {
             return ldapExt.stream().filter(acc -> !gsuiteSubjects.contains(acc.getSubject())).collect(toSet());
         }).orElse(emptySet());
         log.info("Cleaning {} external users", toRemove.size());
-        for (LdapAccount account : toRemove) {
-            ldapService.deleteUser(account);
-        }
+        toRemove.forEach(ldapService::deleteUser);
     }
 }
