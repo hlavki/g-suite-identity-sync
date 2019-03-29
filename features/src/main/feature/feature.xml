@@ -63,6 +63,7 @@
         <feature version="${project.version}">gsync-services-google</feature>
         <bundle>mvn:eu.hlavki.identity/gsync-services-synchronize-api/${project.version}</bundle>
         <bundle>mvn:eu.hlavki.identity/gsync-services-synchronize-scheduler/${project.version}</bundle>
+        <bundle>mvn:eu.hlavki.identity/gsync-services-synchronize-client/${project.version}</bundle>
     </feature>
 
     <feature name="gsync-services" version="${project.version}">

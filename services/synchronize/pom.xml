@@ -13,6 +13,7 @@
 
     <modules>
         <module>api</module>
+        <module>client</module>
         <module>scheduler</module>
     </modules>
 </project>
