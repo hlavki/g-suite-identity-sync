@@ -15,7 +15,7 @@ import eu.hlavki.identity.services.rest.model.PrepareAccountData;
 import eu.hlavki.identity.services.rest.model.Role;
 import eu.hlavki.identity.services.rest.model.UpdateAccountData;
 import eu.hlavki.identity.services.rest.util.AccountUtil;
-import static eu.hlavki.identity.services.rest.util.AccountUtil.isInternalAccount;
+import static eu.hlavki.identity.services.rest.util.AccountUtil.*;
 import eu.hlavki.identity.services.sync.AccountSyncService;
 import java.util.Collections;
 import java.util.HashSet;
@@ -73,7 +73,7 @@ public class UserAccountService {
         detail.setEmail(userInfo.getEmail());
         detail.setEmails(getAccountAliases(userInfo, gsuiteDomain));
         detail.setEmailVerified(userInfo.getEmailVerified());
-        detail.setRole(AccountUtil.getAccountRole(userInfo, gsuiteDomain));
+        detail.setRole(getAccountRole(userInfo, gsuiteDomain));
         detail.setSaveGSuitePassword(detail.getRole() == Role.INTERNAL && config.isGsuiteSyncPassword());
         GroupList userGroups = gsuiteDirService.getUserGroups(userInfo.getSubject());
         if (userGroups.getGroups() != null) {
@@ -91,7 +91,7 @@ public class UserAccountService {
         if (!ldapService.accountExists(subject)) {
             Set<String> emails = Collections.singleton(userInfo.getEmail());
             String gsuiteDomain = gsuiteDirService.getDomainName();
-            LdapAccount account = AccountUtil.toLdapAccount(gsuiteDomain, userInfo, emails, data);
+            LdapAccount account = toLdapAccount(gsuiteDomain, userInfo, emails, data);
             ldapService.createAccount(account);
             if (data.isSaveGSuitePassword() && isInternalAccount(userInfo, gsuiteDomain)) {
                 try {
@@ -124,7 +124,7 @@ public class UserAccountService {
         if (ldapService.accountExists(subject)) {
             String gsuiteDomain = gsuiteDirService.getDomainName();
             Set<String> emails = Collections.singleton(userInfo.getEmail());
-            LdapAccount account = AccountUtil.toLdapAccount(gsuiteDomain, userInfo, emails, data);
+            LdapAccount account = toLdapAccount(gsuiteDomain, userInfo, emails, data);
             ldapService.updateAccount(account);
             response = Response.ok();
             if (data.isSaveGSuitePassword() && isInternalAccount(userInfo, gsuiteDomain)) {
