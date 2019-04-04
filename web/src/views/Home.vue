@@ -1,15 +1,8 @@
 <template>
   <div>
-    <form
-      novalidate
-      class="md-layout md-gutter"
-      @submit.prevent="validateForm"
-    >
+    <form novalidate class="md-layout md-gutter" @submit.prevent="validateForm">
       <md-card class="md-layout-item md-size-40 md-small-size-100">
-        <md-progress-bar
-          md-mode="indeterminate"
-          v-if="showProgress"
-        />
+        <md-progress-bar md-mode="indeterminate" v-if="showProgress" />
         <md-card-header>
           <div class="md-title">LDAP Account info
             <span class="md-gray">[created]</span>
@@ -18,36 +11,23 @@
         <md-card-content>
           <md-field>
             <label>Username</label>
-            <md-input
-              v-model="accountData.username"
-              disabled
-            ></md-input>
+            <md-input v-model="accountData.username" disabled />
           </md-field>
 
           <md-field>
             <label>Name</label>
-            <md-input
-              v-model="accountData.name"
-              disabled
-            ></md-input>
+            <md-input v-model="accountData.name" disabled />
           </md-field>
 
           <md-list class="md-dense">
             <md-subheader>Emails</md-subheader>
-            <md-list-item
-              v-for="email in accountData.emails"
-              :key="email"
-              disabled
-            >
+            <md-list-item v-for="email in accountData.emails" :key="email" disabled>
               <md-icon>email</md-icon>
               <span class="md-list-item-text">{{ email }}</span>
             </md-list-item>
           </md-list>
 
-          <md-field
-            :class="{'md-invalid': errors.has('password')}"
-            md-has-password
-          >
+          <md-field :class="{'md-invalid': errors.has('password')}" md-has-password>
             <label for="password">Type LDAP Password</label>
             <md-input
               v-model="formData.password"
@@ -73,16 +53,11 @@
             <span class="md-error">{{errors.first('password-confirm')}}</span>
           </md-field>
 
-          <md-switch
-            class="md-primary"
-            v-if="showSaveGSuitePasswordCheckbox()"
-            v-model="formData.saveGSuitePassword"
-          >Synchronize GSuite Password</md-switch>
+          <md-switch class="md-primary" v-if="showSaveGSuitePasswordCheckbox()" v-model="formData.saveGSuitePassword">
+            Synchronize GSuite Password
+          </md-switch>
           <br />
-          <md-button
-            type="submit"
-            class="md-raised md-primary"
-          >Update LDAP Password</md-button>
+          <md-button type="submit" class="md-raised md-primary">Update LDAP Password</md-button>
         </md-card-content>
       </md-card>
     </form>
