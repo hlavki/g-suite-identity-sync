@@ -70,6 +70,7 @@
             <!-- Exception mappers -->
             <ref component-id="validationExceptionMapper"/>
             <ref component-id="ldapExceptionMapper"/>
+            <ref component-id="genericExceptionMapper"/>
         </jaxrs:providers>
     </jaxrs:server>
 
@@ -78,6 +79,7 @@
     </bean>
 
     <bean id="ldapExceptionMapper" class="eu.hlavki.identity.services.rest.util.LdapExceptionMapper"/>
+    <bean id="genericExceptionMapper" class="eu.hlavki.identity.services.rest.util.GenericExceptionMapper"/>
 
     <bean id="gsuiteAuthzFilter" class="eu.hlavki.identity.services.rest.security.GSuiteGroupAuthorizationFilter">
         <argument ref="gSuiteDirService"/>
