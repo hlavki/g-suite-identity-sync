@@ -72,7 +72,7 @@
             <plugin>
                 <groupId>com.github.eirslett</groupId>
                 <artifactId>frontend-maven-plugin</artifactId>
-                <version>1.6</version>
+                <version>1.7.5</version>
                 <executions>
                     <execution>
                         <id>install-npm</id>
@@ -80,7 +80,7 @@
                             <goal>install-node-and-npm</goal>
                         </goals>
                         <configuration>
-                            <nodeVersion>v10.15.1</nodeVersion>
+                            <nodeVersion>v10.15.2</nodeVersion>
                             <npmVersion>6.4.1</npmVersion>
                         </configuration>
                     </execution>

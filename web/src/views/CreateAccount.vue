@@ -93,8 +93,8 @@ export default {
           console.error(
             'Cannot authentication user. Status: ' + error.response.status
           );
-          _this.notifyError({ message: error.response.data });
-          if (_this.$isProduction) _this.$auth.logout();
+          _this.notifyError(error.response);
+          if (_this.$production) _this.$auth.logout();
           else {
             _this.userData = {
               email: 'jara@cimrman.cz',
@@ -128,33 +128,25 @@ export default {
             .post(_this.$apiPrefix + '/identity/account', _this.formData)
             .then(function(response) {
               console.info('Account created!' + response.data);
-              _this.showProgress = false;
-              _this.$router.push('/');
-              _this.notifyAccountCreated();
               // Synchronize groups
               _this.$http
                 .put(_this.$apiPrefix + '/identity/account/groups')
                 .then(function(response) {
                   console.info('Groups synchronized!' + response.data);
-                  _this.notifyGroupsSynchronized();
+                  _this.showProgress = false;
+                  _this.notifySuccess("Account successfully created!");
+                  _this.$router.push('/');
                 })
                 .catch(function(error) {
                   console.warn('Error while synchronize groups! ' + error);
                   _this.showProgress = false;
-                  var msgData = error.response.data;
-                  _this.notifyError({
-                    message:
-                      typeof msgData === 'object' ? msgData.message : msgData
-                  });
+                  _this.notifyError(error.response);
                 });
             })
             .catch(function(error) {
               console.warn('Error while creating account! ' + error);
               _this.showProgress = false;
-              var msgData = error.response.data;
-              _this.notifyError({
-                message: typeof msgData === 'object' ? msgData.message : msgData
-              });
+              _this.notifyError(error.response);
             });
         })
         .catch(function(e) {});
@@ -169,25 +161,21 @@ export default {
     processFormData(userData) {
       this.formData.email = userData.email;
       this.formData.saveGSuitePassword = userData.saveGSuitePassword;
-    }
-  },
-  notifications: {
-    notifyAccountCreated: {
-      title: 'Account creation',
-      message: 'User account successfully created.',
-      type: 'success',
-      timeout: 5000
     },
-    notifyGroupsSynchronized: {
-      title: 'Group synchronization',
-      message: 'All groups synchronized.',
-      type: 'success',
-      timeout: 5000
+    notifyError(response) {
+      let data = response.data
+      let message = (typeof data === 'object') ? data.message : data;
+      this.$swal({
+        type: "error",
+        title: "Error Occured",
+        text: (response.status === 404) ? "Resource not found!" : message
+      });
     },
-    notifyError: {
-      title: 'Error Occured',
-      type: 'error',
-      timeout: 5000
+    notifySuccess(titleText) {
+      this.$swal({
+        type: "success",
+        title: titleText
+      });
     }
   }
 };

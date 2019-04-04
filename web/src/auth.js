@@ -13,7 +13,7 @@ const AuthPlugin = {
       },
       methods: {
         login() {
-          if (!options.isProduction) {
+          if (!Vue.prototype.$production) {
             this.loggedIn = true
             this.userInfo = { givenName: 'Gabriel Hakan', familyName: 'Hakan', email: 'g.hakan@xit.camp', amAdmin: true, imageUri: 'https://encrypted-tbn3.gstatic.com/images?q=tbn:ANd9GcQ8TNF1mAw0VymIYZlqOUxktqmdgRyS5ylHtXeHyQyso8103P4sZA' }
           } else {

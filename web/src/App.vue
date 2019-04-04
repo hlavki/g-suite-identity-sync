@@ -1,5 +1,6 @@
 <template>
   <div class="page-container">
+    <notifications group="app" position="top left" width="500" />
     <md-app md-mode="reveal">
       <md-app-toolbar class="md-primary">
         <md-button class="md-icon-button" @click="menuVisible = !menuVisible">
