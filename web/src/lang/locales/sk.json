@@ -8,7 +8,7 @@
         "ldapPassword": "Napíš heslo do LDAP",
         "confirmLdapPassword": "Potvrď heslo do LDAP",
         "syncGSuitePassword": "Synchronizuj LDAP heslo s G-Suite",
-        "updateLdapPassword": "Aktualizuj LDAP účet",
+        "updateLdapAccount": "Aktualizuj LDAP účet",
         "createLdapAccount": "Vytvor LDAP účet",
         "selectUsername": "Vyber si používateľské meno",
         "role": "Rola",
