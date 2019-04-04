@@ -1,0 +1,23 @@
+{
+    "message": {
+        "pageTitle": "Manažér účtov",
+        "ldapAccount": "LDAP účet",        
+        "username": "Používateľské meno",
+        "name": "Meno",
+        "emails": "Emaily",
+        "ldapPassword": "Napíš heslo do LDAP",
+        "confirmLdapPassword": "Potvrď heslo do LDAP",
+        "syncGSuitePassword": "Synchronizuj LDAP heslo s G-Suite",
+        "updateLdapPassword": "Aktualizuj LDAP účet",
+        "createLdapAccount": "Vytvor LDAP účet",
+        "selectUsername": "Vyber si používateľské meno",
+        "role": "Rola",
+        "groups": "Skupiny",
+        "authProgress": "Autorizujem Váš účet. Počkajte prosím",
+        "aboutTitle": "Synchronizátor G-Suite účtov do LDAP",
+        "pageNotFond": "Stránka nebola nájdená!",
+        "settings": "Nastavenia",
+        "synchronizeGroupsButton": "Synchronizácia skupín do LDAP",
+        "synchronizeUsersButton": "Synchronizácia GSuite používateľov"
+    }
+}

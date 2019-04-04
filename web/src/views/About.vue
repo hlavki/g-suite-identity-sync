@@ -1,7 +1,7 @@
 <template>
   <div class="md-layout" style="min-height: 300px">
     <md-card class="md-layout-item md-small-size-100">
-      Kontovy manazer firemny
+      <h1>{{ $t("message.aboutTitle") }}</h1>
     </md-card>
   </div>
 </template>

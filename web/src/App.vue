@@ -6,7 +6,7 @@
         <md-button class="md-icon-button" @click="menuVisible = !menuVisible">
           <md-icon>menu</md-icon>
         </md-button>
-        <h2 class="md-title">{{ titleMsg }}</h2>
+        <h2 class="md-title">{{ $t("message.pageTitle") }}</h2>
       </md-app-toolbar>
       <md-app-drawer :md-active.sync="menuVisible">
         <md-toolbar class="md-transparent" md-elevation="0">
@@ -66,8 +66,7 @@
 export default {
   name: 'app',
   data: () => ({
-    menuVisible: false,
-    titleMsg: 'Account Manager'
+    menuVisible: false
   }),
   methods: {
     open() {

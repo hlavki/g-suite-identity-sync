@@ -14,6 +14,8 @@ Vue.use(VueMaterial)
 Vue.use(VueSweetalert2)
 Vue.use(VeeValidate)
 
+import i18n from './lang'
+
 VeeValidate.Validator.extend('password', {
   getMessage: field => 'Invalid password! It must contain 1 uppercase, 1 lowercase, 1 number, and one punctation.', // eslint-disable-line no-unused-vars
   validate: value => {
@@ -35,5 +37,6 @@ Vue.use(AuthPlugin, {
 
 new Vue({
   router,
+  i18n,
   render: h => h(App)
 }).$mount('#app')

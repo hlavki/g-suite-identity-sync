@@ -4,23 +4,21 @@
       <md-card class="md-layout-item md-size-40 md-small-size-100">
         <md-progress-bar md-mode="indeterminate" v-if="showProgress" />
         <md-card-header>
-          <div class="md-title">LDAP Account info
-            <span class="md-gray">[created]</span>
-          </div>
+          <div class="md-title">{{ $t("message.ldapAccount") }}</div>
         </md-card-header>
         <md-card-content>
           <md-field>
-            <label>Username</label>
+            <label>{{ $t("message.username") }}</label>
             <md-input v-model="accountData.username" disabled />
           </md-field>
 
           <md-field>
-            <label>Name</label>
+            <label>{{ $t("message.name") }}</label>
             <md-input v-model="accountData.name" disabled />
           </md-field>
 
           <md-list class="md-dense">
-            <md-subheader>Emails</md-subheader>
+            <md-subheader>{{ $t("message.emails") }}</md-subheader>
             <md-list-item v-for="email in accountData.emails" :key="email" disabled>
               <md-icon>email</md-icon>
               <span class="md-list-item-text">{{ email }}</span>
@@ -28,7 +26,7 @@
           </md-list>
 
           <md-field :class="{'md-invalid': errors.has('password')}" md-has-password>
-            <label for="password">Type LDAP Password</label>
+            <label for="password">{{ $t("message.ldapPassword") }}</label>
             <md-input
               v-model="formData.password"
               name="password"
@@ -41,7 +39,7 @@
           </md-field>
 
           <md-field :class="{'md-invalid': errors.has('password-confirm')}">
-            <label>Confirm LDAP Password</label>
+            <label>{{ $t("message.confirmLdapPassword") }}</label>
             <md-input
               v-model="formData.confirmPassword"
               name="password-confirm"
@@ -54,10 +52,10 @@
           </md-field>
 
           <md-switch class="md-primary" v-if="showSaveGSuitePasswordCheckbox()" v-model="formData.saveGSuitePassword">
-            Synchronize GSuite Password
+            {{ $t("message.syncGSuitePassword") }}
           </md-switch>
           <br />
-          <md-button type="submit" class="md-raised md-primary">Update LDAP Password</md-button>
+          <md-button type="submit" class="md-raised md-primary">{{ $t("message.updateLdapAccount") }}</md-button>
         </md-card-content>
       </md-card>
     </form>

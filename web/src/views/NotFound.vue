@@ -1,6 +1,6 @@
 <template>
   <div>
-      Page Not Found!
+      {{ $t("message.pageNotFound") }}
   </div>
 </template>
 

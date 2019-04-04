@@ -3,11 +3,11 @@
     <md-card class="md-layout-item md-size-40 md-small-size-100">
       <md-progress-bar md-mode="indeterminate" v-if="showProgress" />
       <md-card-header>
-        <div class="md-title">Settings</div>
+        <div class="md-title">{{ $t("message.settings") }}</div>
       </md-card-header>
       <md-card-content>
-        <md-button class="md-raised md-primary" @click.native="synchronizeGroups">Synchronize Groups to LDAP</md-button>
-        <md-button class="md-raised md-primary" @click.native="synchronizeUsers">Synchronize GSuite User Attributes</md-button>
+        <md-button class="md-raised md-primary" @click.native="synchronizeGroups">{{ $t("message.synchronizeGroupsButton") }}</md-button>
+        <md-button class="md-raised md-primary" @click.native="synchronizeUsers">{{ $t("message.synchronizeUsersButton") }}</md-button>
       </md-card-content>
     </md-card>
   </div>

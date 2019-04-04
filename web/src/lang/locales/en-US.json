@@ -1,0 +1,23 @@
+{
+    "message": {
+        "pageTitle": "Account Manager",
+        "ldapAccount": "LDAP account",
+        "username": "Username",
+        "name": "Name",
+        "emails": "Emails",
+        "ldapPassword": "Type LDAP Password",
+        "configLdapPassword": "Confirm LDAP Password",
+        "syncGSuitePassword": "Synchronize G Suite Password",
+        "updateLdapAccount": "Update LDAP Account",
+        "createLdapAccount": "Create LDAP account",
+        "selectUsername": "Select username",
+        "role": "Role",
+        "groups": "Groups",
+        "authProgress": "Authenticating & authorizing your user profile",
+        "aboutTitle": "G-Suite to LDAP Synchronizer",
+        "pageNotFond": "Page Not Found!",
+        "settings": "Settings",
+        "synchronizeGroupsButton": "Synchronize Groups to LDAP",
+        "synchronizeUsersButton": "Synchronize GSuite User Attributes"
+    }
+}

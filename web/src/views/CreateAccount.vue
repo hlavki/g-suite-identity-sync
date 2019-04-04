@@ -4,16 +4,16 @@
       <md-card class="md-layout-item md-size-40 md-small-size-100">
         <md-progress-bar v-if="showProgress" />
         <md-card-header>
-          <div class="md-title">Create LDAP Account</div>
+          <div class="md-title">{{ $t("message.createLdapAccount") }}</div>
         </md-card-header>
         <md-card-content>
           <md-field>
-            <label>Name</label>
+            <label>{{ $t("message.name") }}</label>
             <md-input v-model="userData.name" disabled />
           </md-field>
 
           <md-field>
-            <label for="formData.email">Select username (email)</label>
+            <label for="formData.email">{{ $t("message.selectUsername") }}</label>
             <md-select v-model="formData.email" name="email" id="email" md-dense>
               <md-option v-for="email in userData.emails" :key="email" :value="email">
                 {{ email }}
@@ -22,12 +22,12 @@
           </md-field>
 
           <md-field>
-            <label>Role</label>
+            <label>{{ $t("message.role") }}</label>
             <md-input v-model="userData.role" disabled />
           </md-field>
 
           <md-list class="md-double-line md-dense" v-if="showGroups()">
-            <md-subheader>Groups</md-subheader>
+            <md-subheader>{{ $t("message.groups") }}</md-subheader>
             <md-list-item v-for="group in userData.groups" :key="group.email" disabled>
               <md-icon class="md-primary">group</md-icon>
 
@@ -39,7 +39,7 @@
           </md-list>
 
           <md-field :class="{'md-invalid': errors.has('password')}" md-has-password>
-            <label for="password">Type LDAP Password</label>
+            <label for="password">{{ $t("message.ldapPassword") }}</label>
             <md-input
               v-model="formData.password"
               name="password"
@@ -52,7 +52,7 @@
           </md-field>
 
           <md-field :class="{'md-invalid': errors.has('password-confirm')}">
-            <label>Confirm LDAP Password</label>
+            <label>{{ $t("message.confirmLdapPassword") }}</label>
             <md-input
               v-model="formData.confirmPassword"
               name="password-confirm"
@@ -65,10 +65,10 @@
           </md-field>
 
           <md-switch class="md-primary" v-if="showSaveGSuitePasswordCheckbox()" v-model="formData.saveGSuitePassword">
-              Synchronize GSuite Password
+              {{ $t("message.syncGSuitePassword") }}
           </md-switch>
           <br />
-          <md-button type="submit" class="md-raised md-primary">Create LDAP Profile</md-button>
+          <md-button type="submit" class="md-raised md-primary">{{ $t("message.createLdapAccount") }}</md-button>
         </md-card-content>
       </md-card>
     </form>
