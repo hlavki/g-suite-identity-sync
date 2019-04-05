@@ -11,6 +11,7 @@ const i18n = new VueI18n({
     fallbackLocale: 'en-US',
     messages: {
       'en-US': require('./locales/en-US.json'),
+      'sk-SK': require('./locales/sk.json'),
       'sk': require('./locales/sk.json')
     }
 })
