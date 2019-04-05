@@ -1,5 +1,12 @@
 {
     "message": {
+        "menu": {
+            "home": "Home",
+            "signIn": "Sign In",
+            "settings": "Settings",
+            "about": "Abount",
+            "signOut": "Sing Out"
+        },
         "pageTitle": "Account Manager",
         "ldapAccount": "LDAP account",
         "username": "Username",
@@ -15,7 +22,7 @@
         "groups": "Groups",
         "authProgress": "Authenticating & authorizing your user profile",
         "aboutTitle": "G-Suite to LDAP Synchronizer",
-        "pageNotFond": "Page Not Found!",
+        "pageNotFound": "Page Not Found!",
         "settings": "Settings",
         "synchronizeGroupsButton": "Synchronize Groups to LDAP",
         "synchronizeUsersButton": "Synchronize GSuite User Attributes"

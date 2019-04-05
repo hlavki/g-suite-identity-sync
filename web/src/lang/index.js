@@ -8,7 +8,7 @@ Vue.use(VueI18n)
 
 const i18n = new VueI18n({
     locale: navigator.language, // set locale
-    fallbackLocale: 'en',
+    fallbackLocale: 'en-US',
     messages: {
       'en-US': require('./locales/en-US.json'),
       'sk': require('./locales/sk.json')

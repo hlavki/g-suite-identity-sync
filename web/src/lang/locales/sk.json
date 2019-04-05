@@ -1,5 +1,12 @@
 {
     "message": {
+        "menu": {
+            "home": "Domov",
+            "signIn": "Prihlásiť",
+            "settings": "Nastavenia",
+            "about": "O aplikácii",
+            "signOut": "Odhlásiť"
+        },
         "pageTitle": "Manažér účtov",
         "ldapAccount": "LDAP účet",        
         "username": "Používateľské meno",
@@ -15,7 +22,7 @@
         "groups": "Skupiny",
         "authProgress": "Autorizujem Váš účet. Počkajte prosím",
         "aboutTitle": "Synchronizátor G-Suite účtov do LDAP",
-        "pageNotFond": "Stránka nebola nájdená!",
+        "pageNotFound": "Stránka nebola nájdená!",
         "settings": "Nastavenia",
         "synchronizeGroupsButton": "Synchronizácia skupín do LDAP",
         "synchronizeUsersButton": "Synchronizácia GSuite používateľov"
