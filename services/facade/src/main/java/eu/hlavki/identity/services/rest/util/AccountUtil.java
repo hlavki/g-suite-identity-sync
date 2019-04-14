@@ -30,19 +30,13 @@ public final class AccountUtil {
     }
 
 
-    public static final boolean isAmAdmin(Configuration cfg, UserInfo userInfo) {
-        return cfg.getAdmins().contains(userInfo.getSubject());
-    }
-
-
     public static final String getLdapGroupName(String groupEmail) {
         return groupEmail.substring(0, groupEmail.indexOf('@'));
     }
 
 
-
     public final static LdapAccount toLdapAccount(String gsuiteDomain, UserInfo userInfo, Set<String> emails,
-        CreateAccountData createData) {
+            CreateAccountData createData) {
         LdapAccount account = new LdapAccount();
         account.setSubject(userInfo.getSubject());
         account.setGivenName(userInfo.getGivenName());
@@ -57,7 +51,7 @@ public final class AccountUtil {
 
 
     public final static LdapAccount toLdapAccount(String gsuiteDomain, UserInfo userInfo, Set<String> emails,
-        UpdateAccountData updateData) {
+            UpdateAccountData updateData) {
         LdapAccount account = new LdapAccount();
         account.setSubject(userInfo.getSubject());
         account.setGivenName(userInfo.getGivenName());
@@ -72,12 +66,12 @@ public final class AccountUtil {
 
     public static final CreatedUser toCreated(LdapAccount ldapAccount) {
         return new CreatedUser(
-            ldapAccount.getGivenName(),
-            ldapAccount.getFamilyName(),
-            ldapAccount.getName(),
-            ldapAccount.getUsername(),
-            ldapAccount.getSubject(),
-            ldapAccount.getEmails(),
-            eu.hlavki.identity.plugin.api.model.Role.valueOf(ldapAccount.getRole().toString()));
+                ldapAccount.getGivenName(),
+                ldapAccount.getFamilyName(),
+                ldapAccount.getName(),
+                ldapAccount.getUsername(),
+                ldapAccount.getSubject(),
+                ldapAccount.getEmails(),
+                eu.hlavki.identity.plugin.api.model.Role.valueOf(ldapAccount.getRole().toString()));
     }
 }

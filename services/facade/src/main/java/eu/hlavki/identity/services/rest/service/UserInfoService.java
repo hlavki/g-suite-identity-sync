@@ -1,4 +1,4 @@
-package eu.hlavki.identity.services.rest.account;
+package eu.hlavki.identity.services.rest.service;
 
 import eu.hlavki.identity.services.rest.config.Configuration;
 import eu.hlavki.identity.services.rest.model.UserInfo;
@@ -30,7 +30,7 @@ public class UserInfoService {
     public UserInfo getUserInfo() {
         org.apache.cxf.rs.security.oidc.common.UserInfo userInfo = oidcContext.getUserInfo();
         URI profilePicture = resizeProfilePicture(userInfo.getPicture());
-        boolean amAdmin = AccountUtil.isAmAdmin(config, userInfo);
+        boolean amAdmin = false; //AccountUtil.isAmAdmin(config, userInfo);
         return new UserInfo(userInfo.getName(), userInfo.getEmail(), amAdmin, profilePicture);
     }
 

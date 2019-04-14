@@ -1,4 +1,4 @@
-package eu.hlavki.identity.services.rest.account;
+package eu.hlavki.identity.services.rest.service;
 
 import eu.hlavki.identity.plugin.api.ProcessException;
 import eu.hlavki.identity.plugin.api.UserInterceptor;

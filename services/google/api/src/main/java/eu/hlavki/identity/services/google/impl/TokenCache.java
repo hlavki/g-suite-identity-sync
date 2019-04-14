@@ -46,8 +46,8 @@ public class TokenCache {
     private ClientAccessToken getAccessToken() throws NoPrivateKeyException {
         JwsHeaders headers = new JwsHeaders(JoseType.JWT, SignatureAlgorithm.RS256);
         JwtClaims claims = new JwtClaims();
-        claims.setIssuer(config.getServiceAccountClientId());
-        claims.setAudience("https://accounts.google.com/o/oauth2/token");
+        claims.setIssuer(config.getServiceAccountEmail());
+        claims.setAudience(config.getServiceAccountTokenUri());
         claims.setSubject(config.getServiceAccountSubject());
 
         long issuedAt = OAuthUtils.getIssuedAt();
@@ -63,7 +63,7 @@ public class TokenCache {
 
         JwtBearerGrant grant = new JwtBearerGrant(base64UrlAssertion);
 
-        WebClient accessTokenService = WebClient.create("https://accounts.google.com/o/oauth2/token",
+        WebClient accessTokenService = WebClient.create(config.getServiceAccountTokenUri(),
                 Arrays.asList(new OAuthJSONProvider(), new AccessTokenGrantWriter()));
 
         accessTokenService.type(MediaType.APPLICATION_FORM_URLENCODED).accept(MediaType.APPLICATION_JSON);

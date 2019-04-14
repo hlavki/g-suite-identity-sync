@@ -11,18 +11,21 @@ import org.apache.karaf.shell.api.action.lifecycle.Service;
 @Command(scope = "google", name = "configure-service-account", description = "Configure service account")
 public class ConfigureServiceAccountCommand implements Action {
 
-    @Argument(index = 0, name = "keyFileLocation", description = "Private key file location", required = true, multiValued = false)
-    String keyFileLocation;
+    @Argument(index = 0, name = "clientEmail", description = "Service account client email", required = true, multiValued = false)
+    String clientEmail;
 
-    @Argument(index = 1, name = "passphrase", description = "passphrase", required = true, multiValued = false)
-    String passphrase;
+    @Argument(index = 1, name = "privateKey", description = "Base64 encoded private key", required = true, multiValued = false)
+    String privateKey;
+
+    @Argument(index = 1, name = "tokenUri", description = "Uri to obtain security token", required = true, multiValued = false)
+    String tokenUri;
 
     @Reference
     Configuration config;
 
     @Override
     public Object execute() throws Exception {
-        config.setServiceAccountKey(keyFileLocation, passphrase);
+        config.setServiceAccount(clientEmail, privateKey, tokenUri);
         return null;
     }
 }

@@ -1,9 +1,9 @@
 <template>
   <div>
     <form novalidate class="md-layout md-gutter" @submit.prevent="validateForm">
-      <md-card class="md-layout-item md-size-40 md-small-size-100">
-        <md-progress-bar md-mode="indeterminate" v-if="showProgress" />
+      <md-card class="md-layout-item md-size-60 md-small-size-100">
         <md-card-header>
+          <md-progress-bar md-mode="indeterminate" v-if="showProgress" />
           <div class="md-title">{{ $t("message.ldapAccount") }}</div>
         </md-card-header>
         <md-card-content>
@@ -175,13 +175,6 @@ export default {
 </script>
 
 <style>
-.global-frame {
-  max-width: 600px;
-  margin: 5px;
-  padding-left: 10px;
-  padding-right: 5px;
-}
-
 .error-label {
   background-color: hotpink;
   color: black;

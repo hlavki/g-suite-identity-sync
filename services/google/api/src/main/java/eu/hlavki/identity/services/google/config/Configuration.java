@@ -17,7 +17,7 @@ public interface Configuration {
     boolean isSetGSuiteImplicitGroup();
 
 
-    String getServiceAccountClientId();
+    String getServiceAccountEmail();
 
 
     String getServiceAccountSubject();
@@ -26,13 +26,13 @@ public interface Configuration {
     Set<String> getServiceAccountScopes();
 
 
-    String getPrivateKeyLocation();
-
-
     PrivateKey readServiceAccountKey() throws NoPrivateKeyException;
 
 
-    void setServiceAccountKey(String keyFileLocation, String passphrase);
+    void setServiceAccount(String clientEmail, String privateKey, String tokenUri);
+
+
+    String getServiceAccountTokenUri();
 
 
     long getServiceAccountTokenLifetime();

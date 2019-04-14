@@ -6,10 +6,12 @@ import eu.hlavki.identity.services.config.AppConfiguration;
 import eu.hlavki.identity.services.google.GSuiteDirectoryService;
 import eu.hlavki.identity.services.google.ResourceNotFoundException;
 import eu.hlavki.identity.services.google.model.GroupMembership;
+import eu.hlavki.identity.services.rest.config.Configuration;
 import eu.hlavki.identity.services.rest.model.ServerError;
 import java.io.IOException;
 import java.util.Collections;
 import static java.util.Collections.emptySet;
+import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
@@ -19,10 +21,9 @@ import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.container.ContainerRequestFilter;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import org.apache.cxf.jaxrs.utils.JAXRSUtils;
-import org.apache.cxf.rs.security.oauth2.client.ClientTokenContext;
 import org.apache.cxf.rs.security.oidc.common.IdToken;
 import org.apache.cxf.rs.security.oidc.rp.OidcClientTokenContext;
+import org.apache.cxf.rs.security.oidc.rp.OidcSecurityContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -30,14 +31,20 @@ import org.slf4j.LoggerFactory;
 public class GSuiteGroupAuthorizationFilter implements ContainerRequestFilter {
 
     private static final Logger log = LoggerFactory.getLogger(GSuiteGroupAuthorizationFilter.class);
-    private final Supplier<Set<String>> externalAccountsCache;
+    private final Supplier<Set<String>> externalUsersCache;
+    private final Supplier<Set<String>> adminUsersCache;
     private final GSuiteDirectoryService gsuiteDirService;
 
 
-    public GSuiteGroupAuthorizationFilter(final GSuiteDirectoryService gsuiteDirService, AppConfiguration config) {
+    public GSuiteGroupAuthorizationFilter(final GSuiteDirectoryService gsuiteDirService, Configuration config,
+            AppConfiguration appConfig) {
+
         this.gsuiteDirService = gsuiteDirService;
-        this.externalAccountsCache = Suppliers.memoizeWithExpiration(
-                () -> config.getExternalAccountsGroup().map(g -> getExternalGroupMembers(g)).orElse(emptySet()),
+        this.externalUsersCache = Suppliers.memoizeWithExpiration(
+                () -> appConfig.getExternalAccountsGroup().map(g -> getExternalGroupMembers(g)).orElse(emptySet()),
+                15, TimeUnit.MINUTES);
+        this.adminUsersCache = Suppliers.memoizeWithExpiration(
+                () -> config.getAdminGroup().map(g -> getExternalGroupMembers(g)).orElse(emptySet()),
                 15, TimeUnit.MINUTES);
     }
 
@@ -45,13 +52,25 @@ public class GSuiteGroupAuthorizationFilter implements ContainerRequestFilter {
     @Override
 
     public void filter(ContainerRequestContext requestContext) throws IOException {
-        OidcClientTokenContext ctx = (OidcClientTokenContext) JAXRSUtils.getCurrentMessage().getContent(ClientTokenContext.class);
-        IdToken idToken = ctx.getIdToken();
+        OidcSecurityContext secCtx = (OidcSecurityContext) requestContext.getSecurityContext();
+        OidcClientTokenContext tokenCtx = secCtx.getOidcContext();
+        IdToken idToken = tokenCtx.getIdToken();
         String email = idToken.getEmail();
         String hdParam = idToken.getStringProperty("hd");
-        boolean fromGsuite = gsuiteDirService.getDomainName().equalsIgnoreCase(hdParam);
-        Set<String> externalAccounts = externalAccountsCache.get();
-        if (!fromGsuite && !externalAccounts.contains(email)) {
+        boolean internal = gsuiteDirService.getDomainName().equalsIgnoreCase(hdParam);
+        boolean external = false;
+        Set<String> roles = new HashSet<>();
+        if (internal) {
+            roles.add(AuthzRole.INTERNAL);
+        } else if (externalUsersCache.get().contains(email)) {
+            roles.add(AuthzRole.EXTERNAL);
+            external = true;
+        }
+        if (adminUsersCache.get().contains(email)) {
+            roles.add(AuthzRole.ADMIN);
+        }
+        if (internal || external) {
+        } else {
             log.error("Unauthorized access from {}", hdParam);
             ServerError err = new ServerError("E001", "Sorry you are not allowed to enter this site");
             requestContext.abortWith(Response.status(Response.Status.UNAUTHORIZED).entity(err).type(MediaType.APPLICATION_JSON).build());

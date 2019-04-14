@@ -1,4 +1,4 @@
-package eu.hlavki.identity.services.rest.account;
+package eu.hlavki.identity.services.rest.service;
 
 import eu.hlavki.identity.services.sync.AccountSyncService;
 import javax.ws.rs.PUT;
@@ -18,15 +18,15 @@ public class AdminService {
     }
 
 
-    @Path("sync/groups")
     @PUT
+    @Path("sync/groups")
     public void synchronizeGroups() {
         syncService.synchronizeAllGroups();
     }
 
 
-    @Path("sync/users")
     @PUT
+    @Path("sync/users")
     public void synchronizeUsers() {
         syncService.synchronizeGSuiteUsers();
     }

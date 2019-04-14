@@ -13,7 +13,7 @@ public class ConfigurationImpl implements Configuration {
     private static final Logger LOG = LoggerFactory.getLogger(ConfigurationImpl.class);
 
     private static final String PID = "eu.hlavki.identity.facade";
-    private static final String ADMINS_PROP = "admins";
+    private static final String ADMIN_GROUP_PROP = "admin.group";
     private static final String GSUITE_SYNC_PASSWORD_PROP = "gsuite.sync.password";
     private static final boolean GSUITE_SYNC_PASSWORD_DEFAULT = false;
 
@@ -41,6 +41,11 @@ public class ConfigurationImpl implements Configuration {
     public String get(String name, String defaultValue) {
         String value = get(name);
         return value != null ? value : defaultValue;
+    }
+
+
+    public Optional<String> getOpt(String name) {
+        return Optional.ofNullable(get(name));
     }
 
 
@@ -197,8 +202,8 @@ public class ConfigurationImpl implements Configuration {
 
 
     @Override
-    public Set<String> getAdmins() {
-        return getSet(ADMINS_PROP);
+    public Optional<String> getAdminGroup() {
+        return getOpt(ADMIN_GROUP_PROP);
     }
 
 

@@ -1,13 +1,37 @@
 <template>
-  <div>
-    <md-card class="md-layout-item md-size-40 md-small-size-100">
+  <div class="md-layout md-gutter">
+    <md-card class="md-layout-item md-small-size-100">
       <md-progress-bar md-mode="indeterminate" v-if="showProgress" />
       <md-card-header>
-        <div class="md-title">{{ $t("message.settings") }}</div>
+        <div class="md-title">{{ $t("message.settings.title") }}</div>
       </md-card-header>
       <md-card-content>
-        <md-button class="md-raised md-primary" @click.native="synchronizeGroups">{{ $t("message.synchronizeGroupsButton") }}</md-button>
-        <md-button class="md-raised md-primary" @click.native="synchronizeUsers">{{ $t("message.synchronizeUsersButton") }}</md-button>
+        <md-card md-with-hover class="md-layout-item md-small-size-100">
+          <md-card-heder>
+            <div class="md-subheading">{{ $t("message.settings.serviceAccountSection") }}</div>
+          </md-card-heder>
+          <md-card-content>
+            <md-field :class="messageClass">
+              <label>{{ $t("message.settings.serviceAccountJson") }}</label>
+              <md-textarea v-model="textarea" required></md-textarea>
+              <span class="md-helper-text">{{ $t("message.settings.serviceAccountJsonHelp") }}</span>
+            </md-field>
+          </md-card-content>
+          <md-card-actions>
+            <md-button class="md-raised md-primary">{{ $t("message.settings.serviceAccountSetup") }}</md-button>
+          </md-card-actions>
+        </md-card>
+        <md-divider/>
+        <md-card md-with-hover class="md-layout-item md-small-size-100">
+          <md-card-heder>
+            <div class="md-subheading">{{ $t("message.settings.syncSection") }}</div>
+          </md-card-heder>
+          <md-card-content/>
+          <md-card-actions>
+            <md-button class="md-raised md-primary" @click.native="synchronizeGroups">{{ $t("message.settings.syncGroupsButton") }}</md-button>
+            <md-button class="md-raised md-primary" @click.native="synchronizeUsers">{{ $t("message.settings.syncUsersButton") }}</md-button>
+          </md-card-actions>
+        </md-card>
       </md-card-content>
     </md-card>
   </div>
@@ -111,12 +135,11 @@ export default {
 </script>
 
 <style>
-.global-frame {
-  max-width: 600px;
-  margin: 5px;
-  padding-left: 10px;
-  padding-right: 5px;
-}
+  .md-card {
+    padding: 8px;
+    margin: 8px;
+    vertical-align: top;
+  }
 
 .error-label {
   background-color: hotpink;

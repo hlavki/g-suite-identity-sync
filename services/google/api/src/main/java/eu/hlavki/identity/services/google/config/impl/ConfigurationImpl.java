@@ -3,12 +3,11 @@ package eu.hlavki.identity.services.google.config.impl;
 import eu.hlavki.identity.services.google.NoPrivateKeyException;
 import eu.hlavki.identity.services.google.config.Configuration;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.math.BigDecimal;
 import java.security.*;
-import java.security.cert.CertificateException;
+import java.security.spec.InvalidKeySpecException;
+import java.security.spec.PKCS8EncodedKeySpec;
 import java.time.Duration;
 import java.util.*;
 import org.osgi.service.cm.ConfigurationAdmin;
@@ -17,11 +16,11 @@ import org.slf4j.LoggerFactory;
 
 public class ConfigurationImpl implements Configuration {
 
-    static final String CLIENT_ID_PROP = "oauth2.serviceAccount.clientId";
-    static final String SUBJECT_PROP = "oauth2.serviceAccount.subject";
-    static final String SCOPES_PROP = "oauth2.serviceAccount.scopes";
-    static final String PRIVATE_KEY_PROP = "oauth2.serviceAccount.privateKey.file";
-    static final String PRIVATE_KEY_PASS_PROP = "oauth2.serviceAccount.privateKey.passphrase";
+    static final String SERVICE_ACCOUNT_EMAIL_PROP = "oauth2.serviceAccount.email";
+    static final String SERVICE_ACCOUNT_SUBJECT_PROP = "oauth2.serviceAccount.subject";
+    static final String SERVICE_ACCOUNT_SCOPES_PROP = "oauth2.serviceAccount.scopes";
+    static final String SERVICE_ACCOUNT_PRIVATE_KEY_PROP = "oauth2.serviceAccount.privateKey";
+    static final String SERVICE_ACCOUNT_TOKEN_URI_PROP = "oauth2.serviceAccount.tokenUri";
     static final String GSUITE_DOMAIN_PROP = "gsuite.domain";
     static final String GSUITE_IMPLICIT_GROUP = "gsuite.implicit.group";
     static final String TOKEN_LIFETIME_PROP = "gsuite.serviceAccount.tokenLifetime";
@@ -244,54 +243,52 @@ public class ConfigurationImpl implements Configuration {
 
 
     @Override
-    public String getServiceAccountClientId() {
-        return get(CLIENT_ID_PROP);
+    public String getServiceAccountEmail() {
+        return get(SERVICE_ACCOUNT_EMAIL_PROP);
     }
 
 
     @Override
     public String getServiceAccountSubject() {
-        return get(SUBJECT_PROP);
+        return get(SERVICE_ACCOUNT_SUBJECT_PROP);
     }
 
 
     @Override
     public Set<String> getServiceAccountScopes() {
-        return getSet(SCOPES_PROP);
-    }
-
-
-    @Override
-    public String getPrivateKeyLocation() {
-        return get(PRIVATE_KEY_PROP);
+        return getSet(SERVICE_ACCOUNT_SCOPES_PROP);
     }
 
 
     @Override
     public PrivateKey readServiceAccountKey() throws NoPrivateKeyException {
-        String keyFile = get(PRIVATE_KEY_PROP);
-        if (keyFile == null) {
+        String keyEncoded = get(SERVICE_ACCOUNT_PRIVATE_KEY_PROP);
+        if (keyEncoded == null) {
             throw new NoPrivateKeyException("Google services are not configured!");
         }
 
-        PrivateKey result = null;
-        try (InputStream is = new FileInputStream(keyFile)) {
-            KeyStore store = KeyStore.getInstance("PKCS12");
-            char[] password = get(PRIVATE_KEY_PASS_PROP).toCharArray();
-            store.load(is, password);
-            result = (PrivateKey) store.getKey("privateKey", password);
-        } catch (IOException | CertificateException | KeyStoreException | NoSuchAlgorithmException | UnrecoverableKeyException e) {
+        try {
+            byte[] decoded = Base64.getDecoder().decode(keyEncoded);
+            KeyFactory kf = KeyFactory.getInstance("RSA");
+            return kf.generatePrivate(new PKCS8EncodedKeySpec(decoded));
+        } catch (InvalidKeySpecException | NoSuchAlgorithmException e) {
             throw new NoPrivateKeyException("Could not load private key", e);
         }
-        return result;
     }
 
 
     @Override
-    public void setServiceAccountKey(String keyFileLocation, String passphrase) {
-        set(PRIVATE_KEY_PROP, keyFileLocation);
-        set(PRIVATE_KEY_PASS_PROP, passphrase);
+    public void setServiceAccount(String clientEmail, String privateKey, String tokenUri) {
+        set(SERVICE_ACCOUNT_EMAIL_PROP, clientEmail);
+        set(SERVICE_ACCOUNT_PRIVATE_KEY_PROP, privateKey);
+        set(SERVICE_ACCOUNT_TOKEN_URI_PROP, tokenUri);
         LOG.info("Service account key is configured");
+    }
+
+
+    @Override
+    public String getServiceAccountTokenUri() {
+        return get(SERVICE_ACCOUNT_TOKEN_URI_PROP);
     }
 
 

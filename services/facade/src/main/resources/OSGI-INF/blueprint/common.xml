@@ -38,6 +38,9 @@
         <argument ref="configurationAdmin"/>
     </bean>
 
+    <reference id="googleConfiguration" interface="eu.hlavki.identity.services.google.config.Configuration"/>
+
+    <!-- Validator -->
     <bean id="hibernateValidator" class="org.hibernate.validator.HibernateValidator"/>
 
     <bean id="validationProviderResolver" class="eu.hlavki.identity.services.rest.util.SingleValidationProviderResolver">
@@ -55,4 +58,12 @@
     <bean id="validationOutInterceptor" class="org.apache.cxf.jaxrs.validation.JAXRSBeanValidationOutInterceptor">
         <property name="provider" ref="validationProvider" />
     </bean>
+
+    <!-- Exception mappers -->
+    <bean id="validationExceptionMapper" class="eu.hlavki.identity.services.rest.util.ValidationExceptionMapper">
+        <property name="addMessageToResponse" value="true"/>
+    </bean>
+
+    <bean id="ldapExceptionMapper" class="eu.hlavki.identity.services.rest.util.LdapExceptionMapper"/>
+    <bean id="genericExceptionMapper" class="eu.hlavki.identity.services.rest.util.GenericExceptionMapper"/>
 </blueprint>
