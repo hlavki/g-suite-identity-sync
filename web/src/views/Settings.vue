@@ -1,12 +1,12 @@
 <template>
-  <div class="md-layout md-gutter">
-    <md-card class="md-layout-item md-small-size-100">
+  <div class="md-layout-item">
+    <md-card>
       <md-progress-bar md-mode="indeterminate" v-if="showProgress" />
       <md-card-header>
         <div class="md-title">{{ $t("message.settings.title") }}</div>
       </md-card-header>
       <md-card-content>
-        <md-card md-with-hover class="md-layout-item md-small-size-100">
+        <md-card class="md-layout-item md-small-size-100">
           <md-card-heder>
             <div class="md-subheading">{{ $t("message.settings.serviceAccountSection") }}</div>
           </md-card-heder>
@@ -22,7 +22,7 @@
           </md-card-actions>
         </md-card>
         <md-divider/>
-        <md-card md-with-hover class="md-layout-item md-small-size-100">
+        <md-card class="md-layout-item md-small-size-100">
           <md-card-heder>
             <div class="md-subheading">{{ $t("message.settings.syncSection") }}</div>
           </md-card-heder>

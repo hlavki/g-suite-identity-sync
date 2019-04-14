@@ -1,6 +1,6 @@
 <template>
-  <div class="md-layout md-gutter">
-    <md-card class="md-layout-item md-size-40 md-small-size-100">
+  <div class="md-layout-item">
+    <md-card>
       <md-card-header>
         <div class="md-title">{{ $t("message.aboutTitle") }}</div>
       </md-card-header>

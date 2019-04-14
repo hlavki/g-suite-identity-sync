@@ -1,7 +1,7 @@
 <template>
-  <div>
-    <form novalidate class="md-layout md-gutter" @submit.prevent="validateForm">
-      <md-card class="md-layout-item md-size-60 md-small-size-100">
+  <div class="md-layout-item">
+    <form novalidate @submit.prevent="validateForm">
+      <md-card>
         <md-card-header>
           <md-progress-bar md-mode="indeterminate" v-if="showProgress" />
           <div class="md-title">{{ $t("message.ldapAccount") }}</div>
