@@ -30,7 +30,7 @@
             "syncUsersButton": "GSuite User Attributes"
         },
         "install": {
-            "title": "Install",
+            "title": "Install Google Services",
             "domain": "G Suite Domain",
             "adminAccount": "Administrator account",
             "serviceAccountJson": "Service account JSON",

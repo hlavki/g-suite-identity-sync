@@ -30,7 +30,7 @@
             "syncUsersButton": "GSuite používatelia"
         },
         "install": {
-            "title": "Inštalácia",
+            "title": "Inštalácia služieb Google",
             "domain": "G Suite doména",
             "adminAccount": "Účet s administrátorskými právami",
             "serviceAccountJson": "Service account JSON",
