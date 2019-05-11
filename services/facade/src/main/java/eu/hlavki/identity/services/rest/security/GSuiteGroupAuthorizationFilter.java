@@ -40,14 +40,14 @@ public class GSuiteGroupAuthorizationFilter implements ContainerRequestFilter {
 
 
     public GSuiteGroupAuthorizationFilter(final GSuiteDirectoryService gsuiteDirService, Configuration config,
-            AppConfiguration appConfig) {
+            AppConfiguration appConfig, eu.hlavki.identity.services.google.config.Configuration googleConfig) {
 
         this.gsuiteDirService = gsuiteDirService;
         this.externalUsersCache = Suppliers.memoizeWithExpiration(
                 () -> appConfig.getExternalAccountsGroup().map(g -> getExternalGroupMembers(g)).orElse(emptySet()),
                 15, TimeUnit.MINUTES);
         this.adminUsersCache = Suppliers.memoizeWithExpiration(
-                () -> getExternalGroupMembers(config.getAdminGroup()),
+                () -> getExternalGroupMembers(config.getAdminGroup() + "@" + googleConfig.getGSuiteDomain()),
                 15, TimeUnit.MINUTES);
     }
 
@@ -82,6 +82,7 @@ public class GSuiteGroupAuthorizationFilter implements ContainerRequestFilter {
             ServerError err = new ServerError("E001", "Sorry you are not allowed to enter this site");
             requestContext.abortWith(Response.status(Response.Status.UNAUTHORIZED).entity(err).type(MediaType.APPLICATION_JSON).build());
         }
+        secCtx.getOidcContext().getUserInfo().setProperty("roles", roles);
     }
 
 

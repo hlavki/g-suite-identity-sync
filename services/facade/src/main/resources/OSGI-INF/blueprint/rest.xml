@@ -14,9 +14,7 @@
 
     <reference id="accountSyncService" interface="eu.hlavki.identity.services.sync.AccountSyncService" />
 
-    <bean id="userInfoService" class="eu.hlavki.identity.services.rest.service.UserInfoService">
-        <argument ref="configuration"/>
-    </bean>
+    <bean id="userInfoService" class="eu.hlavki.identity.services.rest.service.UserInfoService" />
 
     <bean id="adminService" class="eu.hlavki.identity.services.rest.service.AdminService">
         <argument ref="accountSyncService"/>
@@ -76,5 +74,6 @@
         <argument ref="gSuiteDirService"/>
         <argument ref="configuration"/>
         <argument ref="appConfiguration"/>
+        <argument ref="googleConfiguration"/>
     </bean>
 </blueprint>

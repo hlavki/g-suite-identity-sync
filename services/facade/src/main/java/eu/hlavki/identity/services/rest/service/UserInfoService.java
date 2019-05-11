@@ -1,8 +1,9 @@
 package eu.hlavki.identity.services.rest.service;
 
-import eu.hlavki.identity.services.rest.config.Configuration;
 import eu.hlavki.identity.services.rest.model.UserInfo;
+import eu.hlavki.identity.services.rest.security.AuthzRole;
 import java.net.URI;
+import java.util.Set;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.core.Context;
@@ -17,11 +18,9 @@ public class UserInfoService {
     private static final Logger log = LoggerFactory.getLogger(UserInfoService.class);
     @Context
     private OidcClientTokenContext oidcContext;
-    private final Configuration config;
 
 
-    public UserInfoService(Configuration config) {
-        this.config = config;
+    public UserInfoService() {
     }
 
 
@@ -29,7 +28,8 @@ public class UserInfoService {
     public UserInfo getUserInfo() {
         org.apache.cxf.rs.security.oidc.common.UserInfo userInfo = oidcContext.getUserInfo();
         URI profilePicture = resizeProfilePicture(userInfo.getPicture());
-        boolean amAdmin = false; //AccountUtil.isAmAdmin(config, userInfo);
+        Set<String> roles = (Set) userInfo.getProperty("roles");
+        boolean amAdmin = roles.contains(AuthzRole.ADMIN);
         return new UserInfo(userInfo.getName(), userInfo.getEmail(), amAdmin, profilePicture);
     }
 
