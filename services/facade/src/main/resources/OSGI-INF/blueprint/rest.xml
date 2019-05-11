@@ -12,8 +12,6 @@
 
     <reference id="ldapAccountService" interface="eu.hlavki.identity.services.ldap.LdapAccountService" />
 
-    <reference id="gSuiteDirService" interface="eu.hlavki.identity.services.google.GSuiteDirectoryService" />
-
     <reference id="accountSyncService" interface="eu.hlavki.identity.services.sync.AccountSyncService" />
 
     <bean id="userInfoService" class="eu.hlavki.identity.services.rest.service.UserInfoService">
@@ -32,9 +30,6 @@
         <argument ref="userPlugins"/>
     </bean>
 
-    <bean id="googleSettingsService" class="eu.hlavki.identity.services.rest.service.GoogleSettingsService">
-        <argument ref="googleConfiguration"/>
-    </bean>
     <!--    <jaxrsclient:client id="peopleServiceClient" threadSafe="true"
                         address="https://people.googleapis.com/v1/people/me"
                         serviceClass="org.apache.cxf.jaxrs.client.WebClient">
@@ -76,35 +71,6 @@
             <ref component-id="genericExceptionMapper"/>
         </jaxrs:providers>
     </jaxrs:server>
-
-    <jaxrs:server id="adminFacade" address="/admin">
-        <jaxrs:inInterceptors>
-            <ref component-id="validationInInterceptor" />
-        </jaxrs:inInterceptors>
-
-        <jaxrs:outInterceptors>
-            <ref component-id="validationOutInterceptor" />
-        </jaxrs:outInterceptors>
-
-        <jaxrs:serviceBeans>
-            <ref component-id="googleSettingsService"/>
-        </jaxrs:serviceBeans>
-
-        <jaxrs:providers>
-            <ref component-id="jsonProvider"/>
-            <!-- Checks that a client is authenticated with Google -->
-            <ref component-id="oidcRpFilter"/>
-            <!-- JAX-RS provider that makes OidcClientTokenContext available as JAX-RS @Context -->
-            <ref component-id="clientTokenContextProvider"/>
-            <!-- GSuite Authorization filter -->
-            <!--<ref component-id="gsuiteAuthzFilter"/>-->
-            <!-- Exception mappers -->
-            <ref component-id="validationExceptionMapper"/>
-            <ref component-id="ldapExceptionMapper"/>
-            <ref component-id="genericExceptionMapper"/>
-        </jaxrs:providers>
-    </jaxrs:server>
-
 
     <bean id="gsuiteAuthzFilter" class="eu.hlavki.identity.services.rest.security.GSuiteGroupAuthorizationFilter">
         <argument ref="gSuiteDirService"/>

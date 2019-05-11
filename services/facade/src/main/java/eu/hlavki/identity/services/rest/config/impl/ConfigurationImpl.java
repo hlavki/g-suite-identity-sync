@@ -14,6 +14,7 @@ public class ConfigurationImpl implements Configuration {
 
     private static final String PID = "eu.hlavki.identity.facade";
     private static final String ADMIN_GROUP_PROP = "admin.group";
+    private static final String ADMIN_GROUP_DEFAULT = "identity.admins";
     private static final String GSUITE_SYNC_PASSWORD_PROP = "gsuite.sync.password";
     private static final boolean GSUITE_SYNC_PASSWORD_DEFAULT = false;
 
@@ -202,8 +203,8 @@ public class ConfigurationImpl implements Configuration {
 
 
     @Override
-    public Optional<String> getAdminGroup() {
-        return getOpt(ADMIN_GROUP_PROP);
+    public String getAdminGroup() {
+        return get(ADMIN_GROUP_PROP, ADMIN_GROUP_DEFAULT);
     }
 
 

@@ -15,7 +15,7 @@ import lombok.ToString;
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @ToString
 @NoArgsConstructor
-@XmlRootElement(name = "channel")
+@XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ServiceAccount {
 

@@ -2,7 +2,13 @@ package eu.hlavki.identity.services.rest.model;
 
 import java.net.URI;
 import javax.xml.bind.annotation.XmlRootElement;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
+@Getter
+@Setter
+@NoArgsConstructor
 @XmlRootElement
 public class UserInfo {
 
@@ -12,7 +18,9 @@ public class UserInfo {
     private boolean amAdmin;
 
 
-    public UserInfo() {
+    public UserInfo(String name, String email) {
+        this.name = name;
+        this.email = email;
     }
 
 
@@ -21,45 +29,5 @@ public class UserInfo {
         this.email = email;
         this.amAdmin = amAdmin;
         this.imageUri = imageUri;
-    }
-
-
-    public String getName() {
-        return name;
-    }
-
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-
-    public String getEmail() {
-        return email;
-    }
-
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-
-    public URI getImageUri() {
-        return imageUri;
-    }
-
-
-    public void setImageUri(URI imageUri) {
-        this.imageUri = imageUri;
-    }
-
-
-    public boolean isAmAdmin() {
-        return amAdmin;
-    }
-
-
-    public void setAmAdmin(boolean amAdmin) {
-        this.amAdmin = amAdmin;
     }
 }

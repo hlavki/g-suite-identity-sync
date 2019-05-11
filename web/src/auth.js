@@ -28,9 +28,14 @@ const AuthPlugin = {
             }).catch(function (error) {
               console.error('Cannot authenticate user. Status: ' + error.response.status)
               console.info('ERRdata: ' + error.response.data)
-              _this.logout()
-              if (error.response.data.hasOwnProperty('code')) {
-                _this.notifyError({ message: 'Sorry, you are not allowed to enter this site' })
+
+              if (error.response.status === 503) {
+                options.router.push('/install')
+              } else {
+                _this.logout()
+                if (error.response.data.hasOwnProperty('code')) {
+                  _this.notifyError(error.response)
+                }
               }
             })
           }
@@ -39,13 +44,6 @@ const AuthPlugin = {
           this.loggedIn = false
           this.userInfo = undefined
           options.router.push('/sign-in')
-        }
-      },
-      notifications: {
-        notifyError: {
-          title: 'Error Occured',
-          type: 'error',
-          timeout: 5000
         }
       }
     })

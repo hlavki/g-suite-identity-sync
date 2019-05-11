@@ -3,7 +3,13 @@ package eu.hlavki.identity.services.rest.model;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.xml.bind.annotation.XmlRootElement;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
+@Getter
+@Setter
+@NoArgsConstructor
 @XmlRootElement
 public class CreateAccountData {
 
@@ -15,48 +21,4 @@ public class CreateAccountData {
     @NotNull
     private String confirmPassword;
     private boolean saveGSuitePassword;
-
-
-    public CreateAccountData() {
-    }
-
-
-    public String getEmail() {
-        return email;
-    }
-
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-
-    public String getPassword() {
-        return password;
-    }
-
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-
-    public String getConfirmPassword() {
-        return confirmPassword;
-    }
-
-
-    public void setConfirmPassword(String confirmPassword) {
-        this.confirmPassword = confirmPassword;
-    }
-
-
-    public boolean isSaveGSuitePassword() {
-        return saveGSuitePassword;
-    }
-
-
-    public void setSaveGSuitePassword(boolean saveGSuitePassword) {
-        this.saveGSuitePassword = saveGSuitePassword;
-    }
 }

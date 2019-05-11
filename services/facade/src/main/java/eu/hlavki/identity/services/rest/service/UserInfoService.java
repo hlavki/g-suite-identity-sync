@@ -2,7 +2,6 @@ package eu.hlavki.identity.services.rest.service;
 
 import eu.hlavki.identity.services.rest.config.Configuration;
 import eu.hlavki.identity.services.rest.model.UserInfo;
-import eu.hlavki.identity.services.rest.util.AccountUtil;
 import java.net.URI;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;

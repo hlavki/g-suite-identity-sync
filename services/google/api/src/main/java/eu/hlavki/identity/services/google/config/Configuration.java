@@ -32,6 +32,9 @@ public interface Configuration {
     void setServiceAccount(String clientEmail, String privateKey, String tokenUri);
 
 
+    void resetServiceAccount();
+
+
     String getServiceAccountTokenUri();
 
 

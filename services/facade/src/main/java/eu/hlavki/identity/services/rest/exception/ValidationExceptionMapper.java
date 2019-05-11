@@ -1,4 +1,4 @@
-package eu.hlavki.identity.services.rest.util;
+package eu.hlavki.identity.services.rest.exception;
 
 import eu.hlavki.identity.services.rest.model.AppError;
 import javax.ws.rs.core.Response;

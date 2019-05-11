@@ -1,4 +1,4 @@
-package eu.hlavki.identity.services.rest.util;
+package eu.hlavki.identity.services.rest.validation;
 
 import static java.util.Collections.singletonList;
 import java.util.List;

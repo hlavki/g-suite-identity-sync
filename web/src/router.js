@@ -4,6 +4,7 @@ import SignIn from '@/views/SignIn';
 import About from '@/views/About';
 import CreateAccount from '@/views/CreateAccount';
 import Home from '@/views/Home';
+import Install from '@/views/Install';
 import NotFound from '@/views/NotFound';
 import AuthProgress from '@/views/AuthProgress';
 import Settings from '@/views/Settings';
@@ -49,6 +50,12 @@ export default new Router({
       name: "AuthProgress",
       meta: { auth: false },
       component: AuthProgress
+    },
+    {
+      path: "/install",
+      name: "Install",
+      meta: { auth: false },
+      component: Install
     },
     {
       path: "*",

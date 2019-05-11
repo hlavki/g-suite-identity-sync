@@ -8,22 +8,6 @@
       <md-card-content>
         <md-card class="md-layout-item md-small-size-100">
           <md-card-heder>
-            <div class="md-subheading">{{ $t("message.settings.serviceAccountSection") }}</div>
-          </md-card-heder>
-          <md-card-content>
-            <md-field :class="messageClass">
-              <label>{{ $t("message.settings.serviceAccountJson") }}</label>
-              <md-textarea v-model="textarea" required></md-textarea>
-              <span class="md-helper-text">{{ $t("message.settings.serviceAccountJsonHelp") }}</span>
-            </md-field>
-          </md-card-content>
-          <md-card-actions>
-            <md-button class="md-raised md-primary">{{ $t("message.settings.serviceAccountSetup") }}</md-button>
-          </md-card-actions>
-        </md-card>
-        <md-divider/>
-        <md-card class="md-layout-item md-small-size-100">
-          <md-card-heder>
             <div class="md-subheading">{{ $t("message.settings.syncSection") }}</div>
           </md-card-heder>
           <md-card-content/>
@@ -39,7 +23,7 @@
 
 <script>
 export default {
-  name: 'Home',
+  name: 'Settings',
   data() {
     return {
       accountData: { username: '', name: '', role: '' },

@@ -4,10 +4,12 @@ import com.google.common.base.Supplier;
 import com.google.common.base.Suppliers;
 import eu.hlavki.identity.services.config.AppConfiguration;
 import eu.hlavki.identity.services.google.GSuiteDirectoryService;
+import eu.hlavki.identity.services.google.NoPrivateKeyException;
 import eu.hlavki.identity.services.google.ResourceNotFoundException;
 import eu.hlavki.identity.services.google.model.GroupMembership;
 import eu.hlavki.identity.services.rest.config.Configuration;
 import eu.hlavki.identity.services.rest.model.ServerError;
+import static eu.hlavki.identity.services.rest.model.ServerError.serverError;
 import java.io.IOException;
 import java.util.Collections;
 import static java.util.Collections.emptySet;
@@ -21,6 +23,7 @@ import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.container.ContainerRequestFilter;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import static javax.ws.rs.core.Response.Status.SERVICE_UNAVAILABLE;
 import org.apache.cxf.rs.security.oidc.common.IdToken;
 import org.apache.cxf.rs.security.oidc.rp.OidcClientTokenContext;
 import org.apache.cxf.rs.security.oidc.rp.OidcSecurityContext;
@@ -44,20 +47,24 @@ public class GSuiteGroupAuthorizationFilter implements ContainerRequestFilter {
                 () -> appConfig.getExternalAccountsGroup().map(g -> getExternalGroupMembers(g)).orElse(emptySet()),
                 15, TimeUnit.MINUTES);
         this.adminUsersCache = Suppliers.memoizeWithExpiration(
-                () -> config.getAdminGroup().map(g -> getExternalGroupMembers(g)).orElse(emptySet()),
+                () -> getExternalGroupMembers(config.getAdminGroup()),
                 15, TimeUnit.MINUTES);
     }
 
 
     @Override
-
     public void filter(ContainerRequestContext requestContext) throws IOException {
         OidcSecurityContext secCtx = (OidcSecurityContext) requestContext.getSecurityContext();
         OidcClientTokenContext tokenCtx = secCtx.getOidcContext();
         IdToken idToken = tokenCtx.getIdToken();
         String email = idToken.getEmail();
-        String hdParam = idToken.getStringProperty("hd");
-        boolean internal = gsuiteDirService.getDomainName().equalsIgnoreCase(hdParam);
+        String userDomain = idToken.getStringProperty("hd");
+        String appDomain = gsuiteDirService.getDomainName();
+        if (appDomain == null) {
+            throw serverError(SERVICE_UNAVAILABLE, "E002", "Service not configured!");
+        }
+
+        boolean internal = gsuiteDirService.getDomainName().equalsIgnoreCase(userDomain);
         boolean external = false;
         Set<String> roles = new HashSet<>();
         if (internal) {
@@ -71,21 +78,23 @@ public class GSuiteGroupAuthorizationFilter implements ContainerRequestFilter {
         }
         if (internal || external) {
         } else {
-            log.error("Unauthorized access from {}", hdParam);
+            log.error("Unauthorized access from {}", userDomain);
             ServerError err = new ServerError("E001", "Sorry you are not allowed to enter this site");
             requestContext.abortWith(Response.status(Response.Status.UNAUTHORIZED).entity(err).type(MediaType.APPLICATION_JSON).build());
         }
     }
 
 
-    private Set<String> getExternalGroupMembers(String externalGroupName) {
+    private Set<String> getExternalGroupMembers(String groupName) {
         Set<String> result = emptySet();
         try {
-            GroupMembership membership = gsuiteDirService.getGroupMembers(externalGroupName);
+            GroupMembership membership = gsuiteDirService.getGroupMembers(groupName);
             result = membership.getMembers() == null ? Collections.emptySet()
                     : membership.getMembers().stream().map(m -> m.getEmail()).collect(Collectors.toSet());
         } catch (ResourceNotFoundException e) {
-            log.warn("Group for external accounts {} does not exists", externalGroupName);
+            log.warn("Group for external accounts {} does not exists", groupName);
+        } catch (NoPrivateKeyException e) {
+            throw serverError(SERVICE_UNAVAILABLE, "E002", "Service not configured!", e);
         }
         return result;
     }

@@ -25,14 +25,18 @@
         "pageNotFound": "Stránka nebola nájdená!",
         "settings": {
             "title": "Nastavenia",
-            "serviceAccountSection": "Service account",
-            "serviceAccountJson": "Service account JSON",
-            "serviceAccountJsonHelp": "Skopíruj json generovaný v Google Cloud Console",
-            "serviceAccountSetup": "Nastav",
             "syncSection": "Synchronizácia",
             "syncGroupsButton": "Skupiny do LDAP",
             "syncUsersButton": "GSuite používatelia"
+        },
+        "install": {
+            "title": "Inštalácia",
+            "domain": "G Suite doména",
+            "adminAccount": "Účet s administrátorskými právami",
+            "serviceAccountJson": "Service account JSON",
+            "serviceAccountJsonHelp": "Skopíruj json generovaný v Google Cloud Console",
+            "serviceAccountSetup": "Nastav",
+            "serviceAccountSuccess": "Služby Google boli úspešne nainštalované. Môžete začať používať aplikáciu!"
         }
-
     }
 }

@@ -287,6 +287,15 @@ public class ConfigurationImpl implements Configuration {
 
 
     @Override
+    public void resetServiceAccount() {
+        set(SERVICE_ACCOUNT_EMAIL_PROP, null);
+        set(SERVICE_ACCOUNT_PRIVATE_KEY_PROP, null);
+        set(SERVICE_ACCOUNT_TOKEN_URI_PROP, null);
+        LOG.info("Service account configuration is removed");
+    }
+
+
+    @Override
     public String getServiceAccountTokenUri() {
         return get(SERVICE_ACCOUNT_TOKEN_URI_PROP);
     }

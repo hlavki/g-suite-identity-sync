@@ -40,10 +40,12 @@
 
     <reference id="googleConfiguration" interface="eu.hlavki.identity.services.google.config.Configuration"/>
 
+    <reference id="gSuiteDirService" interface="eu.hlavki.identity.services.google.GSuiteDirectoryService" />
+
     <!-- Validator -->
     <bean id="hibernateValidator" class="org.hibernate.validator.HibernateValidator"/>
 
-    <bean id="validationProviderResolver" class="eu.hlavki.identity.services.rest.util.SingleValidationProviderResolver">
+    <bean id="validationProviderResolver" class="eu.hlavki.identity.services.rest.validation.SingleValidationProviderResolver">
         <argument ref="hibernateValidator"/>
     </bean>
 
@@ -60,10 +62,10 @@
     </bean>
 
     <!-- Exception mappers -->
-    <bean id="validationExceptionMapper" class="eu.hlavki.identity.services.rest.util.ValidationExceptionMapper">
+    <bean id="validationExceptionMapper" class="eu.hlavki.identity.services.rest.exception.ValidationExceptionMapper">
         <property name="addMessageToResponse" value="true"/>
     </bean>
 
-    <bean id="ldapExceptionMapper" class="eu.hlavki.identity.services.rest.util.LdapExceptionMapper"/>
-    <bean id="genericExceptionMapper" class="eu.hlavki.identity.services.rest.util.GenericExceptionMapper"/>
+    <bean id="ldapExceptionMapper" class="eu.hlavki.identity.services.rest.exception.LdapExceptionMapper"/>
+    <bean id="genericExceptionMapper" class="eu.hlavki.identity.services.rest.exception.GenericExceptionMapper"/>
 </blueprint>

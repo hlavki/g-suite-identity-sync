@@ -1,6 +1,6 @@
 <template>
   <div class="md-layout-item">
-    <form novalidate class="md-layout md-gutter" @submit.prevent="validateForm">
+    <form novalidate @submit.prevent="validateForm">
       <md-card>
         <md-progress-bar v-if="showProgress" />
         <md-card-header>
