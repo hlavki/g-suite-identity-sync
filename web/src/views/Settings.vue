@@ -1,5 +1,5 @@
 <template>
-  <div class="md-layout-item">
+  <div class="md-layout-item md-size-50 md-small-size-100">
     <md-card>
       <md-progress-bar md-mode="indeterminate" v-if="showProgress" />
       <md-card-header>
@@ -8,12 +8,28 @@
       <md-card-content>
         <md-card class="md-layout-item md-small-size-100">
           <md-card-heder>
-            <div class="md-subheading">{{ $t("message.settings.syncSection") }}</div>
+            <div class="md-subheading">{{ $t("message.settings.push.title") }}</div>
+          </md-card-heder>
+          <md-card-content>
+            <md-field :class="messageClass" v-if="!pushData.enabled">
+              <label>{{ $t("message.settings.push.endpointHostnameEdit") }}</label>
+              <md-input name="domain" id="domain" v-model="pushData.hostname" />
+            </md-field>
+            <md-content>{{ $t("message.settings.push.endpointHostnameLabel") + " https://" + pushData.hostname + "/cxf/push/notify" }}</md-content>
+          </md-card-content>
+          <md-card-actions>
+            <md-button class="md-raised md-primary" v-if="!pushData.enabled" @click.native="enablePushNotifications">{{ $t("message.settings.push.enableButton") }}</md-button>
+            <md-button class="md-raised md-primary" v-if="pushData.enabled" @click.native="disablePushNotifications">{{ $t("message.settings.push.disableButton") }}</md-button>
+          </md-card-actions>
+        </md-card>
+        <md-card class="md-layout-item md-small-size-100">
+          <md-card-heder>
+            <div class="md-subheading">{{ $t("message.settings.sync.title") }}</div>
           </md-card-heder>
           <md-card-content/>
           <md-card-actions>
-            <md-button class="md-raised md-primary" @click.native="synchronizeGroups">{{ $t("message.settings.syncGroupsButton") }}</md-button>
-            <md-button class="md-raised md-primary" @click.native="synchronizeUsers">{{ $t("message.settings.syncUsersButton") }}</md-button>
+            <md-button class="md-raised md-primary" @click.native="synchronizeGroups">{{ $t("message.settings.sync.groupsButton") }}</md-button>
+            <md-button class="md-raised md-primary" @click.native="synchronizeUsers">{{ $t("message.settings.sync.usersButton") }}</md-button>
           </md-card-actions>
         </md-card>
       </md-card-content>
@@ -26,17 +42,75 @@ export default {
   name: 'Settings',
   data() {
     return {
-      accountData: { username: '', name: '', role: '' },
       showProgress: false,
-      formData: { password: '', confirmPassword: '', saveGSuitePassword: true }
+      pushData: {hostname: window.location.hostname, enabled: false}
     };
   },
   created: function() {
+    this.loadPushNotificationStatus()
     if (!this.$auth.userInfo.amAdmin) {
-      this.$auth.logout();
+      this.$auth.logout()
     }
   },
   methods: {
+    enablePushNotifications() {
+      var _this = this;
+      this.$validator
+        .validateAll()
+        .then(res => {
+          if (!res) {
+            // Catch errors
+            console.warn("Form Invalid: " + _this.errors);
+            return;
+          }
+          _this.showProgress = true;
+          console.info("Valid. Enabling push notifications");
+          // Create acccount
+          _this.$http
+            .put(_this.$apiPrefix + "/identity/admin/push/enable", null, { params: { hostname: _this.pushData.hostname } })
+            .then(function(response) {
+              console.info("Push notifications enabled!" + response.data)
+              _this.showProgress = false
+              _this.loadPushNotificationStatus()
+              _this.notifySuccess("message.settings.push.success")
+            })
+            .catch(function(error) {
+              console.warn("Error while enabling push notifications! " + error)
+              _this.showProgress = false
+              _this.notifyError(error.response)
+            });
+        })
+        .catch(function(e) {});
+    },
+    disablePushNotifications() {
+      var _this = this;
+      this.$validator
+        .validateAll()
+        .then(res => {
+          if (!res) {
+            // Catch errors
+            console.warn("Form Invalid: " + _this.errors)
+            return
+          }
+          _this.showProgress = true;
+          console.info("Valid. Disabling push notifications")
+          // Create acccount
+          _this.$http
+            .put(_this.$apiPrefix + "/identity/admin/push/disable", null)
+            .then(function(response) {
+              console.info("Push notifications disabled!" + response.data)
+              _this.showProgress = false
+              _this.loadPushNotificationStatus()
+              _this.notifySuccess("message.settings.push.success")
+            })
+            .catch(function(error) {
+              console.warn("Error while disabling push notifications! " + error)
+              _this.showProgress = false
+              _this.notifyError(error.response)
+            });
+        })
+        .catch(function(e) {});
+    },
     synchronizeGroups: function(event) {
       var _this = this;
       this.$validator
@@ -48,16 +122,13 @@ export default {
             .put(_this.$apiPrefix + '/identity/admin/sync/groups')
             .then(function(response) {
               console.info('All GSuite groups synchronized');
-              _this.notifyGroupsSynchronized();
+              _this.notifySuccess("message.settings.sync.successGroups");
               _this.showProgress = false;
             })
             .catch(function(error) {
               console.warn('Error while synchronizing groups! ' + error);
               _this.showProgress = false;
-              var msgData = error.response.data;
-              _this.notifyError({
-                message: typeof msgData === 'object' ? msgData.message : msgData
-              });
+              _this.notifyError(error.response);
             });
         })
         .catch(function(e) {
@@ -76,7 +147,7 @@ export default {
             .put(_this.$apiPrefix + '/identity/admin/sync/users')
             .then(function(response) {
               console.info('All GSuite user attributes synchronized');
-              _this.notifyUsersSynchronized();
+              _this.notifySuccess("message.settings.sync.successUsers");
               _this.showProgress = false;
             })
             .catch(function(error) {
@@ -84,35 +155,47 @@ export default {
                 'Error while synchronizing user attributes! ' + error
               );
               _this.showProgress = false;
-              var msgData = error.response.data;
-              _this.notifyError({
-                message: typeof msgData === 'object' ? msgData.message : msgData
-              });
+              _this.notifyError(error.response);
             });
         })
         .catch(function(e) {
           // Catch errors
           console.warn('Form Invalid: ' + e);
         });
-    }
-  },
-  notifications: {
-    notifyGroupsSynchronized: {
-      title: 'Group synchronization',
-      message: 'All GSuite groups synchronized.',
-      type: 'success',
-      timeout: 5000
     },
-    notifyUsersSynchronized: {
-      title: 'User attributes synchronization',
-      message: 'All GSuite user attributes synchronized.',
-      type: 'success',
-      timeout: 5000
+    loadPushNotificationStatus() {
+      var _this = this;
+      this.$http
+            .get(this.$apiPrefix + "/identity/admin/push/status")
+            .then(function(response) {
+              console.info("Push notifications status!" + response.data);
+              _this.pushData.enabled = response.data.enabled
+            })
+            .catch(function(error) {
+              console.warn("Error while creating account! " + error);
+              _this.showProgress = false;
+              _this.notifyError(error.response);
+            });
     },
-    notifyError: {
-      title: 'Error Occured',
-      type: 'error',
-      timeout: 5000
+    notifySuccess(prefix) {
+      this.$swal({
+        toast: true,
+        position: 'top',
+        showConfirmButton: false,
+        timer: 4000,
+        type: 'success',
+        title: this.$t(prefix + "Title"),
+        text: this.$t(prefix + "Text")
+      });
+    },
+    notifyError(response) {
+      let data = response.data;
+      let message = typeof data === "object" ? data.message : data;
+      this.$swal({
+        type: "error",
+        title: "Error Occured",
+        text: response.status === 404 ? "Resource not found!" : message
+      });
     }
   }
 };

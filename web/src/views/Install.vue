@@ -1,5 +1,5 @@
 <template>
-  <div class="md-layout-item">
+  <div class="md-layout-item md-size-50 md-small-size-100">
     <form novalidate @submit.prevent="validateForm">
       <md-card>
         <md-progress-bar md-mode="indeterminate" v-if="showProgress"/>
@@ -80,10 +80,15 @@ export default {
           _this.$http
             .put(_this.$apiPrefix + "/setup/google/settings/service-account", serviceAccountData)
             .then(function(response) {
-              console.info("Service account installed!" + response.data)
+              console.info("Service account installed!")
               _this.showProgress = false
-              _this.notifySuccess(_this.$t("message.install.serviceAccountSuccess"))
-              _this.$router.push("/")
+              _this.$swal({
+                type: "success",
+                text: _this.$t("message.install.serviceAccountSuccess"),
+                onClose: () => {
+                  _this.$router.push("/")
+                }
+              })
             })
             .catch(function(error) {
               console.warn("Error while installing service account! " + error)
@@ -100,12 +105,6 @@ export default {
         type: "error",
         title: "Error Occured",
         text: response.status === 404 ? "Resource not found!" : message
-      })
-    },
-    notifySuccess(textMsg) {
-      this.$swal({
-        type: "success",
-        text: textMsg
       })
     }
   }

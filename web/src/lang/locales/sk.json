@@ -25,9 +25,25 @@
         "pageNotFound": "Stránka nebola nájdená!",
         "settings": {
             "title": "Nastavenia",
-            "syncSection": "Synchronizácia",
-            "syncGroupsButton": "Skupiny do LDAP",
-            "syncUsersButton": "GSuite používatelia"
+            "sync": {
+                "title": "Synchronizácia",
+                "groupsButton": " Skupiny do LDAP",
+                "usersButton": "GSuite používatelia",
+                "successUsersTitle": "Synchronizácia používateľských dát",
+                "successUsersText": "Synchronizácia prebehla úspešne",
+                "successGroupsTitle": "Synchronizácia skupín",
+                "successGroupsText": "Synchronizácia prebehla úspešne"
+            },
+            "push": {
+                "title": "Push notifikácie",
+                "endpointHostnameEdit": "Endpoint pre push notifikácie",
+                "endpointHostnameLabel": "Google bude posielať notifikácie na adresu",
+                "enableButton": "Zapni",
+                "disableButton": "Vypni",
+                "enabledLabel": "Push notifikácie su zapnuté.",
+                "successTitle": "Push notifikácie",
+                "successText": "Push notifikácie boli úspešne zapnuté!"
+            }
         },
         "install": {
             "title": "Inštalácia služieb Google",

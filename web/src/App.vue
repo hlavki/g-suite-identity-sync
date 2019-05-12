@@ -54,7 +54,7 @@
           </md-list-item>
         </md-list>
       </md-app-drawer>
-      <md-app-content class="md-layout md-size-60 md-small-size-100 md-alignment-top-center">
+      <md-app-content class="md-layout md-alignment-top-center">
         <router-view></router-view>
       </md-app-content>
     </md-app>

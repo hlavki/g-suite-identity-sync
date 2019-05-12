@@ -25,9 +25,25 @@
         "pageNotFound": "Page Not Found!",
         "settings": {
             "title": "Settings",
-            "syncSection": "Synchronization",
-            "syncGroupsButton": " Groups to LDAP",
-            "syncUsersButton": "GSuite User Attributes"
+            "sync": {
+                "title": "Synchronization",
+                "groupsButton": " Groups to LDAP",
+                "usersButton": "GSuite User Attributes",
+                "successUsersTitle": "User attributes synchronization",
+                "successUsersText": "All GSuite user attributes synchronized.",
+                "successGroupsTitle": "Group synchronization",
+                "successGroupsText": "All GSuite groups synchronized."
+            },
+            "push": {
+                "title": "Push Notifications",
+                "endpointHostnameEdit": "Push notification endpoint hostname",
+                "endpointHostnameLabel": "Google send push notifications to",
+                "enableButton": "Enable",
+                "disableButton": "Disable",
+                "enabledLabel": "Push notifications are enabled.",
+                "successTitle": "Push notifications",
+                "successText": "Push notifications are successfully enabled!"
+            }
         },
         "install": {
             "title": "Install Google Services",
@@ -38,6 +54,5 @@
             "serviceAccountSetup": "Setup",
             "serviceAccountSuccess": "Google services succesfully installed. You can use application!"
         }
-
     }
 }

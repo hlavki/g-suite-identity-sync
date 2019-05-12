@@ -158,6 +158,7 @@ public class PushNotificationServiceImpl implements PushNotificationService {
         } catch (ClientErrorException e) {
             String body = e.getResponse().readEntity(String.class);
             log.error("Cannot register push notification channel for {}.\nResponse: {}", config.getGSuiteDomain(), body);
+            throw new RuntimeException("Cannot register push notification channel for " + hostname);
         }
     }
 
@@ -179,6 +180,7 @@ public class PushNotificationServiceImpl implements PushNotificationService {
             config.getPushChannelFile().delete();
         } else {
             log.error("Cannot stop watching domain! Status: {}, Reason: {}", status.getStatusCode(), status.getReasonPhrase());
+            throw new RuntimeException("Cannot disable notification channel");
         }
     }
 

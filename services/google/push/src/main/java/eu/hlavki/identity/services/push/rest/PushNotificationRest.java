@@ -91,10 +91,14 @@ public class PushNotificationRest {
     }
 
     private String getGroupEmail(Event evt) {
-        return evt.getParameters().stream().filter(p -> p.getName().equals("GROUP_EMAIL")).findAny().map(p -> p.getValue()).orElseThrow();
+        return evt.getParameters().stream()
+                .filter(p -> p.getName().equals("GROUP_EMAIL"))
+                .findAny().map(p -> p.getValue()).orElseThrow();
     }
 
     private String getUserEmail(Event evt) {
-        return evt.getParameters().stream().filter(p -> p.getName().equals("USER_EMAIL")).findAny().map(p -> p.getValue()).orElseThrow();
+        return evt.getParameters().stream()
+                .filter(p -> p.getName().equals("USER_EMAIL"))
+                .findAny().map(p -> p.getValue()).orElseThrow();
     }
 }

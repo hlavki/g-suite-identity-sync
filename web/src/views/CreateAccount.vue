@@ -1,5 +1,5 @@
 <template>
-  <div class="md-layout-item">
+  <div class="md-layout-item md-size-50 md-small-size-100">
     <form novalidate @submit.prevent="validateForm">
       <md-card>
         <md-progress-bar v-if="showProgress" />
@@ -80,6 +80,7 @@ export default {
   name: "CreateAccount",
   data: () => ({
     showProgress: true,
+    userData: {},
     formData: {
       email: null,
       password: "",

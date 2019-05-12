@@ -14,10 +14,13 @@
 
     <reference id="accountSyncService" interface="eu.hlavki.identity.services.sync.AccountSyncService" />
 
+    <reference id="pushNotificationService" interface="eu.hlavki.identity.services.google.PushNotificationService" />
+
     <bean id="userInfoService" class="eu.hlavki.identity.services.rest.service.UserInfoService" />
 
     <bean id="adminService" class="eu.hlavki.identity.services.rest.service.AdminService">
         <argument ref="accountSyncService"/>
+        <argument ref="pushNotificationService"/>
     </bean>
 
     <bean id="userAccountService" class="eu.hlavki.identity.services.rest.service.UserAccountService">

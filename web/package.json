@@ -9,19 +9,19 @@
   },
   "dependencies": {
     "axios": "^0.18.0",
-    "vee-validate": "^2.2.0",
-    "vue": "^2.6.8",
-    "vue-i18n": "^8.10.0",
-    "vue-material": "^1.0.0-beta-10.2",
-    "vue-router": "^3.0.2",
+    "vee-validate": "^2.2.7",
+    "vue": "^2.6.10",
+    "vue-i18n": "^8.11.2",
+    "vue-material": "^1.0.0-beta-11",
+    "vue-router": "^3.0.6",
     "vue-sweetalert2": "^1.6.4"
   },
   "devDependencies": {
-    "@vue/cli-plugin-babel": "^3.5.1",
-    "@vue/cli-plugin-eslint": "^3.5.1",
-    "@vue/cli-service": "^3.5.1",
+    "@vue/cli-plugin-babel": "^3.7.0",
+    "@vue/cli-plugin-eslint": "^3.7.0",
+    "@vue/cli-service": "^3.7.0",
     "babel-eslint": "^10.0.1",
-    "eslint": "^5.15.3",
+    "eslint": "^5.16.0",
     "eslint-plugin-vue": "^5.2.2",
     "vue-template-compiler": "^2.6.10"
   },
