@@ -11,8 +11,6 @@ services:
       - SLAPD_BASE_DN=dc=example,dc=org
       - SLAPD_PASSWORD=changeme
       - GSUITE_DOMAIN=example.org
-      - GSUITE_SERVICE_ACCOUNT_EMAIL=gsuite-services-client@******.gserviceaccount.com
-      - GSUITE_SERVICE_ACCOUNT_SUBJECT=some-admin@example.org
       - GSUITE_CLIENT_ID=*******.apps.googleusercontent.com
       - GSUITE_CLIENT_SECRET=******
     depends_on:

@@ -29,7 +29,7 @@ public interface Configuration {
     PrivateKey readServiceAccountKey() throws NoPrivateKeyException;
 
 
-    void setServiceAccount(String clientEmail, String privateKey, String tokenUri);
+    void setServiceAccount(String clientEmail, String privateKey, String subject, String tokenUri);
 
 
     void resetServiceAccount();

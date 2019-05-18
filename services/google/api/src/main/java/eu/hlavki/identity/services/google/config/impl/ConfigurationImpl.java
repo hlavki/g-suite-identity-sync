@@ -278,10 +278,11 @@ public class ConfigurationImpl implements Configuration {
 
 
     @Override
-    public void setServiceAccount(String clientEmail, String privateKey, String tokenUri) {
+    public void setServiceAccount(String clientEmail, String privateKey, String subject, String tokenUri) {
         set(SERVICE_ACCOUNT_EMAIL_PROP, clientEmail);
         set(SERVICE_ACCOUNT_PRIVATE_KEY_PROP, privateKey);
         set(SERVICE_ACCOUNT_TOKEN_URI_PROP, tokenUri);
+        set(SERVICE_ACCOUNT_SUBJECT_PROP, subject);
         LOG.info("Service account key is configured");
     }
 

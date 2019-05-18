@@ -12,13 +12,10 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.core.Context;
 import org.apache.cxf.rs.security.oidc.rp.OidcClientTokenContext;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 @Path("google/settings")
 public class GoogleSettingsService {
 
-    private static final Logger LOG = LoggerFactory.getLogger(GoogleSettingsService.class);
     @Context
     private OidcClientTokenContext oidcContext;
     private final Configuration googleConfig;
@@ -50,7 +47,7 @@ public class GoogleSettingsService {
                 .replace("-----END PRIVATE KEY-----", "")
                 .replace("\n", "");
         String me = oidcContext.getUserInfo().getSubject();
-        googleConfig.setServiceAccount(serviceAccount.getClientEmail(), privateKey, serviceAccount.getTokenUri());
+        googleConfig.setServiceAccount(serviceAccount.getClientEmail(), privateKey, me, serviceAccount.getTokenUri());
         String adminGroup = config.getAdminGroup() + "@" + gsuiteDirService.getDomainName();
         GroupMembership admins = gsuiteDirService.getGroupMembers(adminGroup);
         if (!admins.isMember(me)) {
