@@ -17,10 +17,10 @@ public class ConfigureServiceAccountCommand implements Action {
     @Argument(index = 1, name = "privateKey", description = "Base64 encoded private key", required = true, multiValued = false)
     String privateKey;
 
-    @Argument(index = 1, name = "subject", description = "Subject email", required = true, multiValued = false)
+    @Argument(index = 2, name = "subject", description = "Subject email", required = true, multiValued = false)
     String subject;
 
-    @Argument(index = 1, name = "tokenUri", description = "Uri to obtain security token", required = true, multiValued = false)
+    @Argument(index = 3, name = "tokenUri", description = "Uri to obtain security token", required = true, multiValued = false)
     String tokenUri;
 
     @Reference
