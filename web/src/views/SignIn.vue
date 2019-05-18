@@ -1,5 +1,5 @@
 <template>
-  <div  class="md-layout-item md-size-50 md-small-size-100">
+  <div  class="md-layout-item md-alignment-top-left">
     <md-button class="md-raised md-primary" v-on:click.native="signIn"><img class="google-logo" src="../assets/google.png">Sign In</md-button>
   </div>
 </template>
