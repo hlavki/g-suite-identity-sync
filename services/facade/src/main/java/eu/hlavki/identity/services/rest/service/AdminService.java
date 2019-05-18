@@ -2,15 +2,19 @@ package eu.hlavki.identity.services.rest.service;
 
 import eu.hlavki.identity.services.google.PushNotificationService;
 import eu.hlavki.identity.services.rest.model.PushNotificationStatus;
+import static eu.hlavki.identity.services.rest.security.AuthzRole.ADMIN;
 import eu.hlavki.identity.services.sync.AccountSyncService;
+import javax.annotation.security.RolesAllowed;
 import javax.ws.rs.GET;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.QueryParam;
+import org.apache.cxf.security.claims.authorization.Claim;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @Path("admin")
+@RolesAllowed(ADMIN)
 public class AdminService {
 
     private static final Logger log = LoggerFactory.getLogger(AdminService.class);

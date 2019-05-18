@@ -67,14 +67,18 @@ public class GSuiteGroupAuthorizationFilter implements ContainerRequestFilter {
         boolean internal = gsuiteDirService.getDomainName().equalsIgnoreCase(userDomain);
         boolean external = false;
         Set<String> roles = new HashSet<>();
+        String masterRole = null;
         if (internal) {
             roles.add(AuthzRole.INTERNAL);
+            masterRole = AuthzRole.INTERNAL;
         } else if (externalUsersCache.get().contains(email)) {
             roles.add(AuthzRole.EXTERNAL);
+            masterRole = AuthzRole.EXTERNAL;
             external = true;
         }
         if (adminUsersCache.get().contains(email)) {
             roles.add(AuthzRole.ADMIN);
+            masterRole = AuthzRole.ADMIN;
         }
         if (internal || external) {
         } else {
@@ -82,7 +86,9 @@ public class GSuiteGroupAuthorizationFilter implements ContainerRequestFilter {
             ServerError err = new ServerError("E001", "Sorry you are not allowed to enter this site");
             requestContext.abortWith(Response.status(Response.Status.UNAUTHORIZED).entity(err).type(MediaType.APPLICATION_JSON).build());
         }
-        secCtx.getOidcContext().getUserInfo().setProperty("roles", roles);
+        secCtx.getOidcContext().getUserInfo().setProperty("securityRoles", roles);
+        secCtx.getOidcContext().getUserInfo().setProperty("masterRole", masterRole);
+        secCtx.setRoleClaim("masterRole");
     }
 
 

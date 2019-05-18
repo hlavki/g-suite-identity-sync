@@ -28,7 +28,7 @@ public class UserInfoService {
     public UserInfo getUserInfo() {
         org.apache.cxf.rs.security.oidc.common.UserInfo userInfo = oidcContext.getUserInfo();
         URI profilePicture = resizeProfilePicture(userInfo.getPicture());
-        Set<String> roles = (Set) userInfo.getProperty("roles");
+        Set<String> roles = (Set) userInfo.getProperty("securityRoles");
         boolean amAdmin = roles.contains(AuthzRole.ADMIN);
         return new UserInfo(userInfo.getName(), userInfo.getEmail(), amAdmin, profilePicture);
     }
