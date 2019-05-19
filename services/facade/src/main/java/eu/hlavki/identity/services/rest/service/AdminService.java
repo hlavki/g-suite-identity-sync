@@ -9,15 +9,11 @@ import javax.ws.rs.GET;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.QueryParam;
-import org.apache.cxf.security.claims.authorization.Claim;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 @Path("admin")
 @RolesAllowed(ADMIN)
 public class AdminService {
 
-    private static final Logger log = LoggerFactory.getLogger(AdminService.class);
     private final AccountSyncService syncService;
     private final PushNotificationService pushService;
 
