@@ -44,6 +44,18 @@ const AuthPlugin = {
           this.loggedIn = false
           this.userInfo = undefined
           options.router.push('/sign-in')
+        },
+        notifyError(response) {
+          let data = response.data;
+          let message = typeof data === "object" ? data.message : data;
+          Vue.prototype.$swal({
+            toast: true,
+            position: 'top',
+            showConfirmButton: false,
+            timer: 4000,
+            type: 'warning',
+            text: message
+          });
         }
       }
     })
