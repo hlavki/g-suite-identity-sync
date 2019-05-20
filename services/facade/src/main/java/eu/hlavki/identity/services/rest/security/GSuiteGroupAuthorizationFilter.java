@@ -46,8 +46,7 @@ public class GSuiteGroupAuthorizationFilter implements ContainerRequestFilter {
         this.externalUsersCache = Suppliers.memoizeWithExpiration(
                 () -> appConfig.getExternalAccountsGroup().map(g -> getExternalGroupMembers(g)).orElse(emptySet()),
                 15, TimeUnit.MINUTES);
-        this.adminUsersCache = Suppliers.memoizeWithExpiration(
-                () -> getExternalGroupMembers(config.getAdminGroup() + "@" + googleConfig.getGSuiteDomain()),
+        this.adminUsersCache = Suppliers.memoizeWithExpiration(() -> getExternalGroupMembers(config.getAdminGroup()),
                 15, TimeUnit.MINUTES);
     }
 

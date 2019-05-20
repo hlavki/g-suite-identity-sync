@@ -38,7 +38,7 @@ public class GSuiteDirectoryServiceImpl implements GSuiteDirectoryService {
 
 
     private GroupMembership readGroupMembers(String groupKey, GroupMembership parent) throws ResourceNotFoundException {
-        String path = MessageFormat.format("/admin/directory/v1/groups/{0}/members", new Object[]{groupKey});
+        String path = MessageFormat.format("/admin/directory/v1/groups/{0}/members", new Object[]{completeGroupKey(groupKey)});
 
         WebClient webClient = WebClient.fromClient(directoryApiClient, true).path(path);
         ClientAccessToken accessToken = tokenCache.getToken();
@@ -60,7 +60,7 @@ public class GSuiteDirectoryServiceImpl implements GSuiteDirectoryService {
 
     @Override
     public GSuiteGroup getGroup(String groupKey) {
-        String path = MessageFormat.format("/admin/directory/v1/groups/{0}", new Object[]{groupKey});
+        String path = MessageFormat.format("/admin/directory/v1/groups/{0}", new Object[]{completeGroupKey(groupKey)});
 
         WebClient webClient = WebClient.fromClient(directoryApiClient, true);
         webClient.authorization(tokenCache.getToken());
@@ -171,5 +171,10 @@ public class GSuiteDirectoryServiceImpl implements GSuiteDirectoryService {
             }
         }
         return result;
+    }
+
+
+    private String completeGroupKey(String groupKey) {
+        return groupKey.indexOf('@') < 0 ? groupKey + '@' + getDomainName() : groupKey;
     }
 }
