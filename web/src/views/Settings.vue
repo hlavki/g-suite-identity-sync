@@ -15,7 +15,8 @@
               <label>{{ $t("message.settings.push.endpointHostnameEdit") }}</label>
               <md-input name="domain" id="domain" v-model="pushData.hostname" />
             </md-field>
-            <md-content>{{ $t("message.settings.push.endpointHostnameLabel") + " https://" + pushData.hostname + "/cxf/push/notify" }}</md-content>
+            <md-content v-if="!pushData.enabled">{{ $t("message.settings.push.endpointHostnameLabel") + " https://" + pushData.hostname + "/cxf/push/notify" }}</md-content>
+            <md-content v-if="pushData.enabled">{{ $t("message.settings.push.enabledLabel") }}</md-content>
           </md-card-content>
           <md-card-actions>
             <md-button class="md-raised md-primary" v-if="!pushData.enabled" @click.native="enablePushNotifications">{{ $t("message.settings.push.enableButton") }}</md-button>
