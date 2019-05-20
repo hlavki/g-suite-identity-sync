@@ -64,7 +64,7 @@ function ApplyRouteGuard(router) {
         console.log('Hide from authenticated users - only for guests:', route.path)
         // TODO: disable, hide somehow
       } else {
-        console.log('Appropriate route, user/guset has rights to visit:', route.path)
+        console.log('Appropriate route, user/guest has rights to visit:', route.path)
       }
     }
     next()
