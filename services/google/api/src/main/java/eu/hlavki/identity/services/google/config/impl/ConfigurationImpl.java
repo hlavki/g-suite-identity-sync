@@ -10,6 +10,7 @@ import java.security.spec.InvalidKeySpecException;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.time.Duration;
 import java.util.*;
+import java.util.function.Consumer;
 import org.osgi.service.cm.ConfigurationAdmin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -55,14 +56,21 @@ public class ConfigurationImpl implements Configuration {
     }
 
 
-    public void set(String name, Object value) {
+    public void update(Consumer<Dictionary<String, Object>> consumer) {
         try {
             Dictionary<String, Object> props = osgiConfig.getProperties();
-            props.put(name, value);
+            consumer.accept(props);
             osgiConfig.update(props);
         } catch (IOException e) {
-            LOG.warn("Cannot set property " + name, e);
+            LOG.warn("Cannot update configuration", e);
         }
+    }
+
+
+    public void set(String name, Object value) {
+        update(props -> {
+            props.put(name, value);
+        });
     }
 
 
@@ -279,19 +287,24 @@ public class ConfigurationImpl implements Configuration {
 
     @Override
     public void setServiceAccount(String clientEmail, String privateKey, String subject, String tokenUri) {
-        set(SERVICE_ACCOUNT_EMAIL_PROP, clientEmail);
-        set(SERVICE_ACCOUNT_PRIVATE_KEY_PROP, privateKey);
-        set(SERVICE_ACCOUNT_TOKEN_URI_PROP, tokenUri);
-        set(SERVICE_ACCOUNT_SUBJECT_PROP, subject);
+        update(props -> {
+            props.put(SERVICE_ACCOUNT_EMAIL_PROP, clientEmail);
+            props.put(SERVICE_ACCOUNT_PRIVATE_KEY_PROP, privateKey);
+            props.put(SERVICE_ACCOUNT_TOKEN_URI_PROP, tokenUri);
+            props.put(SERVICE_ACCOUNT_SUBJECT_PROP, subject);
+        });
         LOG.info("Service account key is configured");
     }
 
 
     @Override
     public void resetServiceAccount() {
-        set(SERVICE_ACCOUNT_EMAIL_PROP, null);
-        set(SERVICE_ACCOUNT_PRIVATE_KEY_PROP, null);
-        set(SERVICE_ACCOUNT_TOKEN_URI_PROP, null);
+        update(props -> {
+            props.remove(SERVICE_ACCOUNT_EMAIL_PROP);
+            props.remove(SERVICE_ACCOUNT_PRIVATE_KEY_PROP);
+            props.remove(SERVICE_ACCOUNT_TOKEN_URI_PROP);
+            props.remove(SERVICE_ACCOUNT_SUBJECT_PROP);
+        });
         LOG.info("Service account configuration is removed");
     }
 
