@@ -170,6 +170,17 @@ public class AccountSyncServiceImpl implements AccountSyncService {
 
 
     @Override
+    public void synchronizeGSuiteUser(String email) {
+        Optional<LdapAccount> account = ldapService.searchByEmail(email);
+        account.ifPresent(acc -> {
+            GSuiteUser gsuiteUser = gsuiteDirService.getUser(acc.getSubject());
+            ldapService.updateAccount(AccountUtil.toLdapAccount(gsuiteUser));
+            LOG.info("User {} successfully updated.", acc.getUsername());
+        });
+    }
+
+
+    @Override
     public void cleanExternalUsers() {
         Optional<String> externalGroup = appConfig.getExternalAccountsGroup();
         Set<LdapAccount> toRemove = externalGroup.map(extGroup -> {

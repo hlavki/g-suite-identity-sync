@@ -17,6 +17,9 @@ public interface AccountSyncService {
     void synchronizeAllGroups();
 
 
+    void synchronizeGSuiteUser(String email);
+
+
     void synchronizeGSuiteUsers();
 
 

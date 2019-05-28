@@ -54,6 +54,10 @@ public class PushNotificationRest {
                 case "DELETE_USER":
                     deleteUser(evt);
                     break;
+                case "CHANGE_FIRST_NAME":
+                case "CHANGE_LAST_NAME":
+                    syncUser(evt);
+                    break;
                 default:
                     log.info("Event {} of type {} is not relevant for me!", evt.getName(), evt.getType());
                     break;
@@ -69,6 +73,14 @@ public class PushNotificationRest {
         try {
             syncService.synchronizeGroup(getGroupEmail(evt));
             syncService.cleanExternalUsers();
+        } catch (LdapSystemException | ResourceNotFoundException e) {
+            log.error("Cannot process event " + evt + " because of error!", e);
+        }
+    }
+
+    private void syncUser(Event evt) {
+        try {
+            syncService.synchronizeGSuiteUser(getUserEmail(evt));
         } catch (LdapSystemException | ResourceNotFoundException e) {
             log.error("Cannot process event " + evt + " because of error!", e);
         }
