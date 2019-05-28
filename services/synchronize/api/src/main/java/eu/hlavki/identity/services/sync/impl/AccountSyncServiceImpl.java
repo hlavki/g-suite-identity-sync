@@ -19,7 +19,7 @@ import org.slf4j.LoggerFactory;
 
 public class AccountSyncServiceImpl implements AccountSyncService {
 
-    private static final Logger log = LoggerFactory.getLogger(AccountSyncServiceImpl.class);
+    private static final Logger LOG = LoggerFactory.getLogger(AccountSyncServiceImpl.class);
     private final LdapAccountService ldapService;
     private final GSuiteDirectoryService gsuiteDirService;
     private final AppConfiguration appConfig;
@@ -61,8 +61,8 @@ public class AccountSyncServiceImpl implements AccountSyncService {
         Set<String> toAdd = new HashSet<>(toBe);
         toAdd.removeAll(asIs);
 
-        log.info("Remove membership for user {} from groups {}", userInfo.getEmail(), toRemove);
-        log.info("Add membership for user {} to groups {}", userInfo.getEmail(), toAdd);
+        LOG.info("Remove membership for user {} from groups {}", userInfo.getEmail(), toRemove);
+        LOG.info("Add membership for user {} to groups {}", userInfo.getEmail(), toAdd);
 
         for (String group : toRemove) {
             ldapService.deleteGroupMember(accountDN, group);
@@ -102,7 +102,7 @@ public class AccountSyncServiceImpl implements AccountSyncService {
 
         Set<String> toRemove = new HashSet<>(ldapGroups);
         toRemove.removeAll(syncedGroups);
-        log.info("Removing groups from LDAP {}", toRemove);
+        LOG.info("Removing groups from LDAP {}", toRemove);
         for (String groupName : toRemove) {
             ldapService.deleteGroup(groupName);
         }
@@ -136,7 +136,7 @@ public class AccountSyncServiceImpl implements AccountSyncService {
 
     private LdapGroup synchronizeGroup(GSuiteGroup gsuiteGroup, GroupMembership gsuiteMembership,
             Map<String, LdapAccount> emailAccountMap) {
-        log.info("Starting to synchronize group {}", gsuiteGroup.getEmail());
+        LOG.info("Starting to synchronize group {}", gsuiteGroup.getEmail());
         LdapGroup ldapGroup = new LdapGroup();
         ldapGroup.setName(AccountUtil.getLdapGroupName(gsuiteGroup));
         ldapGroup.setDescription(gsuiteGroup.getName());
@@ -147,11 +147,11 @@ public class AccountSyncServiceImpl implements AccountSyncService {
         LdapGroup result = ldapGroup;
         if (!members.isEmpty()) {
             ldapGroup.setMembersDn(members);
-            log.info("Synchronizing GSuite group {} as LDAP group {} with {} members",
+            LOG.info("Synchronizing GSuite group {} as LDAP group {} with {} members",
                     gsuiteGroup.getEmail(), ldapGroup.getName(), ldapGroup.getMembersDn().size());
             result = ldapService.createOrUpdateGroup(ldapGroup);
         } else {
-            log.info("Removing group {} from LDAP. No active members!", ldapGroup.getName());
+            LOG.info("Removing group {} from LDAP. No active members!", ldapGroup.getName());
             ldapService.deleteGroup(ldapGroup.getName());
         }
         return result;
@@ -160,14 +160,11 @@ public class AccountSyncServiceImpl implements AccountSyncService {
 
     @Override
     public void synchronizeGSuiteUsers() {
-        GSuiteUsers users = gsuiteDirService.getAllUsers();
-        for (GSuiteUser user : users.getUsers()) {
-            if (ldapService.accountExists(user.getId())) {
-                ldapService.updateAccount(AccountUtil.toLdapAccount(user));
-                log.info("User {} successfully updated.", user.getPrimaryEmail());
-            } else {
-                log.info("User {} does not exists in LDAP.", user.getPrimaryEmail());
-            }
+        List<LdapAccount> accounts = ldapService.getAllAccounts();
+        for (LdapAccount account : accounts) {
+            GSuiteUser gsuiteUser = gsuiteDirService.getUser(account.getSubject());
+            ldapService.updateAccount(AccountUtil.toLdapAccount(gsuiteUser));
+            LOG.info("User {} successfully updated.", account.getUsername());
         }
     }
 
@@ -179,10 +176,9 @@ public class AccountSyncServiceImpl implements AccountSyncService {
             List<LdapAccount> ldapExt = ldapService.searchByRole(LdapAccount.Role.EXTERNAL);
             GroupMembership gsuiteExt = gsuiteDirService.getGroupMembers(extGroup);
             Set<String> gsuiteSubjects = gsuiteExt.getMembers().stream().map(u -> u.getId()).collect(toSet());
-            Set<String> ldapSubjects = ldapExt.stream().map(u -> u.getSubject()).collect(toSet());
             return ldapExt.stream().filter(acc -> !gsuiteSubjects.contains(acc.getSubject())).collect(toSet());
         }).orElse(emptySet());
-        log.info("Cleaning {} external users", toRemove.size());
+        LOG.info("Cleaning {} external users", toRemove.size());
         toRemove.forEach(ldapService::deleteUser);
     }
 }
