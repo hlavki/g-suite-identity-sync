@@ -44,9 +44,9 @@ public class GSuiteGroupAuthorizationFilter implements ContainerRequestFilter {
 
         this.gsuiteDirService = gsuiteDirService;
         this.externalUsersCache = Suppliers.memoizeWithExpiration(
-                () -> appConfig.getExternalAccountsGroup().map(g -> getExternalGroupMembers(g)).orElse(emptySet()),
+                () -> appConfig.getExternalAccountsGroup().map(g -> getGroupMembers(g)).orElse(emptySet()),
                 15, TimeUnit.MINUTES);
-        this.adminUsersCache = Suppliers.memoizeWithExpiration(() -> getExternalGroupMembers(config.getAdminGroup()),
+        this.adminUsersCache = Suppliers.memoizeWithExpiration(() -> getGroupMembers(config.getAdminGroup()),
                 15, TimeUnit.MINUTES);
     }
 
@@ -91,10 +91,11 @@ public class GSuiteGroupAuthorizationFilter implements ContainerRequestFilter {
     }
 
 
-    private Set<String> getExternalGroupMembers(String groupName) {
+    private Set<String> getGroupMembers(String groupName) {
         Set<String> result = emptySet();
         try {
-            GroupMembership membership = gsuiteDirService.getGroupMembers(groupName);
+            String groupEmail = gsuiteDirService.completeGroupEmail(groupName);
+            GroupMembership membership = gsuiteDirService.getGroupMembers(groupEmail);
             result = membership.getMembers() == null ? Collections.emptySet()
                     : membership.getMembers().stream().map(m -> m.getEmail()).collect(Collectors.toSet());
         } catch (ResourceNotFoundException e) {

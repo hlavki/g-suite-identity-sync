@@ -25,6 +25,13 @@
         "pageNotFound": "Page Not Found!",
         "settings": {
             "title": "Settings",
+            "general": {
+                "title": "General",
+                "externalAccountsGroupLabel": "Group for external users",
+                "saveButton": "Save",
+                "savedTitle": "General settings",
+                "savedText": "Successfully saved."
+            },
             "sync": {
                 "title": "Synchronization",
                 "groupsButton": " Groups to LDAP",

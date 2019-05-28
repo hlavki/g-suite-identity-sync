@@ -7,11 +7,30 @@
       </md-card-header>
       <md-card-content>
         <md-card class="md-layout-item md-small-size-100">
-          <md-card-heder>
-            <div class="md-subheading">{{ $t("message.settings.push.title") }}</div>
-          </md-card-heder>
+          <md-card-header>
+            <div class="md-subheading">{{ $t("message.settings.general.title") }}</div>
+          </md-card-header>
           <md-card-content>
-            <md-field :class="messageClass" v-if="!pushData.enabled">
+            <md-field>
+              <label for="generalData.externalAccountsGroup">{{ $t("message.settings.general.externalAccountsGroupLabel") }}</label>
+                <md-select v-model="generalData.externalAccountsGroup" name="externalAccountsGroup" id="externalAccountsGroup" md-dense>
+                  <md-option value="">None</md-option>
+                  <md-option v-for="group in googleGroups" :key="group.email" :value="group.email">
+                    {{ group.email.match(/^([^@]*)@/)[1] }} ({{ group.name }})
+                  </md-option>
+                </md-select>
+            </md-field>
+          </md-card-content>
+          <md-card-actions>
+            <md-button class="md-raised md-primary" @click.native="saveGeneralSettings">{{ $t("message.settings.general.saveButton") }}</md-button>
+          </md-card-actions>
+        </md-card>
+        <md-card class="md-layout-item md-small-size-100">
+          <md-card-header>
+            <div class="md-subheading">{{ $t("message.settings.push.title") }}</div>
+          </md-card-header>
+          <md-card-content>
+            <md-field v-if="!pushData.enabled">
               <label>{{ $t("message.settings.push.endpointHostnameEdit") }}</label>
               <md-input name="domain" id="domain" v-model="pushData.hostname" />
             </md-field>
@@ -24,9 +43,9 @@
           </md-card-actions>
         </md-card>
         <md-card class="md-layout-item md-small-size-100">
-          <md-card-heder>
+          <md-card-header>
             <div class="md-subheading">{{ $t("message.settings.sync.title") }}</div>
-          </md-card-heder>
+          </md-card-header>
           <md-card-content/>
           <md-card-actions>
             <md-button class="md-raised md-primary" @click.native="synchronizeGroups">{{ $t("message.settings.sync.groupsButton") }}</md-button>
@@ -44,16 +63,47 @@ export default {
   data() {
     return {
       showProgress: false,
+      generalData: {externalAccountsGroup: null},
+      googleGroups:[],
       pushData: {hostname: window.location.hostname, enabled: false}
     };
   },
   created: function() {
     this.loadPushNotificationStatus()
+    this.loadGoogleGroups()
+    this.loadGeneralSettings()
     if (!this.$auth.userInfo.amAdmin) {
       this.$auth.logout()
     }
   },
   methods: {
+    saveGeneralSettings() {
+      var _this = this;
+      this.$validator
+        .validateAll()
+        .then(res => {
+          if (!res) {
+            // Catch errors
+            console.warn("Form Invalid: " + _this.errors);
+            return;
+          }
+          _this.showProgress = true;
+          console.info("Valid. Saving general settings");
+          _this.$http
+            .put(_this.$apiPrefix + "/identity/admin/general-settings", _this.generalData)
+            .then(function(response) {
+              console.info("General Settings saved!" + response.data)
+              _this.showProgress = false
+              _this.notifySuccess("message.settings.general.saved")
+            })
+            .catch(function(error) {
+              console.warn("Error while saving general settings! " + error)
+              _this.showProgress = false
+              _this.notifyError(error.response)
+            });
+        })
+        .catch(function(e) {});
+    },
     enablePushNotifications() {
       var _this = this;
       this.$validator
@@ -174,6 +224,32 @@ export default {
             })
             .catch(function(error) {
               console.warn("Error while creating account! " + error);
+              _this.showProgress = false;
+              _this.notifyError(error.response);
+            });
+    },
+    loadGoogleGroups() {
+      var _this = this;
+      this.$http
+            .get(this.$apiPrefix + "/identity/admin/google/groups")
+            .then(function(response) {
+              _this.googleGroups = response.data
+            })
+            .catch(function(error) {
+              console.warn("Error while getting external users groups! " + error);
+              _this.showProgress = false;
+              _this.notifyError(error.response);
+            });
+    },
+    loadGeneralSettings() {
+      var _this = this;
+      this.$http
+            .get(this.$apiPrefix + "/identity/admin/general-settings")
+            .then(function(response) {
+              _this.generalData = response.data
+            })
+            .catch(function(error) {
+              console.warn("Error while getting general settings! " + error);
               _this.showProgress = false;
               _this.notifyError(error.response);
             });

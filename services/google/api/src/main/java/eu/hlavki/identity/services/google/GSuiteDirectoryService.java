@@ -79,4 +79,7 @@ public interface GSuiteDirectoryService {
 
 
     String getImplicitGroup();
+
+
+    String completeGroupEmail(String groupName);
 }

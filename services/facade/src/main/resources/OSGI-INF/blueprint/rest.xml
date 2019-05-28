@@ -21,6 +21,8 @@
     <bean id="adminService" class="eu.hlavki.identity.services.rest.service.AdminService">
         <argument ref="accountSyncService"/>
         <argument ref="pushNotificationService"/>
+        <argument ref="gSuiteDirService"/>
+        <argument ref="appConfiguration"/>
     </bean>
 
     <bean id="userAccountService" class="eu.hlavki.identity.services.rest.service.UserAccountService">

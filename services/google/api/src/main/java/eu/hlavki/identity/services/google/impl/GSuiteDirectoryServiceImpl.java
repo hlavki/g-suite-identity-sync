@@ -17,7 +17,7 @@ import org.slf4j.LoggerFactory;
 
 public class GSuiteDirectoryServiceImpl implements GSuiteDirectoryService {
 
-    private static final Logger log = LoggerFactory.getLogger(GSuiteDirectoryServiceImpl.class);
+    private static final Logger LOG = LoggerFactory.getLogger(GSuiteDirectoryServiceImpl.class);
 
     private final TokenCache tokenCache;
     private final WebClient directoryApiClient;
@@ -38,7 +38,7 @@ public class GSuiteDirectoryServiceImpl implements GSuiteDirectoryService {
 
 
     private GroupMembership readGroupMembers(String groupKey, GroupMembership parent) throws ResourceNotFoundException {
-        String path = MessageFormat.format("/admin/directory/v1/groups/{0}/members", new Object[]{completeGroupKey(groupKey)});
+        String path = MessageFormat.format("/admin/directory/v1/groups/{0}/members", new Object[]{groupKey});
 
         WebClient webClient = WebClient.fromClient(directoryApiClient, true).path(path);
         ClientAccessToken accessToken = tokenCache.getToken();
@@ -60,7 +60,7 @@ public class GSuiteDirectoryServiceImpl implements GSuiteDirectoryService {
 
     @Override
     public GSuiteGroup getGroup(String groupKey) {
-        String path = MessageFormat.format("/admin/directory/v1/groups/{0}", new Object[]{completeGroupKey(groupKey)});
+        String path = MessageFormat.format("/admin/directory/v1/groups/{0}", new Object[]{groupKey});
 
         WebClient webClient = WebClient.fromClient(directoryApiClient, true);
         webClient.authorization(tokenCache.getToken());
@@ -139,6 +139,12 @@ public class GSuiteDirectoryServiceImpl implements GSuiteDirectoryService {
     }
 
 
+    @Override
+    public String completeGroupEmail(String groupName) {
+        return groupName != null && groupName.indexOf('@') < 0 ? groupName + '@' + getDomainName() : groupName;
+    }
+
+
     private GSuiteUsers readAllUsers() {
         return readAllUsers(null);
     }
@@ -167,14 +173,9 @@ public class GSuiteDirectoryServiceImpl implements GSuiteDirectoryService {
             try {
                 result.put(group, getGroupMembers(group.getId()));
             } catch (ResourceNotFoundException e) {
-                log.warn("Can't get group members for " + group.getEmail(), e);
+                LOG.warn("Can't get group members for " + group.getEmail(), e);
             }
         }
         return result;
-    }
-
-
-    private String completeGroupKey(String groupKey) {
-        return groupKey.indexOf('@') < 0 ? groupKey + '@' + getDomainName() : groupKey;
     }
 }
