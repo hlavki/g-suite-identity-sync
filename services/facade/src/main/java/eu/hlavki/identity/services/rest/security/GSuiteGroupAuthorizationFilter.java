@@ -33,7 +33,8 @@ import org.slf4j.LoggerFactory;
 @Priority(Priorities.AUTHORIZATION)
 public class GSuiteGroupAuthorizationFilter implements ContainerRequestFilter {
 
-    private static final Logger log = LoggerFactory.getLogger(GSuiteGroupAuthorizationFilter.class);
+    private static final Logger LOG = LoggerFactory.getLogger(GSuiteGroupAuthorizationFilter.class);
+
     private final Supplier<Set<String>> externalUsersCache;
     private final Supplier<Set<String>> adminUsersCache;
     private final GSuiteDirectoryService gsuiteDirService;
@@ -45,9 +46,9 @@ public class GSuiteGroupAuthorizationFilter implements ContainerRequestFilter {
         this.gsuiteDirService = gsuiteDirService;
         this.externalUsersCache = Suppliers.memoizeWithExpiration(
                 () -> appConfig.getExternalAccountsGroup().map(g -> getGroupMembers(g)).orElse(emptySet()),
-                15, TimeUnit.MINUTES);
+                5, TimeUnit.MINUTES);
         this.adminUsersCache = Suppliers.memoizeWithExpiration(() -> getGroupMembers(config.getAdminGroup()),
-                15, TimeUnit.MINUTES);
+                5, TimeUnit.MINUTES);
     }
 
 
@@ -81,7 +82,7 @@ public class GSuiteGroupAuthorizationFilter implements ContainerRequestFilter {
         }
         if (internal || external) {
         } else {
-            log.error("Unauthorized access from {}", userDomain);
+            LOG.error("Unauthorized access from {}", userDomain);
             ServerError err = new ServerError("E001", "Sorry you are not allowed to enter this site");
             requestContext.abortWith(Response.status(Response.Status.UNAUTHORIZED).entity(err).type(MediaType.APPLICATION_JSON).build());
         }
@@ -99,7 +100,7 @@ public class GSuiteGroupAuthorizationFilter implements ContainerRequestFilter {
             result = membership.getMembers() == null ? Collections.emptySet()
                     : membership.getMembers().stream().map(m -> m.getEmail()).collect(Collectors.toSet());
         } catch (ResourceNotFoundException e) {
-            log.warn("Group for external accounts {} does not exists", groupName);
+            LOG.warn("Group for external accounts {} does not exists", groupName);
         } catch (NoPrivateKeyException e) {
             throw serverError(SERVICE_UNAVAILABLE, "E002", "Service not configured!", e);
         }
