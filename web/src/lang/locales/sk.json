@@ -25,6 +25,13 @@
         "pageNotFound": "Stránka nebola nájdená!",
         "settings": {
             "title": "Nastavenia",
+            "general": {
+                "title": "Všeobecné",
+                "externalAccountsGroupLabel": "Skupina pre externých používateľov",
+                "saveButton": "Uložiť",
+                "savedTitle": "Všeobecné nastavenia",
+                "savedText": "Úspešne uložené."
+            },
             "sync": {
                 "title": "Synchronizácia",
                 "groupsButton": " Skupiny do LDAP",
