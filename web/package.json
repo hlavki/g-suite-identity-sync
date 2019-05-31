@@ -8,18 +8,18 @@
     "lint": "vue-cli-service lint"
   },
   "dependencies": {
-    "axios": "^0.18.0",
-    "vee-validate": "^2.2.7",
+    "axios": "^0.19.0",
+    "vee-validate": "^2.2.9",
     "vue": "^2.6.10",
     "vue-i18n": "^8.11.2",
     "vue-material": "^1.0.0-beta-11",
     "vue-router": "^3.0.6",
-    "vue-sweetalert2": "^1.6.4"
+    "vue-sweetalert2": "^2.0.5"
   },
   "devDependencies": {
-    "@vue/cli-plugin-babel": "^3.7.0",
-    "@vue/cli-plugin-eslint": "^3.7.0",
-    "@vue/cli-service": "^3.7.0",
+    "@vue/cli-plugin-babel": "^3.8.0",
+    "@vue/cli-plugin-eslint": "^3.8.0",
+    "@vue/cli-service": "^3.8.0",
     "babel-eslint": "^10.0.1",
     "eslint": "^5.16.0",
     "eslint-plugin-vue": "^5.2.2",
