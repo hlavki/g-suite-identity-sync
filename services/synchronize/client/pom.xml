@@ -4,7 +4,7 @@
     <parent>
         <groupId>eu.hlavki.identity</groupId>
         <artifactId>gsync-services-synchronize</artifactId>
-        <version>0.4.3-SNAPSHOT</version>
+        <version>0.4.3</version>
     </parent>
 
     <artifactId>gsync-services-synchronize-client</artifactId>
