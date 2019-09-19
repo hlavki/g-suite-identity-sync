@@ -22,10 +22,12 @@ This software is good for all G Suite customers who need to use services that su
 
 ## How it works
 
-Account synchronization is driven by users. It means that account is synchronized when user uses account manager web to create account.
+Account synchronization is driven by users. It means that account is synchronized when user authenticate by g-suite
+or gmail account and uses account manager web to create LDAP account.
 Every account must be G Suite account or regular gmail account with specific G Suite group membership.
 There is no possibility to use G Suite password but you can synchronize LDAP password to G Suite.
-Groups are synchronized on user creation, scheduler on manually.
+Groups are synchronized on user creation, scheduler or manually. You can also use
+[push notifications](https://github.com/hlavki/g-suite-identity-sync/wiki/Push-Notifications) from google.
 
 ## Screenshots
 
