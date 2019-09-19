@@ -4,7 +4,7 @@
     <parent>
         <groupId>eu.hlavki.identity</groupId>
         <artifactId>gsync-services-ldap</artifactId>
-        <version>0.4.4-SNAPSHOT</version>
+        <version>0.4.4</version>
     </parent>
 
     <artifactId>gsync-services-ldap-api</artifactId>
