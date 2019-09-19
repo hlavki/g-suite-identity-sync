@@ -11,7 +11,7 @@ RUN groupadd -r $KARAF_USER --gid=$KARAF_UID && useradd -rm -g $KARAF_USER --uid
 COPY --chown=karaf:karaf maven/karaf/ /opt/karaf
 
 # Install karaf distribution
-RUN sed -i 's/log4j\.rootLogger=INFO,\ out,\ osgi\:\*/log4j\.rootLogger=INFO,\ out,\ stdout,\ osgi\:\*/' /opt/karaf/etc/org.ops4j.pax.logging.cfg \
+RUN sed -i 's/log4j2.rootLogger.appenderRef.RollingFile/#log4j2.rootLogger.appenderRef.RollingFile/' ${KARAF_HOME}/etc/org.ops4j.pax.logging.cfg \
     && sed -i '/felix.fileinstall.log.default/a felix.fileinstall.subdir.mode\ =\ recurse' /opt/karaf/etc/config.properties \
     && sed -i -e '$a log4j2.logger.cxf.name\ =\ org.apache.cxf' /opt/karaf/etc/org.ops4j.pax.logging.cfg \
     && sed -i -e '$a log4j2.logger.cxf.level\ =\ WARN' /opt/karaf/etc/org.ops4j.pax.logging.cfg \
