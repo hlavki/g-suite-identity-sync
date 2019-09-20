@@ -5,9 +5,9 @@
                       http://maven.apache.org/xsd/settings-1.0.0.xsd">
     <servers>
         <server>
-            <id>xit-public-releases</id>
-            <username>${env.MVN_DEPLOY_USER}</username>
-            <password>${env.MVN_DEPLOY_PWD}</password>
+            <id>github</id>
+            <username>${env.GITHUB_MVN_USER}</username>
+            <password>${env.GITHUB_MVN_TOKEN}</password>
         </server>
         <server>
             <id>xit-public-snapshots</id>

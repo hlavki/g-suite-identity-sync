@@ -34,8 +34,8 @@
 
     <distributionManagement>
         <repository>
-            <id>xit-public-releases</id>
-            <url>https://repository.xit.camp/repository/maven-public-releases/</url>
+            <id>github</id>
+            <url>https://maven.pkg.github.com/hlavki</url>
         </repository>
         <snapshotRepository>
             <id>xit-public-snapshots</id>
