@@ -4,7 +4,7 @@
     <parent>
         <groupId>eu.hlavki.identity</groupId>
         <artifactId>gsync</artifactId>
-        <version>0.4.5-SNAPSHOT</version>
+        <version>0.4.5</version>
     </parent>
     <artifactId>gsync-dist</artifactId>
     <packaging>karaf-assembly</packaging>
