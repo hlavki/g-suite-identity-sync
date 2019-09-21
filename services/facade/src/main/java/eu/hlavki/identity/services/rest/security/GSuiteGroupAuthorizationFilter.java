@@ -95,7 +95,8 @@ public class GSuiteGroupAuthorizationFilter implements ContainerRequestFilter {
     private Set<String> getGroupMembers(String groupName) {
         Set<String> result = emptySet();
         try {
-            GroupMembership membership = gsuiteDirService.getGroupMembers(groupName);
+            String groupEmail = gsuiteDirService.completeGroupEmail(groupName);
+            GroupMembership membership = gsuiteDirService.getGroupMembers(groupEmail);
             result = membership.getMembers() == null ? Collections.emptySet()
                     : membership.getMembers().stream().map(m -> m.getEmail()).collect(Collectors.toSet());
         } catch (ResourceNotFoundException e) {

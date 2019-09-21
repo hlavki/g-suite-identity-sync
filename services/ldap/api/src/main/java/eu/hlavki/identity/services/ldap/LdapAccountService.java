@@ -12,13 +12,13 @@ public interface LdapAccountService {
     boolean accountExists(String subject);
 
 
-    Optional<LdapAccount> searchBySubject(String subject);
+    Optional<LdapAccount> getAccountBySubject(String subject);
 
 
-    Optional<LdapAccount> searchByEmail(String email);
+    Optional<LdapAccount> getAccountByEmail(String email);
 
 
-    List<LdapAccount> searchByRole(Role role);
+    List<LdapAccount> searchAccounts(Role role);
 
 
     List<LdapAccount> getAllAccounts();

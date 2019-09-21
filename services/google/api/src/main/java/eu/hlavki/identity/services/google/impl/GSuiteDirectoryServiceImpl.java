@@ -33,7 +33,7 @@ public class GSuiteDirectoryServiceImpl implements GSuiteDirectoryService {
 
     @Override
     public GroupMembership getGroupMembers(String groupKey) throws ResourceNotFoundException {
-        return readGroupMembers(completeGroupEmail(groupKey), null);
+        return readGroupMembers(groupKey, null);
     }
 
 

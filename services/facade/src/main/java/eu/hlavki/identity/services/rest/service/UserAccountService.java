@@ -152,7 +152,7 @@ public class UserAccountService {
     public Response getAccountInfo() {
         ResponseBuilder response;
         String subject = oidcContext.getUserInfo().getSubject();
-        Optional<LdapAccount> ldapAcc = ldapService.searchBySubject(subject);
+        Optional<LdapAccount> ldapAcc = ldapService.getAccountBySubject(subject);
         Optional<AccountInfo> info = ldapAcc.map(AccountInfo::new);
         response = info.map(Response::ok).orElse(Response.ok().status(NOT_FOUND));
         return response.build();

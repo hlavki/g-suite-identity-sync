@@ -68,7 +68,7 @@ public class LdapAccountServiceImpl implements LdapAccountService, Configurable 
 
 
     @Override
-    public Optional<LdapAccount> searchBySubject(String subject) throws LdapSystemException {
+    public Optional<LdapAccount> getAccountBySubject(String subject) throws LdapSystemException {
         Optional<LdapAccount> result = empty();
         try (LDAPConnection conn = ldapPool.getConnection()) {
             String baseDn = config.getLdapUserBaseDN();
@@ -84,7 +84,7 @@ public class LdapAccountServiceImpl implements LdapAccountService, Configurable 
 
 
     @Override
-    public Optional<LdapAccount> searchByEmail(String email) throws LdapSystemException {
+    public Optional<LdapAccount> getAccountByEmail(String email) throws LdapSystemException {
         Optional<LdapAccount> result = empty();
         try (LDAPConnection conn = ldapPool.getConnection()) {
             String baseDn = config.getLdapUserBaseDN();
@@ -100,7 +100,7 @@ public class LdapAccountServiceImpl implements LdapAccountService, Configurable 
 
 
     @Override
-    public List<LdapAccount> searchByRole(LdapAccount.Role role) throws LdapSystemException {
+    public List<LdapAccount> searchAccounts(LdapAccount.Role role) throws LdapSystemException {
         try (LDAPConnection conn = ldapPool.getConnection()) {
             String baseDn = config.getLdapUserBaseDN();
             String roleStr = String.valueOf(role);
@@ -330,7 +330,7 @@ public class LdapAccountServiceImpl implements LdapAccountService, Configurable 
 
     @Override
     public void deleteUserByEmail(String email) throws LdapSystemException {
-        Optional<LdapAccount> account = searchByEmail(email);
+        Optional<LdapAccount> account = getAccountByEmail(email);
         account.ifPresentOrElse(this::deleteUser, () -> log.warn("Account with email {} does not exists!", email));
     }
 

@@ -171,7 +171,7 @@ public class AccountSyncServiceImpl implements AccountSyncService {
 
     @Override
     public void synchronizeGSuiteUser(String email) {
-        Optional<LdapAccount> account = ldapService.searchByEmail(email);
+        Optional<LdapAccount> account = ldapService.getAccountByEmail(email);
         account.ifPresent(acc -> {
             GSuiteUser gsuiteUser = gsuiteDirService.getUser(acc.getSubject());
             ldapService.updateAccount(AccountUtil.toLdapAccount(gsuiteUser));
@@ -183,12 +183,14 @@ public class AccountSyncServiceImpl implements AccountSyncService {
     @Override
     public void cleanExternalUsers() {
         Optional<String> externalGroup = appConfig.getExternalAccountsGroup();
-        Set<LdapAccount> toRemove = externalGroup.map(extGroup -> {
-            List<LdapAccount> ldapExt = ldapService.searchByRole(LdapAccount.Role.EXTERNAL);
-            GroupMembership gsuiteExt = gsuiteDirService.getGroupMembers(extGroup);
-            Set<String> gsuiteSubjects = gsuiteExt.getMembers().stream().map(u -> u.getId()).collect(toSet());
-            return ldapExt.stream().filter(acc -> !gsuiteSubjects.contains(acc.getSubject())).collect(toSet());
-        }).orElse(emptySet());
+        Set<LdapAccount> toRemove = externalGroup
+                .map(extGroup -> gsuiteDirService.completeGroupEmail(extGroup))
+                .map(extGroup -> {
+                    List<LdapAccount> ldapExt = ldapService.searchAccounts(LdapAccount.Role.EXTERNAL);
+                    GroupMembership gsuiteExt = gsuiteDirService.getGroupMembers(extGroup);
+                    Set<String> gsuiteSubjects = gsuiteExt.getMembers().stream().map(u -> u.getId()).collect(toSet());
+                    return ldapExt.stream().filter(acc -> !gsuiteSubjects.contains(acc.getSubject())).collect(toSet());
+                }).orElse(emptySet());
         LOG.info("Cleaning {} external users", toRemove.size());
         toRemove.forEach(ldapService::deleteUser);
     }
