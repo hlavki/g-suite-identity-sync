@@ -7,7 +7,7 @@ import org.apache.karaf.shell.api.action.lifecycle.Reference;
 import org.apache.karaf.shell.api.action.lifecycle.Service;
 
 @Service
-@Command(scope = "sync", name = "clean-external-users", description = "Remove all unassigned external users")
+@Command(scope = "identity", name = "clean-external-users", description = "Remove all unassigned external users")
 public class CleanExternalUsersCommand implements Action {
 
     @Reference
