@@ -14,6 +14,7 @@
     <cxf:bus>
         <cxf:features>
             <cxf:logging />
+            <!--<ref component-id="validationFeature"/>-->
         </cxf:features>
     </cxf:bus>
 
@@ -54,13 +55,17 @@
         <argument ref="validationProviderResolver"/>
     </bean>
 
-    <bean id="validationInInterceptor" class="org.apache.cxf.jaxrs.validation.JAXRSBeanValidationInInterceptor">
+    <bean id="validationFeature" class="org.apache.cxf.validation.BeanValidationFeature">
+        <property name="provider" ref="validationProvider" />
+    </bean>
+
+<!--    <bean id="validationInInterceptor" class="org.apache.cxf.jaxrs.validation.JAXRSBeanValidationInInterceptor">
         <property name="provider" ref="validationProvider" />
     </bean>
 
     <bean id="validationOutInterceptor" class="org.apache.cxf.jaxrs.validation.JAXRSBeanValidationOutInterceptor">
         <property name="provider" ref="validationProvider" />
-    </bean>
+    </bean>-->
 
     <!-- Exception mappers -->
     <bean id="validationExceptionMapper" class="eu.hlavki.identity.services.rest.exception.ValidationExceptionMapper">

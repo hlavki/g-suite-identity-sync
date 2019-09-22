@@ -79,7 +79,7 @@
         <feature version="${cxf.version}">cxf-jaxrs</feature>
         <feature version="${cxf.version}">cxf-rs-security-oauth2</feature>
         <feature version="${cxf.version}">cxf-rt-security-oidc</feature>
-        <feature version="${cxf.version}">cxf-bean-validation-core</feature>
+        <feature version="${cxf.version}">cxf-bean-validation</feature>
         <feature version="${project.version}">gsync-services-config</feature>
         <feature version="${project.version}">gsync-services-ldap</feature>
         <feature version="${project.version}">gsync-services-google</feature>

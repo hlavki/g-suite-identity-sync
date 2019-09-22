@@ -46,13 +46,9 @@
 
     <!-- Identity REST service  -->
     <jaxrs:server id="serviceFacade" address="/identity">
-        <jaxrs:inInterceptors>
-            <ref component-id="validationInInterceptor" />
-        </jaxrs:inInterceptors>
-
-        <jaxrs:outInterceptors>
-            <ref component-id="validationOutInterceptor" />
-        </jaxrs:outInterceptors>
+        <jaxrs:features>
+            <ref component-id="validationFeature" />
+        </jaxrs:features>
 
         <jaxrs:serviceBeans>
             <ref component-id="userAccountService"/>

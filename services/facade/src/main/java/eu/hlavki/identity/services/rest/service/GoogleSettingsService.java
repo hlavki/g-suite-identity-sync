@@ -4,17 +4,23 @@ import eu.hlavki.identity.services.google.GSuiteDirectoryService;
 import eu.hlavki.identity.services.google.ResourceNotFoundException;
 import eu.hlavki.identity.services.google.config.Configuration;
 import eu.hlavki.identity.services.google.model.GroupMembership;
-import eu.hlavki.identity.services.google.model.ServiceAccount;
+import eu.hlavki.identity.services.rest.model.ServiceAccount;
 import eu.hlavki.identity.services.rest.model.GoogleSettingsData;
 import eu.hlavki.identity.services.rest.model.UserInfo;
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 import javax.ws.rs.GET;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.core.Context;
 import org.apache.cxf.rs.security.oidc.rp.OidcClientTokenContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Path("google/settings")
 public class GoogleSettingsService {
+
+    private static final Logger LOG = LoggerFactory.getLogger(GoogleSettingsService.class);
 
     @Context
     private OidcClientTokenContext oidcContext;
@@ -41,7 +47,7 @@ public class GoogleSettingsService {
 
     @PUT
     @Path("service-account")
-    public void configureServiceAccount(ServiceAccount serviceAccount) {
+    public void configureServiceAccount(@NotNull @Valid ServiceAccount serviceAccount) {
         String privateKey = serviceAccount.getPrivateKey()
                 .replace("-----BEGIN PRIVATE KEY-----\n", "")
                 .replace("-----END PRIVATE KEY-----", "")
@@ -49,10 +55,16 @@ public class GoogleSettingsService {
         String me = oidcContext.getUserInfo().getSubject();
         googleConfig.setServiceAccount(serviceAccount.getClientEmail(), privateKey, me, serviceAccount.getTokenUri());
         String adminGroup = config.getAdminGroup() + "@" + gsuiteDirService.getDomainName();
-        GroupMembership admins = gsuiteDirService.getGroupMembers(adminGroup);
-        if (!admins.isMember(me)) {
+        try {
+            GroupMembership admins = gsuiteDirService.getGroupMembers(adminGroup);
+            if (!admins.isMember(me)) {
+                googleConfig.resetServiceAccount();
+                throw new ResourceNotFoundException("You are not member of " + adminGroup + " group!");
+            }
+        } catch (Exception e) {
+            LOG.warn("Service account is not configured properly!", e);
             googleConfig.resetServiceAccount();
-            throw new ResourceNotFoundException("You are not member of " + adminGroup + " group!");
+            throw e;
         }
     }
 }
