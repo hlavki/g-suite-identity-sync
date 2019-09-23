@@ -5,7 +5,6 @@ steps:
   - '-c'
   - |
     docker login --username=hlavki --password=$$DOCKER_PASSWORD &&
-    echo $$MVN_DEPLOY_USER && echo $$MVN_DEPLOY_PWD &&
     mvn install -B &&
     mvn deploy -s .ci.settings.xml -B
   secretEnv: ['DOCKER_PASSWORD', 'MVN_DEPLOY_USER', 'MVN_DEPLOY_PWD']
