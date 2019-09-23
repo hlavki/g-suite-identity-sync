@@ -4,7 +4,7 @@ steps:
   args:
   - '-c'
   - |
-    cp .ci.settings.xml $HOME/.m2/settings.xml &&
+    cp .ci.settings.xml $$HOME/.m2/settings.xml &&
     docker login --username=hlavki --password=$$DOCKER_PASSWORD &&
     mvn install -B &&
     mvn deploy -B
