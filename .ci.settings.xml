@@ -11,7 +11,7 @@
         </server>
         <server>
             <id>docker.io</id>
-            <username>miso@hlavki.eu</username>
+            <username>hlavki</username>
             <password>${env.DOCKER_PASSWORD}</password>
         </server>
         <server>
