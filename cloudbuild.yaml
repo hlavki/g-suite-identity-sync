@@ -1,17 +1,16 @@
 steps:
-- name: 'hlavki/cloud-build-mvn-docker'
+- name: 'gcr.io/account-manager-204119/cloud-build-mvn-docker'
   entrypoint: 'bash'
   args:
   - '-c'
   - |
-    docker login --username=hlavki --password=$$DOCKER_PASSWORD &&
     mvn install -B &&
     mvn deploy -s .ci.settings.xml -B
-  secretEnv: ['DOCKER_PASSWORD', 'MVN_DEPLOY_USER', 'MVN_DEPLOY_PWD']
+  secretEnv: ['DOCKER_PASSWORD', 'XIT_MAVEN_USER', 'XIT_MAVEN_PASSWORD']
 
 secrets:
 - kmsKeyName: projects/account-manager-204119/locations/global/keyRings/cloud-build/cryptoKeys/cloud-build
   secretEnv:
     DOCKER_PASSWORD: CiQA4vB+FtuEVnxGY51k+kP5gfvTFsWlF3q9aqfEquAclDk36qwSNQDOhpIPzuhaHGt+hxCrcri0jdAeFfV2OpTQhLqp1/BeoRnYl/NFim6NMix1BmzS74M1azYk
-    MVN_DEPLOY_USER: CiQA4vB+FlQTCFIvtmNK2VvrClawMFC817/jhWTH/YyYHkf5pLgSOADOhpIPKRvM5JYy8wdY4Doi0emfxVY0j94yo0+vDTjaXjtaI/j9GR1Ow1sG2aWlfzsZiwZW3WKF
-    MVN_DEPLOY_PWD: CiQA4vB+FgcgSli5expv7PQ79+L5SQSgUsZnP4UMXNH8HQ7GzyESNQDOhpIPqSRhW6GeVQNfao58JebKzot1QtErUr967MAPYaLFcnRzs6Knia0ZNncoKFR06oZi
+    XIT_MAVEN_PASSWORD: CiQA4vB+FgcgSli5expv7PQ79+L5SQSgUsZnP4UMXNH8HQ7GzyESNQDOhpIPqSRhW6GeVQNfao58JebKzot1QtErUr967MAPYaLFcnRzs6Knia0ZNncoKFR06oZi
+    GITHUB_TOKEN: CiQA4vB+FvFYhku6FZSmvPfunPvsykoEFKSEeYnCzD65suLWq8ASUQDOhpIPVRUSgcZTu9/oMTsG4Z6X479icNa+eW2S8Y6Dmc7PO/9i6ppza0kXZC1pllX3Qc971Q2gUpgGS3EOUVA98IILvwpp8u64XGcyrYrL/w==
