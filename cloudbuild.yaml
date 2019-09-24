@@ -1,18 +1,3 @@
 steps:
-- name: 'gcr.io/cloud-builders/mvn'
-  entrypoint: 'bash'
-  args:
-  - '-c'
-  - |
-    cp .ci.settings.xml $$HOME/.m2/settings.xml &&
-    docker login --username=hlavki --password=$$DOCKER_PASSWORD &&
-    mvn install -B &&
-    mvn deploy -B
-  secretEnv: ['DOCKER_PASSWORD', 'MVN_DEPLOY_USER', 'MVN_DEPLOY_PWD']
-
-secrets:
-- kmsKeyName: projects/account-manager-204119/locations/global/keyRings/cloud-build/cryptoKeys/cloud-build
-  secretEnv:
-    DOCKER_PASSWORD: CiQA4vB+FtuEVnxGY51k+kP5gfvTFsWlF3q9aqfEquAclDk36qwSNQDOhpIPzuhaHGt+hxCrcri0jdAeFfV2OpTQhLqp1/BeoRnYl/NFim6NMix1BmzS74M1azYk
-    MVN_DEPLOY_USER: CiQA4vB+FlQTCFIvtmNK2VvrClawMFC817/jhWTH/YyYHkf5pLgSOADOhpIPKRvM5JYy8wdY4Doi0emfxVY0j94yo0+vDTjaXjtaI/j9GR1Ow1sG2aWlfzsZiwZW3WKF
-    MVN_DEPLOY_PWD: CiQA4vB+FgcgSli5expv7PQ79+L5SQSgUsZnP4UMXNH8HQ7GzyESNQDOhpIPqSRhW6GeVQNfao58JebKzot1QtErUr967MAPYaLFcnRzs6Knia0ZNncoKFR06oZi
+- name: 'gcr.io/account-manager-204119/cloud-build-mvn-docker'
+  args: ['install', '-B']

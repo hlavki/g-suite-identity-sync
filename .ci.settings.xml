@@ -6,18 +6,23 @@
     <servers>
         <server>
             <id>github</id>
-            <username>${env.GITHUB_MVN_USER}</username>
-            <password>${env.GITHUB_MVN_TOKEN}</password>
+            <username>hlavki</username>
+            <password>${env.GITHUB_TOKEN}</password>
+        </server>
+        <server>
+            <id>docker.io</id>
+            <username>hlavki</username>
+            <password>${env.DOCKER_PASSWORD}</password>
         </server>
         <server>
             <id>xit-public-releases</id>
-            <username>${env.MVN_DEPLOY_USER}</username>
-            <password>${env.MVN_DEPLOY_PWD}</password>
+            <username>deployer.public</username>
+            <password>${env.XIT_MAVEN_PASSWORD}</password>
         </server>
         <server>
             <id>xit-public-snapshots</id>
-            <username>${env.MVN_DEPLOY_USER}</username>
-            <password>${env.MVN_DEPLOY_PWD}</password>
+            <username>deployer.public</username>
+            <password>${env.XIT_MAVEN_PASSWORD}</password>
         </server>
     </servers>
 </settings>
