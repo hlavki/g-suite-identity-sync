@@ -6,7 +6,7 @@ steps:
   - |
     mvn install -B &&
     mvn deploy -s .ci.settings.xml -B
-  secretEnv: ['DOCKER_PASSWORD', 'XIT_MAVEN_USER', 'XIT_MAVEN_PASSWORD']
+  secretEnv: ['DOCKER_PASSWORD', 'XIT_MAVEN_PASSWORD', 'GITHUB_TOKEN']
 
 secrets:
 - kmsKeyName: projects/account-manager-204119/locations/global/keyRings/cloud-build/cryptoKeys/cloud-build
