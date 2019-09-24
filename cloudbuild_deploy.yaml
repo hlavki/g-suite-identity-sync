@@ -4,7 +4,7 @@ steps:
   args:
   - '-c'
   - |
-    mvn deploy -s .ci.settings.xml -B
+    mvn deploy -s .ci.settings.xml -B -Pdocker-release
   secretEnv: ['DOCKER_PASSWORD', 'XIT_MAVEN_PASSWORD', 'GITHUB_TOKEN']
 
 secrets:
