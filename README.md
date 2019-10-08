@@ -9,7 +9,7 @@ Read [Wiki](https://github.com/hlavki/g-suite-identity-sync/wiki) to [install](h
 
 * Synchronize G Suite accounts or regular gmail accounts to LDAP
 * Synchronize G Suite groups to LDAP groups
-* Support for external users (gmail only)
+* [Support for external users](https://medium.com/@hlavki/saving-your-money-with-external-users-in-g-suite-37ce5d7a1895) (every google account)
 * Synchronize LDAP password to G Suite (One password for everything)
 * [Push notifications](https://github.com/hlavki/g-suite-identity-sync/wiki/Push-Notifications)
 * Synchronize name changes to LDAP
