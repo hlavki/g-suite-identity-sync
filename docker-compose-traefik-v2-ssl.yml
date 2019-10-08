@@ -37,7 +37,7 @@ services:
   traefik:
     image: traefik:latest
     command:
-      - "--log.level=DEBUG"
+      #- "--log.level=DEBUG"
       - "--api.insecure=true"
       - "--providers.docker=true"
       - "--providers.docker.exposedbydefault=false"
@@ -45,7 +45,7 @@ services:
       - "--entrypoints.websecure.address=:443"
       - "--certificatesresolvers.default.acme.httpchallenge=true"
       - "--certificatesresolvers.default.acme.httpchallenge.entrypoint=web"
-      - "--certificatesresolvers.default.acme.email=admin@example.com"
+      - "--certificatesresolvers.default.acme.email=admin@example.com" # replace with real email
       - "--certificatesresolvers.default.acme.storage=/letsencrypt/acme.json"
     ports:
       - 80:80
