@@ -1,8 +1,8 @@
-version: "3.3"
+version: "3.6"
 
 services:
   identity:
-    image: hlavki/g-suite-identity-sync
+    image: hlavki/g-suite-identity-sync:latest
     environment:
       - SLAPD_BIND_DN=cn=admin,dc=example,dc=org
       - SLAPD_BASE_DN=dc=example,dc=org
@@ -21,7 +21,7 @@ services:
       - "traefik.frontend.rule=Host:identity.example.com"
 
   ldap:
-    image: osixia/openldap
+    image: osixia/openldap:latest
     ports:
       - "389:389"
     environment:
@@ -35,7 +35,7 @@ services:
       - ldap-config:/etc/ldap/slapd.d
 
   traefik:
-    image: traefik
+    image: traefik:1.7
     command: -c /dev/null --api --docker --docker.domain=example.com --logLevel=DEBUG
     restart: always
     ports:
