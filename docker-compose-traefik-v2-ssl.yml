@@ -1,0 +1,60 @@
+version: "3.6"
+
+services:
+  identity:
+    image: hlavki/g-suite-identity-sync:latest
+    environment:
+      - SLAPD_BIND_DN=cn=admin,dc=example,dc=com # cn=admin stays, replace dc=example,dc=com with real domain 
+      - SLAPD_BASE_DN=dc=example,dc=com # remplace with real domain
+      - SLAPD_PASSWORD=changeme
+      - GSUITE_DOMAIN=example.com # replace real domain
+      - GSUITE_CLIENT_ID=xxxx.apps.googleusercontent.com # client ID
+      - GSUITE_CLIENT_SECRET=xxxxxx # client secret 
+    volumes:
+      - identity-config:/opt/karaf/etc/identity
+    depends_on:
+      - ldap
+    labels:
+      - "traefik.enable=true"
+      - "traefik.port=8181"
+      - "traefik.http.routers.accounts.rule=Host(`accounts.example.com`)" # your real domain
+      - "traefik.http.routers.accounts.entrypoints=websecure"
+      - "traefik.http.routers.accounts.tls.certresolver=default"
+      - "traefik.http.routers.identity.service=identitysvc"
+      - "traefik.http.services.identitysvc.loadbalancer.server.port=8181"
+  ldap:
+    image: osixia/openldap:latest
+    environment:
+      LDAP_LOG_LEVEL: "256"
+      LDAP_ORGANISATION: "xIT ltd."
+      LDAP_DOMAIN: "example.com" # replace real domain
+      LDAP_ADMIN_PASSWORD: "changeme"
+      LDAP_CONFIG_PASSWORD: "changeme"
+    volumes:
+      - ldap-data:/var/lib/ldap
+      - ldap-config:/etc/ldap/slapd.d
+
+  traefik:
+    image: traefik:latest
+    command:
+      - "--log.level=DEBUG"
+      - "--api.insecure=true"
+      - "--providers.docker=true"
+      - "--providers.docker.exposedbydefault=false"
+      - "--entrypoints.web.address=:80"
+      - "--entrypoints.websecure.address=:443"
+      - "--certificatesresolvers.default.acme.httpchallenge=true"
+      - "--certificatesresolvers.default.acme.httpchallenge.entrypoint=web"
+      - "--certificatesresolvers.default.acme.email=admin@example.com"
+      - "--certificatesresolvers.default.acme.storage=/letsencrypt/acme.json"
+    ports:
+      - 80:80
+      - 443:443
+    volumes:
+      - "./letsencrypt:/letsencrypt"
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
+
+volumes:
+  identity-config:
+  ldap-config:
+  ldap-data:
