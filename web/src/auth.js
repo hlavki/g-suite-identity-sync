@@ -33,7 +33,7 @@ const AuthPlugin = {
                 options.router.push('/install')
               } else {
                 _this.logout()
-                if (error.response.data.hasOwnProperty('code')) {
+                if (Object.prototype.hasOwnProperty.call(error.response.data, 'code')) {
                   _this.notifyError(error.response)
                 }
               }
