@@ -10,8 +10,8 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>11</maven.compiler.source>
         <maven.compiler.target>11</maven.compiler.target>
-        <cxf.version>3.3.3</cxf.version>
-        <karaf.version>4.2.6</karaf.version>
+        <cxf.version>3.3.4</cxf.version>
+        <karaf.version>4.2.7</karaf.version>
         <osgi.version>6.0.0</osgi.version>
         <unboundid.version>4.0.10</unboundid.version>
         <guava.version>24.1.1-jre</guava.version>
