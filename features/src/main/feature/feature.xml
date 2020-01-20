@@ -4,6 +4,8 @@
           xmlns="http://karaf.apache.org/xmlns/features/v1.3.0"
           xsi:schemaLocation="http://karaf.apache.org/xmlns/features/v1.3.0 http://karaf.apache.org/xmlns/features/v1.3.0">
 
+    <repository>mvn:org.apache.cxf.karaf/apache-cxf/${cxf.version}/xml/features</repository>
+
     <feature name="gsync-plugins" version="${project.version}">
         <feature>aries-blueprint</feature>
         <bundle>mvn:eu.hlavki.identity/gsync-plugin-api/${project.version}</bundle>
@@ -76,6 +78,7 @@
     <feature name="gsync-services-facade" version="${project.version}">
         <feature>aries-blueprint</feature>
         <feature>pax-cdi</feature>
+        <feature version="${cxf.version}">cxf-commands</feature>
         <feature version="${cxf.version}">cxf-jaxrs</feature>
         <feature version="${cxf.version}">cxf-rs-security-oauth2</feature>
         <feature version="${cxf.version}">cxf-rt-security-oidc</feature>

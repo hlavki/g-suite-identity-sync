@@ -48,13 +48,13 @@
                 <extensions>true</extensions>
                 <configuration>
                     <finalName>${project.artifactId}</finalName>
+                    <startupFeatures>
+                        <feature>static</feature>
+                    </startupFeatures>
                     <bootFeatures>
                         <feature>standard</feature>
-                    </bootFeatures>
-                    <startupFeatures>
-                        <feature>gsync-services</feature>
                         <feature>gsync-web</feature>
-                    </startupFeatures>
+                    </bootFeatures>
                     <javase>11</javase>
                     <archiveZip>false</archiveZip>
                 </configuration>
