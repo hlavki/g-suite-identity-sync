@@ -17,5 +17,5 @@ public interface Configuration {
     String getLdapGroupsMemberAttr();
 
     
-    String getUserAttr();
+    String getUserDNAttr();
 }

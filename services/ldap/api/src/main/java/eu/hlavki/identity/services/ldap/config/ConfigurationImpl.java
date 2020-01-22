@@ -16,7 +16,7 @@ public class ConfigurationImpl implements Configuration {
     private static final String LDAP_GROUPS_OBJECT_CLASS_DEFAULT = "groupOfUniqueNames";
     private static final String LDAP_GROUPS_MEMBER_ATTR_PROP = "ldap.groups.memberAttr";
     private static final String LDAP_GROUPS_MEMBER_ATTR_DEFAULT = "uniqueMember";
-    private static final String LDAP_USER_ATTR_PROP = "ldap.users.attr";
+    private static final String LDAP_USER_ATTR_PROP = "ldap.users.dnAttr";
     private static final String LDAP_USER_ATTR_DEFAULT = "uid";
 
     private static final Logger log = LoggerFactory.getLogger(ConfigurationImpl.class);
@@ -206,7 +206,7 @@ public class ConfigurationImpl implements Configuration {
     }
 
     @Override
-    public String getUserAttr() {
+    public String getUserDNAttr() {
         return get(LDAP_USER_ATTR_PROP, LDAP_USER_ATTR_DEFAULT);
     }
 }

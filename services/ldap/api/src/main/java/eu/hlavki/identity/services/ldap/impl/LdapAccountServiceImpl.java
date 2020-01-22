@@ -63,7 +63,8 @@ public class LdapAccountServiceImpl implements LdapAccountService, Configurable 
 
     @Override
     public String getAccountDN(LdapAccount account) {
-        return config.getUserAttr() + "=" + account.getUsername() + "," + config.getLdapUserBaseDN();
+        String attrValue = account.getValueByAttr(config.getUserDNAttr());
+        return config.getUserDNAttr() + "=" + attrValue + "," + config.getLdapUserBaseDN();
     }
 
 
@@ -137,6 +138,7 @@ public class LdapAccountServiceImpl implements LdapAccountService, Configurable 
             entry.addAttribute("givenName", account.getGivenName());
             entry.addAttribute("sn", account.getFamilyName());
             entry.addAttribute("cn", account.getName());
+            entry.addAttribute("uid", account.getUsername());
             entry.addAttribute("employeeNumber", account.getSubject());
             entry.addAttribute("userPassword", account.getPassword());
             entry.addAttribute("employeeType", account.getRole().toString());

@@ -42,4 +42,12 @@ public class LdapAccount {
                 append(", role=").append(role).append("]");
         return sb.toString();
     }
+
+    public String getValueByAttr(String attr) {
+        switch (attr) {
+            case "cn": return getName();
+            case "uid": return getUsername();
+            default: return null;
+        }
+    }
 }
