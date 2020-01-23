@@ -8,6 +8,7 @@ import 'vue-material/dist/theme/default.css'
 import VeeValidate from 'vee-validate'
 import axios from 'axios'
 import VueSweetalert2 from 'vue-sweetalert2'
+import 'sweetalert2/dist/sweetalert2.min.css';
 
 Vue.config.productionTip = false
 Vue.use(VueMaterial)

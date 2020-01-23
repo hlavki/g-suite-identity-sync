@@ -13,8 +13,8 @@
     "vue": "^2.6.11",
     "vue-i18n": "^8.15.3",
     "vue-material": "^1.0.0-beta-11",
-    "vue-router": "^3.1.4",
-    "vue-sweetalert2": "^3.0.1"
+    "vue-router": "^3.1.5",
+    "vue-sweetalert2": "^2.1.5"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "^3.11.0",
