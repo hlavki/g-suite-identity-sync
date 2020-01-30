@@ -56,6 +56,7 @@ public class LdapAccountServiceImpl implements LdapAccountService, Configurable 
             SearchResultEntry entry = conn.searchForEntry(baseDn, ONE, "(employeeNumber=" + subject + ")", "uid");
             return entry != null ? entry.getDN() : null;
         } catch (LDAPException e) {
+            log.error("Unable to get account DN. Subject: " + subject, e);
             throw new LdapSystemException(e);
         }
     }
@@ -78,6 +79,7 @@ public class LdapAccountServiceImpl implements LdapAccountService, Configurable 
                 result = Optional.of(accountFromEntry(entry));
             }
         } catch (LDAPException e) {
+            log.error("Unable to get account by subject " + subject, e);
             throw new LdapSystemException(e);
         }
         return result;
@@ -94,6 +96,7 @@ public class LdapAccountServiceImpl implements LdapAccountService, Configurable 
                 result = Optional.of(accountFromEntry(entry));
             }
         } catch (LDAPException e) {
+            log.error("Unable to get account by email " + email, e);
             throw new LdapSystemException(e);
         }
         return result;
@@ -108,6 +111,7 @@ public class LdapAccountServiceImpl implements LdapAccountService, Configurable 
             SearchResult searchResult = conn.search(baseDn, ONE, "(&(objectClass=inetOrgPerson)(employeeType=" + roleStr + "))");
             return searchResult.getSearchEntries().stream().map(entry -> accountFromEntry(entry)).collect(Collectors.toList());
         } catch (LDAPException e) {
+            log.error("Cannot search accounts", e);
             throw new LdapSystemException(e);
         }
     }
@@ -120,6 +124,7 @@ public class LdapAccountServiceImpl implements LdapAccountService, Configurable 
             SearchResult searchResult = conn.search(baseDn, ONE, "(objectClass=inetOrgPerson)");
             return searchResult.getSearchEntries().stream().map(entry -> accountFromEntry(entry)).collect(Collectors.toList());
         } catch (LDAPException e) {
+            log.error("Unable to get accounts", e);
             throw new LdapSystemException(e);
         }
     }
@@ -144,6 +149,7 @@ public class LdapAccountServiceImpl implements LdapAccountService, Configurable 
             entry.addAttribute("employeeType", account.getRole().toString());
             conn.add(entry);
         } catch (LDAPException e) {
+            log.error("Unable to create account " + account, e);
             throw new LdapSystemException(e);
         }
     }
@@ -162,6 +168,7 @@ public class LdapAccountServiceImpl implements LdapAccountService, Configurable 
             mods.add(new Modification(REPLACE, "mail", account.getEmails().toArray(new String[0])));
             conn.modify(new ModifyRequest(getAccountDN(account.getSubject()), mods));
         } catch (LDAPException e) {
+            log.error("Unable to update account " + account, e);
             throw new LdapSystemException(e);
         }
     }
@@ -172,6 +179,7 @@ public class LdapAccountServiceImpl implements LdapAccountService, Configurable 
         try (LDAPConnection conn = ldapPool.getConnection()) {
             return getGroup(groupName, conn);
         } catch (LDAPException e) {
+            log.error("Unable to get group " + groupName, e);
             throw new LdapSystemException(e);
         }
     }
@@ -190,6 +198,7 @@ public class LdapAccountServiceImpl implements LdapAccountService, Configurable 
                 result.add(name);
             }
         } catch (LDAPException e) {
+            log.error("Unable to get groups", e);
             throw new LdapSystemException(e);
         }
         return result;
@@ -220,6 +229,7 @@ public class LdapAccountServiceImpl implements LdapAccountService, Configurable 
             }
             return current;
         } catch (LDAPException e) {
+            log.error("Unable to create group " + group, e);
             throw new LdapSystemException(e);
         }
     }
@@ -244,6 +254,7 @@ public class LdapAccountServiceImpl implements LdapAccountService, Configurable 
                 result.add(new LdapGroup(name, dn, description, members));
             }
         } catch (LDAPException e) {
+            log.error("Unable to get account groups for DN " + accountDN, e);
             throw new LdapSystemException(e);
         }
         return result;
@@ -272,6 +283,7 @@ public class LdapAccountServiceImpl implements LdapAccountService, Configurable 
                 }
             }
         } catch (LDAPException e) {
+            log.error("Unable to get account groups for DN " + accountDN, e);
             throw new LdapSystemException(e);
         }
     }
@@ -294,6 +306,7 @@ public class LdapAccountServiceImpl implements LdapAccountService, Configurable 
                 log.info("Nothing to do. Account {} is not member of group {}", accountDN, groupName);
             }
         } catch (LDAPException e) {
+            log.error("Unable to delete group " + groupName + " for account " + accountDN, e);
             throw new LdapSystemException(e);
         }
     }
@@ -308,6 +321,7 @@ public class LdapAccountServiceImpl implements LdapAccountService, Configurable 
                 conn.delete(groupDN);
             }
         } catch (LDAPException e) {
+            log.error("Unable to delete group " + groupName, e);
             throw new LdapSystemException(e);
         }
     }
@@ -325,6 +339,7 @@ public class LdapAccountServiceImpl implements LdapAccountService, Configurable 
             conn.delete(account.getDn());
             log.info("User {} successfully deleted", account.getUsername());
         } catch (LDAPException e) {
+            log.error("Unable to delete user " + account, e);
             throw new LdapSystemException(e);
         }
     }
@@ -361,6 +376,7 @@ public class LdapAccountServiceImpl implements LdapAccountService, Configurable 
             }
             return result;
         } catch (LDAPException e) {
+            log.error("Unable to get group " + groupName, e);
             throw new LdapSystemException(e);
         }
     }
