@@ -5,7 +5,7 @@
             "signIn": "Sign In",
             "settings": "Settings",
             "about": "Abount",
-            "signOut": "Sing Out"
+            "signOut": "Sign Out"
         },
         "pageTitle": "Account Manager",
         "ldapAccount": "LDAP account",
