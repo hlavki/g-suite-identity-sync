@@ -1,6 +1,7 @@
 package eu.hlavki.identity.services.ldap.impl;
 
 import com.unboundid.ldap.sdk.*;
+import com.unboundid.util.Base64;
 import static com.unboundid.ldap.sdk.ModificationType.*;
 import static com.unboundid.ldap.sdk.SearchScope.*;
 import eu.hlavki.identity.services.ldap.LdapAccountService;
@@ -9,11 +10,13 @@ import eu.hlavki.identity.services.ldap.config.Configurable;
 import eu.hlavki.identity.services.ldap.config.Configuration;
 import eu.hlavki.identity.services.ldap.model.LdapAccount;
 import eu.hlavki.identity.services.ldap.model.LdapGroup;
+import java.security.MessageDigest;
 import java.util.*;
 import static java.util.Optional.empty;
 import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 
 public class LdapAccountServiceImpl implements LdapAccountService, Configurable {
 
@@ -145,7 +148,7 @@ public class LdapAccountServiceImpl implements LdapAccountService, Configurable 
             entry.addAttribute("cn", account.getName());
             entry.addAttribute("uid", account.getUsername());
             entry.addAttribute("employeeNumber", account.getSubject());
-            entry.addAttribute("userPassword", account.getPassword());
+            entry.addAttribute("userPassword", encryptLdapPassword("SHA",account.getPassword()));
             entry.addAttribute("employeeType", account.getRole().toString());
             conn.add(entry);
         } catch (LDAPException e) {
@@ -160,7 +163,7 @@ public class LdapAccountServiceImpl implements LdapAccountService, Configurable 
         try (LDAPConnection conn = ldapPool.getConnection()) {
             List<Modification> mods = new ArrayList<>();
             if (account.getPassword() != null) {
-                mods.add(new Modification(REPLACE, "userPassword", account.getPassword()));
+                mods.add(new Modification(REPLACE, "userPassword", encryptLdapPassword("SHA",account.getPassword())));
             }
             mods.add(new Modification(REPLACE, "givenName", account.getGivenName()));
             mods.add(new Modification(REPLACE, "sn", account.getFamilyName()));
@@ -416,5 +419,30 @@ public class LdapAccountServiceImpl implements LdapAccountService, Configurable 
         account.setName(entry.getAttributeValue("cn"));
         account.setRole(LdapAccount.Role.valueOf(entry.getAttributeValue("employeeType")));
         return account;
+    }
+
+    private String encryptLdapPassword(String algorithm, String _password) {
+        String sEncrypted = _password;
+        if ((_password != null) && (_password.length() > 0)) {
+            boolean bMD5 = algorithm.equalsIgnoreCase("MD5");
+            boolean bSHA = algorithm.equalsIgnoreCase("SHA")
+                    || algorithm.equalsIgnoreCase("SHA1")
+                    || algorithm.equalsIgnoreCase("SHA-1");
+            if (bSHA || bMD5) {
+                String sAlgorithm = "MD5";
+                if (bSHA) {
+                    sAlgorithm = "SHA";
+                }
+                try {
+                    MessageDigest md = MessageDigest.getInstance(sAlgorithm);
+                    md.update(_password.getBytes("UTF-8"));
+                    sEncrypted = "{" + sAlgorithm + "}" + Base64.encode(md.digest());
+                } catch (Exception e) {
+                    sEncrypted = null;
+                    log.error("Encryption process error", e);
+                }
+            }
+        }
+        return sEncrypted;
     }
 }
