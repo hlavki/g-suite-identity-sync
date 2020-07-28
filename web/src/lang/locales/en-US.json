@@ -4,7 +4,7 @@
             "home": "Home",
             "signIn": "Sign In",
             "settings": "Settings",
-            "about": "Abount",
+            "about": "About",
             "signOut": "Sign Out"
         },
         "pageTitle": "Account Manager",
@@ -13,7 +13,7 @@
         "name": "Name",
         "emails": "Emails",
         "ldapPassword": "Type LDAP Password",
-        "configLdapPassword": "Confirm LDAP Password",
+        "confirmLdapPassword": "Confirm LDAP Password",
         "syncGSuitePassword": "Synchronize G Suite Password",
         "updateLdapAccount": "Update LDAP Account",
         "createLdapAccount": "Create LDAP account",
