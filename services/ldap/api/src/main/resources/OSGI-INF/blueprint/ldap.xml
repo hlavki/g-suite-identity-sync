@@ -13,12 +13,21 @@
         <argument ref="configurationAdmin"/>
     </bean>
 
+    <bean id="sockerFactoryProviderFactory" class="eu.hlavki.identity.services.ldap.config.SocketFactoryProviderFactory">
+        <argument value="${ldap.enableTls}"/>
+        <argument value="${ldap.trustStorePath}"/>
+        <argument value="${ldap.trustStorePassword}"/>
+    </bean>
+
+    <bean id="socketFactory" factory-ref="sockerFactoryProviderFactory" factory-method="getSocketFactory"/>
+
     <!-- LDAP -->
     <bean id="ldapConnOptions" class="com.unboundid.ldap.sdk.LDAPConnectionOptions">
         <!-- configure options -->
     </bean>
 
     <bean id="ldapConnection" class="com.unboundid.ldap.sdk.LDAPConnection">
+        <argument ref="socketFactory"/>
         <argument ref="ldapConnOptions"/>
         <argument value="${ldap.host}"/>
         <argument value="${ldap.port}"/>
