@@ -181,14 +181,14 @@ export default {
       let data = response.data;
       let message = typeof data === "object" ? data.message : data;
       this.$swal({
-        type: "error",
+        icon: "error",
         title: "Error Occured",
         text: response.status === 404 ? "Resource not found!" : message
       });
     },
     notifySuccess(titleText) {
       this.$swal({
-        type: "success",
+        icon: "success",
         title: titleText
       });
     }

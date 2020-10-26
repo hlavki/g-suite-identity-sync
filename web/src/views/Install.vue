@@ -83,7 +83,7 @@ export default {
               console.info("Service account installed!")
               _this.showProgress = false
               _this.$swal({
-                type: "success",
+                icon: "success",
                 text: _this.$t("message.install.serviceAccountSuccess"),
                 onClose: () => {
                   _this.$router.push("/")
@@ -102,7 +102,7 @@ export default {
       let data = response.data
       let message = typeof data === "object" ? data.message : data
       this.$swal({
-        type: "error",
+        icon: "error",
         title: "Error Occured",
         text: response.status === 404 ? "Resource not found!" : message
       })

@@ -53,7 +53,7 @@ const AuthPlugin = {
             position: 'top',
             showConfirmButton: false,
             timer: 4000,
-            type: 'warning',
+            icon: 'warning',
             text: message
           });
         }

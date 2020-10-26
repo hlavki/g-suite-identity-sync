@@ -260,7 +260,7 @@ export default {
         position: 'top',
         showConfirmButton: false,
         timer: 4000,
-        type: 'success',
+        icon: 'success',
         title: this.$t(prefix + "Title"),
         text: this.$t(prefix + "Text")
       });
@@ -269,7 +269,7 @@ export default {
       let data = response.data;
       let message = typeof data === "object" ? data.message : data;
       this.$swal({
-        type: "error",
+        icon: "error",
         title: "Error Occured",
         text: response.status === 404 ? "Resource not found!" : message
       });
