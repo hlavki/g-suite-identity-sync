@@ -3,6 +3,7 @@ package eu.hlavki.identity.services.rest.service;
 import eu.hlavki.identity.services.rest.model.UserInfo;
 import eu.hlavki.identity.services.rest.security.AuthzRole;
 import java.net.URI;
+import java.nio.charset.Charset;
 import java.util.Set;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -16,6 +17,8 @@ import org.slf4j.LoggerFactory;
 public class UserInfoService {
 
     private static final Logger log = LoggerFactory.getLogger(UserInfoService.class);
+    private static final Charset UTF_8 = Charset.forName("UTF-8");
+
     @Context
     private OidcClientTokenContext oidcContext;
 
@@ -35,6 +38,8 @@ public class UserInfoService {
 
 
     private URI resizeProfilePicture(String originalUri) {
-        return UriBuilder.fromUri(originalUri).queryParam("sz", "100").build();
+        String url = StringEscapeUtils.unescapeJava(originalUri);
+        log.info("Profile URL: {}", url);
+        return UriBuilder.fromUri(url).queryParam("sz", "100").build();
     }
 }
