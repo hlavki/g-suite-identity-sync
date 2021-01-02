@@ -10,7 +10,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>11</maven.compiler.source>
         <maven.compiler.target>11</maven.compiler.target>
-        <cxf.version>3.4.0</cxf.version>
+        <cxf.version>3.4.1</cxf.version>
         <karaf.version>4.2.9</karaf.version>
         <osgi.version>6.0.0</osgi.version>
         <unboundid.version>5.1.1</unboundid.version>
@@ -72,7 +72,7 @@
             </dependency>
             <dependency>
                 <groupId>org.osgi</groupId>
-                <artifactId>org.osgi.core</artifactId>
+                <artifactId>osgi.core</artifactId>
                 <version>${osgi.version}</version>
                 <scope>provided</scope>
             </dependency>
@@ -139,7 +139,7 @@
             <dependency>
                 <groupId>org.projectlombok</groupId>
                 <artifactId>lombok</artifactId>
-                <version>1.18.6</version>
+                <version>1.18.16</version>
                 <scope>provided</scope>
             </dependency>
         </dependencies>
