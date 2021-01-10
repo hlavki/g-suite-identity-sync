@@ -26,7 +26,6 @@
 
     <feature name="gsync-services-ldap" version="${project.version}">
         <feature>aries-blueprint</feature>
-        <feature>pax-cdi</feature>
         <bundle>mvn:com.unboundid/unboundid-ldapsdk/${unboundid.version}</bundle>
         <bundle>mvn:eu.hlavki.identity/gsync-services-ldap-api/${project.version}</bundle>
         <configfile finalname="${karaf.etc}/identity/eu.hlavki.identity.ldap.cfg">
@@ -36,7 +35,6 @@
 
     <feature name="gsync-services-google" version="${project.version}">
         <feature>aries-blueprint</feature>
-        <feature>pax-cdi</feature>
         <feature>scheduler</feature>
         <feature version="${cxf.version}">cxf-jaxrs</feature>
         <feature version="${cxf.version}">cxf-rs-security-oauth2</feature>
@@ -57,7 +55,6 @@
 
     <feature name="gsync-services-synchronize" version="${project.version}">
         <feature>aries-blueprint</feature>
-        <feature>pax-cdi</feature>
         <feature>scheduler</feature>
         <feature version="${cxf.version}">cxf-rt-security-oidc</feature>
         <feature version="${project.version}">gsync-services-config</feature>
@@ -77,7 +74,6 @@
 
     <feature name="gsync-services-facade" version="${project.version}">
         <feature>aries-blueprint</feature>
-        <feature>pax-cdi</feature>
         <feature version="${cxf.version}">cxf-commands</feature>
         <feature version="${cxf.version}">cxf-jaxrs</feature>
         <feature version="${cxf.version}">cxf-rs-security-oauth2</feature>
