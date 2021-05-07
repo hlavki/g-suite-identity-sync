@@ -10,10 +10,10 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>11</maven.compiler.source>
         <maven.compiler.target>11</maven.compiler.target>
-        <cxf.version>3.4.1</cxf.version>
-        <karaf.version>4.3.0</karaf.version>
+        <cxf.version>3.4.3</cxf.version>
+        <karaf.version>4.3.1</karaf.version>
         <osgi.version>7.0.0</osgi.version>
-        <unboundid.version>5.1.1</unboundid.version>
+        <unboundid.version>5.1.4</unboundid.version>
         <guava.version>24.1.1-jre</guava.version>
         <validation.api.version>2.0.2</validation.api.version>
         <docker.release.tag>${project.version}</docker.release.tag>
