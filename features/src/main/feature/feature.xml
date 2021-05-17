@@ -6,6 +6,12 @@
 
     <repository>mvn:org.apache.cxf.karaf/apache-cxf/${cxf.version}/xml/features</repository>
 
+    <feature name="guava" version="${guava.version}">
+        <bundle>mvn:com.google.guava/failureaccess/1.0.1</bundle>
+        <bundle>mvn:com.google.code.findbugs/jsr305/3.0.2</bundle>
+        <bundle>mvn:com.google.guava/guava/${guava.version}</bundle>
+    </feature>
+
     <feature name="gsync-plugins" version="${project.version}">
         <feature>aries-blueprint</feature>
         <bundle>mvn:eu.hlavki.identity/gsync-plugin-api/${project.version}</bundle>
@@ -21,7 +27,7 @@
 
     <feature name="cxf-rt-security-oidc" version="${cxf.version}">
         <bundle>mvn:org.apache.cxf/cxf-rt-rs-security-sso-oidc/${cxf.version}</bundle> <!-- Missing in features!!! Maybe bug -->
-        <bundle>mvn:javax.persistence/javax.persistence-api/2.2</bundle>
+        <bundle>mvn:jakarta.persistence/jakarta.persistence-api/2.2.3</bundle>
     </feature>
 
     <feature name="gsync-services-ldap" version="${project.version}">
@@ -38,7 +44,7 @@
         <feature>scheduler</feature>
         <feature version="${cxf.version}">cxf-jaxrs</feature>
         <feature version="${cxf.version}">cxf-rs-security-oauth2</feature>
-        <bundle>mvn:com.google.guava/guava/${guava.version}</bundle>
+        <feature version="${guava.version}">guava</feature>
         <bundle>mvn:eu.hlavki.identity/gsync-services-google-api/${project.version}</bundle>
         <bundle>mvn:eu.hlavki.identity/gsync-services-google-client/${project.version}</bundle>
         <configfile finalname="${karaf.etc}/identity/eu.hlavki.identity.google.cfg">
