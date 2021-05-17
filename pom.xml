@@ -11,7 +11,7 @@
         <maven.compiler.source>11</maven.compiler.source>
         <maven.compiler.target>11</maven.compiler.target>
         <cxf.version>3.4.3</cxf.version>
-        <karaf.version>4.3.1</karaf.version>
+        <karaf.version>4.3.2</karaf.version>
         <osgi.version>7.0.0</osgi.version>
         <unboundid.version>5.1.4</unboundid.version>
         <guava.version>24.1.1-jre</guava.version>
@@ -139,7 +139,7 @@
             <dependency>
                 <groupId>org.projectlombok</groupId>
                 <artifactId>lombok</artifactId>
-                <version>1.18.16</version>
+                <version>1.18.20</version>
                 <scope>provided</scope>
             </dependency>
         </dependencies>
@@ -151,7 +151,7 @@
                 <plugin>
                     <groupId>org.apache.felix</groupId>
                     <artifactId>maven-bundle-plugin</artifactId>
-                    <version>5.1.1</version>
+                    <version>5.1.2</version>
                     <inherited>true</inherited>
                     <extensions>true</extensions>
                 </plugin>
@@ -176,7 +176,7 @@
                 </plugin>
                 <plugin>
                     <artifactId>maven-resources-plugin</artifactId>
-                    <version>3.1.0</version>
+                    <version>3.2.0</version>
                 </plugin>
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
