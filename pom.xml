@@ -189,14 +189,14 @@
                 </plugin>
                 <plugin>
                     <artifactId>maven-install-plugin</artifactId>
-                    <version>2.5.2</version>
+                    <version>3.0.0-M1</version>
                 </plugin>
             </plugins>
         </pluginManagement>
         <plugins>
             <plugin>
                 <artifactId>maven-release-plugin</artifactId>
-                <version>2.5.3</version>
+                <version>3.0.0-M4</version>
                 <configuration>
                     <preparationGoals>install</preparationGoals>
                     <autoVersionSubmodules>true</autoVersionSubmodules>
