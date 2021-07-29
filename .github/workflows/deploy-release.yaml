@@ -21,9 +21,10 @@ jobs:
     - name: Checkout master branch
       run: git checkout master
     - name: Prepare release
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: mvn --batch-mode -s .ci.settings.xml release:prepare
     - name: Perform release
       env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         DOCKER_HUB_TOKEN: ${{ secrets.DOCKER_HUB_TOKEN }}
       run: mvn --batch-mode -s .ci.settings.xml -Pdocker-release release:perform -Darguments='-Dmaven.deploy.skip=true -Dmaven.javadoc.failOnError=false'
