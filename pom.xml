@@ -21,7 +21,7 @@
     </properties>
 
     <scm>
-        <connection>scm:git:ssh://git@github.com:hlavki/g-suite-identity-sync.git</connection>
+        <connection>scm:git:https://github.com/hlavki/g-suite-identity-sync.git</connection>
         <tag>HEAD</tag>
     </scm>
 
@@ -113,7 +113,7 @@
             <dependency>
                 <groupId>org.slf4j</groupId>
                 <artifactId>slf4j-api</artifactId>
-                <version>1.7.26</version>
+                <version>1.7.31</version>
                 <scope>provided</scope>
             </dependency>
             <dependency>
