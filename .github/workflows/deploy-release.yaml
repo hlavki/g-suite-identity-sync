@@ -26,4 +26,4 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         DOCKER_HUB_TOKEN: ${{ secrets.DOCKER_HUB_TOKEN }}
-      run: mvn --batch-mode -s .ci.settings.xml -Pdocker-release release:perform -Darguments='-Dmaven.javadoc.failOnError=false'
+      run: mvn --batch-mode -s .ci.settings.xml -Pdocker-release release:perform -Darguments='-Dmaven.deploy.skip=true -Dmaven.javadoc.failOnError=false'
