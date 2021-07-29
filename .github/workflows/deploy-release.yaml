@@ -21,7 +21,6 @@ jobs:
     - name: Checkout master branch
       run: git checkout master
     - name: Prepare release
-      env:
       run: mvn --batch-mode release:prepare
     - name: Perform release
       env:
