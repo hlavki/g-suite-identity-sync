@@ -6,13 +6,13 @@
     <servers>
         <server>
             <id>github</id>
-            <username>hlavki</username>
+            <username>${env.$GITHUB_ACTOR}</username>
             <password>${env.GITHUB_TOKEN}</password>
         </server>
         <server>
             <id>docker.io</id>
             <username>hlavki</username>
-            <password>${env.DOCKER_PASSWORD}</password>
+            <password>${env.DOCKER_HUB_TOKEN}</password>
         </server>
     </servers>
 </settings>
