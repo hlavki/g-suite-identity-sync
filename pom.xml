@@ -17,6 +17,7 @@
         <guava.version>30.1.1-jre</guava.version>
         <validation.api.version>2.0.2</validation.api.version>
         <docker.release.tag>${project.version}</docker.release.tag>
+        <project.scm.id>github</project.scm.id>
     </properties>
 
     <scm>
