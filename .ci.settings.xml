@@ -14,15 +14,5 @@
             <username>hlavki</username>
             <password>${env.DOCKER_PASSWORD}</password>
         </server>
-        <server>
-            <id>xit-public-releases</id>
-            <username>deployer.public</username>
-            <password>${env.XIT_MAVEN_PASSWORD}</password>
-        </server>
-        <server>
-            <id>xit-public-snapshots</id>
-            <username>deployer.public</username>
-            <password>${env.XIT_MAVEN_PASSWORD}</password>
-        </server>
     </servers>
 </settings>
