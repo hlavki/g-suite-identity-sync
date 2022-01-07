@@ -17,6 +17,8 @@ RUN sed -i 's/log4j2.rootLogger.appenderRef.RollingFile/#log4j2.rootLogger.appen
     && mkdir -p /opt/karaf/data /opt/karaf/data/log /opt/karaf/etc/identity \
     && chown -R $KARAF_USER.$KARAF_USER /opt/karaf/data /opt/karaf/data/log /opt/karaf/etc/identity
 
+WORKDIR /opt/karaf
+
 USER $KARAF_USER
 
 VOLUME ["/opt/karaf/etc/identity"]
