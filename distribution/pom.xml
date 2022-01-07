@@ -55,14 +55,13 @@
                         <feature>standard</feature>
                         <feature>gsync-web</feature>
                     </bootFeatures>
-                    <javase>11</javase>
                     <archiveZip>false</archiveZip>
                 </configuration>
             </plugin>
             <plugin>
                 <groupId>io.fabric8</groupId>
                 <artifactId>docker-maven-plugin</artifactId>
-                <version>0.36.1</version>
+                <version>0.38.1</version>
                 <configuration>
                     <images>
                         <image>

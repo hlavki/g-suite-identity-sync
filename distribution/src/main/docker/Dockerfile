@@ -1,4 +1,4 @@
-FROM openjdk:16-jdk-slim
+FROM openjdk:17-jdk-slim
 
 ENV KARAF_USER karaf
 ENV KARAF_UID 8181
