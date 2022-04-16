@@ -11,11 +11,11 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>${java.version}</maven.compiler.source>
         <maven.compiler.target>${java.version}</maven.compiler.target>
-        <cxf.version>3.5.0</cxf.version>
-        <karaf.version>4.3.5</karaf.version>
+        <cxf.version>3.5.2</cxf.version>
+        <karaf.version>4.3.6</karaf.version>
         <osgi.version>7.0.0</osgi.version>
-        <unboundid.version>5.1.4</unboundid.version>
-        <guava.version>30.1.1-jre</guava.version>
+        <unboundid.version>6.0.4</unboundid.version>
+        <guava.version>31.1-jre</guava.version>
         <validation.api.version>2.0.2</validation.api.version>
         <docker.release.tag>${project.version}</docker.release.tag>
         <project.scm.id>github</project.scm.id>
@@ -114,7 +114,7 @@
             <dependency>
                 <groupId>org.slf4j</groupId>
                 <artifactId>slf4j-api</artifactId>
-                <version>1.7.31</version>
+                <version>1.7.36</version>
                 <scope>provided</scope>
             </dependency>
             <dependency>
