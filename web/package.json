@@ -17,9 +17,9 @@
     "vue-sweetalert2": "^4.1.1"
   },
   "devDependencies": {
-    "@vue/cli-plugin-babel": "^3.11.0",
+    "@vue/cli-plugin-babel": "^5.0.8",
     "@vue/cli-plugin-eslint": "^3.11.0",
-    "@vue/cli-service": "^3.11.0",
+    "@vue/cli-service": "^5.0.8",
     "babel-eslint": "^10.0.3",
     "eslint": "^6.8.0",
     "eslint-plugin-vue": "^6.1.2",
